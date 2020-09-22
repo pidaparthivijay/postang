@@ -3,22 +3,31 @@
  */
 package com.postang.service.common;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import com.postang.model.BillPendingRequest;
 import com.postang.model.Constants;
 import com.postang.model.Customer;
 import com.postang.model.Employee;
+import com.postang.model.Room;
 import com.postang.model.RoomRequest;
+import com.postang.model.TourPackageRequest;
 import com.postang.model.User;
 import com.postang.repo.CustomerRepository;
 import com.postang.repo.EmployeeRepository;
+import com.postang.repo.RoomRepository;
 import com.postang.repo.RoomRequestRepository;
+import com.postang.repo.TourPackageRequestRepository;
 import com.postang.repo.UserRepository;
+import com.postang.util.MailUtil;
 import com.postang.util.Util;
 
 import lombok.extern.log4j.Log4j2;
@@ -29,7 +38,7 @@ import lombok.extern.log4j.Log4j2;
  */
 @Log4j2
 @Service
-public class CustomerServiceImpl implements CustomerService {
+public class CustomerServiceImpl implements CustomerService,Constants {
 
 	@Autowired
 	CustomerRepository custRepo;
@@ -43,7 +52,15 @@ public class CustomerServiceImpl implements CustomerService {
 	@Autowired
 	RoomRequestRepository roomReqRepo;
 
+	@Autowired
+	RoomRepository roomRepo;
+	
+	@Autowired
+	TourPackageRequestRepository tourPackageRequestRepository;
+	
 	Util util = new Util();
+
+	MailUtil mailUtil = new MailUtil();
 	
 	@Override
 	public Customer saveCustomer(Customer customer) {
@@ -54,13 +71,13 @@ public class CustomerServiceImpl implements CustomerService {
 			if (!StringUtils.isEmpty(validatedCustomer.getStatusMessage())) {
 				return validatedCustomer;
 			}			
-			user = this.generateUserFromCustomer(customer);
+			user = util.generateUserFromCustomer(customer);
 			User newUser = userRepo.save(user);
 			if (newUser == null) {
 				Customer newCus = new Customer();
 				newCus.setCustId(-1L);
 				newCus.setActionStatus(false);
-				newCus.setStatusMessage(Constants.USER_INVALID);
+				newCus.setStatusMessage(USER_INVALID);
 				return newCus;
 			}
 			return custRepo.save(customer);
@@ -75,11 +92,11 @@ public class CustomerServiceImpl implements CustomerService {
 	private Customer validate(Customer customer) {
 		List<Customer> customerList = null;
 		customerList = custRepo.findByUserName(customer.getUserName());
-		if (customerList.size() > 0) {
+		if (CollectionUtils.isNotEmpty(customerList)) {
 			Customer newCus = new Customer();
 			newCus.setCustId(-1L);
 			newCus.setActionStatus(false);
-			newCus.setStatusMessage(Constants.USERNAME_TAKEN);
+			newCus.setStatusMessage(USERNAME_TAKEN);
 			return newCus;
 		} else {
 			int age = util.calculateAge(customer.getCustDob());
@@ -90,34 +107,19 @@ public class CustomerServiceImpl implements CustomerService {
 				newCus.setCustId(-1L);
 				newCus.setActionStatus(false);
 				newCus.setCustAge(-1);
-				newCus.setStatusMessage(Constants.AGE_INSUFF);
+				newCus.setStatusMessage(AGE_INSUFF);
 				return newCus;
 			}
 		}
 		return customer;
 	}
 
-	private User generateUserFromCustomer(Customer customer) {
-		User genUser = new User();
-		try {
-			genUser.setCustName(customer.getCustName());
-			genUser.setUserName(customer.getUserName());
-			genUser.setPassword(customer.getCustPass());
-			genUser.setUserMail(customer.getCustEmail());
-			genUser.setUserMob(customer.getCustMob());
-			genUser.setUserType(Constants.CUSTOMER);
-		} catch (Exception e) {
-			log.info("Exception while generating the user: " + e);
-			e.printStackTrace();
-		}
-		return genUser;
-	}
-
+	
 	@Override
 	public Customer getCustomerByUserName(String userName) {
 		List<Customer> custList= null;
 		custList = custRepo.findByUserName(userName);
-		if (custList != null && custList.size() > 0) {
+		if (CollectionUtils.isNotEmpty(custList)) {
 			return custList.get(0);
 		} else {
 			return null;
@@ -141,7 +143,7 @@ public class CustomerServiceImpl implements CustomerService {
 		User user=null; 
 		custList = custRepo.findByUserName(customer.getUserName());
 		user= userRepo.findByUserName(customer.getUserName());
-		if (custList != null && custList.size() > 0) {
+		if (CollectionUtils.isNotEmpty(custList)) {
 			custList.get(0).setCustPass(user.getPassword());
 			return custList.get(0);
 		} else {
@@ -152,7 +154,7 @@ public class CustomerServiceImpl implements CustomerService {
 	public Employee getEmployeeByUserName(String userName) {
 		List<Employee> empList= null;
 		empList = empRepo.findByUserName(userName);
-		if (empList != null && empList.size() > 0) {
+		if (CollectionUtils.isNotEmpty(empList)) {
 			return empList.get(0);
 		} else {
 			return null;
@@ -160,6 +162,63 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Override
 	public RoomRequest requestRoom(RoomRequest roomRequest) {
+		roomRequest.setRoomRequestStatus(PENDING);
 		return roomReqRepo.save(roomRequest);
+	}
+
+	@Override
+	public List<RoomRequest> getMyRequestsList(Customer customer) {		
+		return roomReqRepo.findByUserId((int) customer.getUserId());
+	}
+
+	@Override
+	public String cancelRoomRequest(int roomRequestId) {
+		String cancellationStatus="";
+		RoomRequest roomRequest=roomReqRepo.findByRequestId(roomRequestId);
+		roomRequest.setRoomRequestStatus(CANCEL);
+		RoomRequest roomReq=roomReqRepo.save(roomRequest);
+		int userId=roomReq.getUserId();
+		User user=userRepo.findByUserId(userId);
+		if(roomReq.getRequestId()==roomRequestId && roomReq.getRoomRequestStatus().equals(CANCEL)) {
+			cancellationStatus=mailUtil.sendCancellationMail(roomRequestId,user);
+		}else if(roomReq.getRequestId()==roomRequestId || roomReq.getRoomRequestStatus().equals(CANCEL)) {
+			cancellationStatus=mailUtil.sendCancellationFailMail(roomRequestId,user);
+		}
+		return cancellationStatus;
+	}
+
+	@Override
+	public double generateBill(String custEmail) {		
+		User user= userRepo.findByUserMail(custEmail);
+		List<RoomRequest> roomRequestList=roomReqRepo.findByUserId((int) user.getUserId());
+		List<RoomRequest> billPendingList = roomRequestList.stream().filter(p -> BILL_PENDING.equals(p.getBillStatus())).collect(Collectors.toList());
+		List<Room> totalRoomsList=new ArrayList<>();
+		for(RoomRequest roomRequest:billPendingList) {
+			List<Room> roomsList=roomRepo.findByRoomRequestId(roomRequest.getRequestId());
+			totalRoomsList.addAll(roomsList);
+		}
+		double roomBill=util.generateBillForRooms(totalRoomsList);
+		return roomBill;
+		
+}
+
+	@Override
+	public List<BillPendingRequest> getPendingBillRequests(String custEmail) {
+		List<BillPendingRequest> billPendingRequests=new ArrayList<>();
+		User user= userRepo.findByUserMail(custEmail);
+		List<RoomRequest> roomRequestList=roomReqRepo.findByUserId((int) user.getUserId());
+		List<RoomRequest> billPendingList = roomRequestList.stream().filter(p -> BILL_PENDING.equals(p.getBillStatus())).collect(Collectors.toList());
+		billPendingRequests.addAll(util.convertToBillPendingRequest(billPendingList));
+		return billPendingRequests;
+	}
+
+	@Override
+	public TourPackageRequest bookTourPackage(TourPackageRequest tourPackageRequest) {
+		return tourPackageRequestRepository.save(tourPackageRequest);
+	}
+	
+	@Override
+	public Iterable<TourPackageRequest> getAllTourPackageBookings() {
+		return tourPackageRequestRepository.findAll();
 	}
 }

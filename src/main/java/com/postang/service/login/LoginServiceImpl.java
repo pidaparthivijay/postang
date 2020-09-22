@@ -18,7 +18,7 @@ import lombok.extern.log4j.Log4j2;
 
 @Service
 @Log4j2
-public class LoginServiceImpl implements LoginService {
+public class LoginServiceImpl implements Constants,LoginService {
 	@Autowired
 	UserRepository userRepository;
  	@Autowired
@@ -71,11 +71,11 @@ public class LoginServiceImpl implements LoginService {
 				log.info(Integer.parseInt(otp.getOtpValue()));
 				if(Integer.parseInt(oneTimePassword.getOtpValue()) != Integer.parseInt(otp.getOtpValue())) {
 					log.info("inequal");
-					return Constants.INVALID_OTP;
+					return INVALID_OTP;
 				}
 				else if(Integer.parseInt(oneTimePassword.getOtpValue()) == Integer.parseInt(otp.getOtpValue())) {
 					log.info("Equal");
-					return Constants.VALID_OTP;
+					return VALID_OTP;
 				}	
 			}
 			
@@ -91,13 +91,13 @@ public class LoginServiceImpl implements LoginService {
 				savedUser.setPassword(user.getPassword());
 				User newUser = userRepository.save(savedUser);
 				if (newUser != null) {
-					return Constants.PWD_RESET_SUCCESS;
+					return PWD_RESET_SUCCESS;
 				} else {
-					return Constants.PWD_RESET_FAILURE;
+					return PWD_RESET_FAILURE;
 				}
 			} else {
 				log.info("There is no user with given userName: "+user.getUserName());
-				return Constants.NO_USER_WITH_GIVEN_NAME;
+				return NO_USER_WITH_GIVEN_NAME;
 			}
 		} catch (Exception e) {
 			log.info("Exception occured in resetPwd: "+e);

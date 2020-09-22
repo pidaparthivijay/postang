@@ -3,11 +3,13 @@ package com.postang.model;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
+import javax.persistence.Transient;
 
 import lombok.Data;
 @Entity
@@ -25,8 +27,13 @@ public class Room implements Serializable{
 	private String roomModel;
 	private String roomType;
 	private String roomCategory;
+	@Column(columnDefinition="varchar(10) default 'vacant'")
 	private String roomStatus;
 	private Date checkInDate;
 	private Date checkOutDate;
+	@Transient
+	private int countOfRooms;
+	@Column(columnDefinition="int default '0'")
+	private int roomRequestId;
 
 	}

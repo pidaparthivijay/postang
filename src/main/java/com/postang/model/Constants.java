@@ -1,12 +1,13 @@
 package com.postang.model;
 
-public class Constants {
-	public static final double SINGLEROOMFARE = 0.10;
-	public static final double DOUBLEROOMFARE = 0.20;
-	public static final double STANDARDROOMFARE = 0.20;
+public interface Constants {
+
+	public static final double DELUXEROOMFARE = 0.20;
 	public static final double SUITEROOMFARE = 0.25;
 	public static final double ACROOMFARE = 0.25;
-	public static final double NONACROOMFARE = 0.25;
+	public static final double NONACROOMFARE = 0.20;
+	public static final double SINGLE_BASE_FARE= 800;
+	public static final double DOUBLE_BASE_FARE= 1500;
 	public static final String AGE_INSUFF = "Age is not sufficient";
 	public static final String USERNAME_TAKEN = "Username is already taken";
 	public static final String CUSTOMER = "Customer";
@@ -33,8 +34,60 @@ public class Constants {
 	public static final String NO_USER_WITH_GIVEN_NAME = "There is no user with given userName.";
 	public static final String OTPMAIL = "otpMail";
 	public static final String SIGNUPMAIL = "signUpMail";
+	public static final String EMP_SIGNUP_MAIL = "signUpEmpMail";
 	public static final String SINGUP_MAIL_SUCCESS = "Sign Up mail has been sent";
 	public static final String MAIL_USERNAME = "#userName#";
 	public static final String MAIL_OTP = "#OTP#";
 	public static final String MAIL_CUSTNAME = "#custName#";
+	public static final String MAIL_ROOM_REQ_ID = "#roomReqId#";
+	public static final String VACANT="vacant";
+	public static final String OCCUPIED = "occupied";
+	public static final String ALLOCATION_MAIL = "allocationMail";
+	public static final String ALLOCATION_MAIL_SUCCESS = "Allocation mail has been sent";
+	public static final String CANCEL_SUCCESS_MAIL_SUCCESS = "Cancellation Success mail has been sent";
+	public static final String CANCEL_SUCCESS_MAIL_FALIURE = "Cancellation Success mail is not sent";
+	public static final String CANCEL_FAILURE_MAIL_SUCCESS = "Cancellation Failure mail has been sent";
+	public static final String CANCEL_FAILURE_MAIL_FALIURE = "Cancellation Failure mail is not sent";
+	public static final String PENDING = "P";
+	public static final String CANCEL = "C";
+	public static final String ALLOCATED = "A";
+	public static final String EXPIRED = "E";
+	public static final String CANCEL_SUCCESS_MAIL = "cancellationSuccessMail";
+	public static final String CANCEL_FAIL_MAIL = "cancellationFailMail";
+	public static final String CANCEL_FAILED = "Room Request Cancellation Failed";
+	public static final String CANCEL_SUCCESS = "Room Request Cancellation Success";
+	public static final String ROOM_ALLOCATED = "Room has been Allocated";
+	public static final String ROOM_BOOKING = "RoomBooking";
+	public static final long ROOM_BOOKING_REWARD = 300;
+	public static final String TOUR_BOOKING = "TourBooking";
+	public static final long TOUR_BOOKING_REWARD = 500;
+	public static final String NO_REWARDS_FOUND = "No Reward Points found for you.. Perhaps you would like to earn some??";
+	public static final String TOTAL_POINTS = "Total Points";
+	public static final CharSequence MAIL_EMPNAME = "#empName#";
+	public static final CharSequence MAIL_PASSWORD = "#password#";
+	public static final String ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvxyz";
+    public static final int PASSWORD_LENGTH = 8;
+	public static final String BILL_PENDING = "PEND";
+	public static final String SINGLE="SNG";
+	public static final String DOUBLE="DBL";
+	public static final String DELUXE="DLX";
+	public static final String SUITE="STE";
+	public static final String AC="AC";
+	public static final String NONAC="NAC";
+	public static final String ROOM_REQUEST="Room Request";
+	public static final String AMENITY_REQUEST="Amenity Request";
+	public static final String TOTAL_BILL_AMOUNT = "Total Bill Amount";
+	public static final String SHORT = "2D3N";
+	public static final String MEDIUM = "4D5N";
+	public static final String LONG = "6D7N";
+	public static final String MIN="MIN";
+	public static final String MED="MED";
+	public static final String MAX="MAX";
+	public static final String YES = "Y";
+	public static final String NO = "N";
+	public static final String LOOK_UP ="Lookup";
+	public static final String XLSX_EXTN=".xlsx";
+	public static final String UNDER_SCORE="_";
+
 }
+

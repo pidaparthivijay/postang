@@ -1,9 +1,8 @@
 package com.postang.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,7 +19,7 @@ import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 @RestController
-public class LoginController {
+public class LoginController implements Constants{
 
 	Util util = new Util();
 
@@ -30,90 +29,92 @@ public class LoginController {
 	@Autowired
 	CustomerService customerService;
 
-	@RequestMapping(value = "/brw/login", method = { RequestMethod.POST })
+	@PostMapping(value = "/brw/login")
 	public String loginMethod(@RequestBody User user) {
 		User loginUser = null;
 		log.info("loginMethod starts: ");
 		try {
 			loginUser = loginService.validateUserDetails(user);
 			if (loginUser != null) {
-				if (Constants.CUSTOMER.equalsIgnoreCase(loginUser.getUserType())) {
+				if (CUSTOMER.equalsIgnoreCase(loginUser.getUserType())) {
 					Customer customer = customerService.getCustomerByUserName(loginUser.getUserName());
-					customer.setStatusMessage(Constants.CUST_LOG_SUCCESS);
+					customer.setUserId(loginUser.getUserId());
+					customer.setStatusMessage(CUST_LOG_SUCCESS);
 					return new ObjectMapper().writeValueAsString(customer);
-				} else if (Constants.EMPLOYEE.equalsIgnoreCase(loginUser.getUserType())) {
+				} else {
 					Employee employee = customerService.getEmployeeByUserName(user.getUserName());
-					employee.setStatusMessage(Constants.EMP_LOG_SUCCESS); 
-					return new ObjectMapper().writeValueAsString(employee);					 
-				} else if (Constants.ADMIN.equalsIgnoreCase(loginUser.getUserType())) {					
-					Employee employee = customerService.getEmployeeByUserName(user.getUserName());
-					employee.setStatusMessage(Constants.ADM_LOG_SUCCESS); 
-					return new ObjectMapper().writeValueAsString(employee);					 
+					employee.setUserId(loginUser.getUserId());
+					if (EMPLOYEE.equalsIgnoreCase(loginUser.getUserType())) {
+						employee.setStatusMessage(EMP_LOG_SUCCESS); 
+					} else if (ADMIN.equalsIgnoreCase(loginUser.getUserType())) {					
+						employee.setStatusMessage(ADM_LOG_SUCCESS); 
+				}
+					return new ObjectMapper().writeValueAsString(employee);
 				}
 			} else {
-				user.setUserType(Constants.INVALID);
+				user.setUserType(INVALID);
 				return new ObjectMapper().writeValueAsString(user);
 			}
 		} catch (Exception ex) {
-			log.info("Exception is: " + ex);
+			log.error("Exception occured in loginMethod: " + ex);
 			ex.printStackTrace();
 		}
 		log.info("loginMethod ends: ");
 		return null;
 	}
 
-	@RequestMapping(value = "/brw/requestOTP", method = { RequestMethod.POST })
+	@PostMapping(value = "/brw/requestOTP")
 	public String restorePwd(@RequestBody User user) {
 		log.info("restorePwd starts: ");
 		try {
 			String statusMsg = loginService.restoreAccount(user);
-			if (statusMsg.equals(Constants.MAIL_SUCCESS)) {
-				return Constants.TRUE;
+			if (statusMsg.equals(MAIL_SUCCESS)) {
+				return TRUE;
 			}
 		} catch (Exception ex) {
-			log.info("Exception is: " + ex);
+			log.error("Exception occured in restorePwd: " + ex);
 		}
 		log.info("restorePwd ends: ");
 		return null;
 	}
 
-	@RequestMapping(value = "/brw/submitOtp", method = { RequestMethod.POST })
+	@PostMapping(value = "/brw/submitOtp")
 	public String submitOtp(@RequestBody OneTimePassword oneTimePassword) {
 		try {
 			String otpStatus = loginService.validateOtp(oneTimePassword);
-			if (Constants.VALID_OTP.equalsIgnoreCase(otpStatus)) {
+			if (VALID_OTP.equalsIgnoreCase(otpStatus)) {
 				User user = new User();
 				user.setUserName(oneTimePassword.getUserName());
 				user = loginService.getUserDetailsByUserName(user.getUserName());
-				if (Constants.CUSTOMER.equals(user.getUserType())) {
+				if (CUSTOMER.equals(user.getUserType())) {
 					Customer customer = customerService.getCustomerByUserName(user.getUserName());
 					customer.setActionStatus(true);
-					customer.setStatusMessage(Constants.VALID_OTP);
+					customer.setStatusMessage(VALID_OTP);
 					return new ObjectMapper().writeValueAsString(customer);
-				} else if (Constants.EMPLOYEE.equals(user.getUserType())) {
+				} else if (EMPLOYEE.equals(user.getUserType())) {
 					/*
 					 * Customer customer=commonService.getCustomerByUserName(user.getUserName());
 					 * customer.setActionStatus(true);
-					 * customer.setStatusMessage(Constants.VALID_OTP); return new
+					 * customer.setStatusMessage(VALID_OTP); return new
 					 * ObjectMapper().writeValueAsString(customer);
 					 */
 				}
 			} else
 				return new ObjectMapper().writeValueAsString(otpStatus);
 		} catch (Exception e) {
-			log.info("Exception is: " + e);
+			log.error("Exception occured in submitOtp: " + e);
 			e.printStackTrace();
 		}
 		return null;
 	}
 
-	@RequestMapping(value = "/brw/resetPwd", method = { RequestMethod.POST })
+	@PostMapping(value = "/brw/resetPwd")
 	public String resetPwd(@RequestBody User user) {
 		String statusMsg = "";
 		try {
 			statusMsg = loginService.resetPwd(user);
 		} catch (Exception e) {
-			log.info("Exception is: " + e);
+			log.error("Exception occured in resetPwd: " + e);
 			e.printStackTrace();
 		}
 		return statusMsg;

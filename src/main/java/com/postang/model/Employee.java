@@ -4,8 +4,8 @@
 package com.postang.model;
 
 import java.io.Serializable;
-import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -31,6 +31,7 @@ public class Employee implements Serializable {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long empId;
 	private String empName;
+	private String empGen;
 	private String userName;
 	@Transient
 	private String empPass;
@@ -38,6 +39,9 @@ public class Employee implements Serializable {
 	private boolean actionStatus;
 	@Transient
 	private String statusMessage;
+	private String email;
+	@Column(columnDefinition="int default '0'")
+	private long userId;
 
 
 }

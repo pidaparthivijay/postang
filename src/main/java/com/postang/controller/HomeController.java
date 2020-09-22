@@ -1,12 +1,15 @@
 package com.postang.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.postang.model.BillPendingRequest;
+import com.postang.model.Constants;
 import com.postang.model.Customer;
 import com.postang.service.common.CustomerService;
 import com.postang.util.MailUtil;
@@ -15,14 +18,14 @@ import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 @RestController
-public class HomeController {
+public class HomeController implements Constants{
 
 	@Autowired
 	CustomerService customerService;
 	
 	MailUtil mailUtil = new MailUtil();
 
-	@RequestMapping(value = "/brw/registerCustomer", method = { RequestMethod.POST })
+	@PostMapping(value = "/brw/registerCustomer")
 	public String registerCustomer(@RequestBody Customer customer) {
 		String customerJsonString = "";
 		log.info("registerCustomer starts..." + customer);
@@ -42,29 +45,27 @@ public class HomeController {
 		}
 		return customerJsonString;
 	}
+	
+	@PostMapping(value = "/brw/getPendingBillRequests")
+	public String getPendingBillRequests(@RequestBody String custEmail) {
+		String pendingBillJson = "";
+		log.info("getPendingBillRequests starts..." + custEmail);
+		try {
+			List<BillPendingRequest> billPendingRequests= customerService.getPendingBillRequests(custEmail);
+			BillPendingRequest totalBillPendingRequest= new BillPendingRequest(); 
+			double customerBill=customerService.generateBill(custEmail);
+			totalBillPendingRequest.setBillAmount(customerBill);
+			totalBillPendingRequest.setTypeOfRequest(TOTAL_BILL_AMOUNT);
+			billPendingRequests.add(totalBillPendingRequest);
+			pendingBillJson= new ObjectMapper().writeValueAsString(billPendingRequests);
+			log.info(pendingBillJson);
+		} catch (Exception e) {
+			log.error("Exception occured in getPendingBillRequests: " + e);
+			e.printStackTrace();
 
-	/*
-	 * @RequestMapping(value = "/brw/findAll", method = { RequestMethod.GET
-	 * ,RequestMethod.POST }) public String findAll() { String
-	 * customerJsonString=""; log.info("registerCustomer starts..."); try {
-	 * Iterable<Customer> customerList = customerService.findAll();
-	 * customerJsonString=new ObjectMapper().writeValueAsString(customerList); }
-	 * catch (Exception ex) { log.info("Exception is: " + ex); } return
-	 * customerJsonString; }
-	 * 
-	 * @RequestMapping(value = "/brw/findById", method = { RequestMethod.GET
-	 * ,RequestMethod.POST }) public String findById(@RequestParam("id") long id) {
-	 * String customerJsonString=""; log.info("registerCustomer starts..."); try {
-	 * customerJsonString=customerService.findById(id).toString(); } catch
-	 * (Exception ex) { log.info("Exception is: " + ex); } return
-	 * customerJsonString; }
-	 * 
-	 * @RequestMapping(value = "/brw/findByUserName", method = { RequestMethod.GET
-	 * ,RequestMethod.POST }) public String findByUserName(@RequestParam("userName")
-	 * String userName) { String customerJsonString="";
-	 * log.info("registerCustomer starts..."); try {
-	 * customerJsonString=customerService.findByUserName(userName).toString(); }
-	 * catch (Exception ex) { log.info("Exception is: " + ex); } return
-	 * customerJsonString; }
-	 */
+		}
+		return pendingBillJson;
+	}
+	
+	
 }

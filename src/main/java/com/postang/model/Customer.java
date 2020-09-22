@@ -35,5 +35,7 @@ public class Customer implements Serializable {
 	private boolean actionStatus;
 	@Transient
 	private String statusMessage;
+	@Transient
+	private long userId;
 
 }

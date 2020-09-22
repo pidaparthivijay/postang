@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -30,6 +31,8 @@ public class RoomRequest implements Serializable{
 	private int userId;
 	private String custName, guestName;
 	private Date checkInDate;
+	@Column(name="requestDate", columnDefinition="DATE DEFAULT CURRENT_DATE")
+	private Date requestDate;
 	private Date checkOutDate;
 	private int roomCount;
 	private int guestCount;
@@ -37,7 +40,18 @@ public class RoomRequest implements Serializable{
 	@Transient
 	@JsonIgnore
 	private List<Room> roomsList= new ArrayList<Room>();
-	private String modelOfRooms;
-	private String typeOfRooms;
+	private String roomModel;
+	private String roomType;
+	private String roomCategory;
+	@Column(columnDefinition="varchar(3) default 'P'")
 	private String roomRequestStatus;
+	@Column(columnDefinition="int default '0'")
+	private int roomNumber;
+	/**
+	 * PEND => PENDING
+	 * GEND => GENERATED
+	 * PAID => PAID
+	 */
+	@Column(columnDefinition="varchar(4) default 'PEND'")
+	private String billStatus;
 }
