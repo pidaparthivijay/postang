@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.postang.model.Amenity;
-import com.postang.model.AmenityRequest;
 import com.postang.model.Constants;
 import com.postang.model.Employee;
 import com.postang.model.Lookup;
@@ -19,7 +18,6 @@ import com.postang.model.RoomRequest;
 import com.postang.model.TourPackage;
 import com.postang.model.User;
 import com.postang.repo.AmenityRepository;
-import com.postang.repo.AmenityRequestRepository;
 import com.postang.repo.EmployeeRepository;
 import com.postang.repo.LookupRepository;
 import com.postang.repo.RoomRepository;
@@ -53,9 +51,6 @@ public class AdminServiceImpl implements AdminService, Constants {
 
 	@Autowired
 	AmenityRepository amenityRepository;
-
-	@Autowired
-	AmenityRequestRepository amenityRequestRepository;
 
 	@Autowired
 	TourPackageRepository tourPackageRepository;
@@ -185,11 +180,6 @@ public class AdminServiceImpl implements AdminService, Constants {
 	@Override
 	public Iterable<Amenity> viewAllAmenities() {
 		return amenityRepository.findAll();
-	}
-
-	@Override
-	public AmenityRequest requestAmenity(AmenityRequest amenityRequest) {
-		return amenityRequestRepository.save(amenityRequest);
 	}
 
 	@Override

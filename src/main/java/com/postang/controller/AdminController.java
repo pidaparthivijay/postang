@@ -2,13 +2,13 @@ package com.postang.controller;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,12 +18,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.postang.model.Amenity;
-import com.postang.model.AmenityRequest;
 import com.postang.model.Constants;
 import com.postang.model.Employee;
 import com.postang.model.Lookup;
+import com.postang.model.RequestDTO;
 import com.postang.model.Room;
 import com.postang.model.RoomRequest;
 import com.postang.model.TourPackage;
@@ -44,246 +43,231 @@ public class AdminController implements Constants {
 
 	Util util = new Util();
 
+	
+	/*******************
+	 * Room Operations**
+	 *******************/
+	
 	@PostMapping(value = "/brw/createRoom")
-	public String createRoom(@RequestBody Room room) {
-		String roomJson = "";
-		log.info("createRoom starts..." + room);
+	public RequestDTO createRoom(@RequestBody RequestDTO requestDTO) {
+		log.info("createRoom starts..." + requestDTO.getRoom());
 		try {
-			room = adminService.saveRoom(room);
-			roomJson = new ObjectMapper().writeValueAsString(room);
+			Room room = adminService.saveRoom(requestDTO.getRoom());
+			requestDTO.setRoom(room);
+			requestDTO.setActionStatus(room.getRoomNumber() > 0 ? "Room Creation Success" : "Room Creation Failed");
 		} catch (Exception ex) {
+			requestDTO.setActionStatus(EXCEPTION_OCCURED);
 			log.error("Exception in createRoom : " + ex.getMessage());
 		}
-		return roomJson;
+		return requestDTO;
 	}
 
 	@PostMapping(value = "/brw/createRoomMultiple")
-	public String createMultipleRooms(@RequestBody Room room) {
-		String roomJson = "";
-		log.info("createMultipleRooms starts with count of rooms: " + room.getCountOfRooms());
+	public RequestDTO createMultipleRooms(@RequestBody RequestDTO requestDTO) {
+		int countOfRooms = requestDTO.getCountOfRooms() == 0 ? 1 : requestDTO.getCountOfRooms();
+		log.info("createMultipleRooms starts with count of rooms: " + countOfRooms);
+		Room room = requestDTO.getRoom();
 		try {
 			List<Room> roomList = new ArrayList<>();
-			for (int i = 0; i < room.getCountOfRooms(); i++) {
+			for (int i = 0; i < countOfRooms; i++) {
 				Room roomi = new Room();
 				BeanUtils.copyProperties(room, roomi);
 				roomList.add(roomi);
 			}
 			Iterable<Room> roomSave = adminService.saveMultipleRooms(roomList);
-			roomJson = new ObjectMapper().writeValueAsString(roomSave);
+			requestDTO.setRoomsList(StreamSupport.stream(roomSave.spliterator(), false).collect(Collectors.toList()));
+			requestDTO.setActionStatus(RM_CRT_SXS);
 		} catch (Exception ex) {
+			requestDTO.setActionStatus(EXCEPTION_OCCURED);
 			log.error("Exception in createMultipleRooms : " + ex.getMessage());
 		}
-		return roomJson;
-	}
-
-	@GetMapping(value = "/brw/getAllRooms")
-	public String getAllRooms() {
-		String roomJson = "";
-		log.info("getAllRooms starts...");
-		try {
-			Iterable<Room> roomList = adminService.getAllRooms();
-			roomJson = new ObjectMapper().writeValueAsString(roomList);
-		} catch (Exception ex) {
-			log.error("Exception in getAllRooms : " + ex.getMessage());
-		}
-		return roomJson;
+		return requestDTO;
 	}
 
 	@RequestMapping(value = "/brw/getRoomsByStatus", method = { RequestMethod.GET, RequestMethod.POST })
-	public String getRoomsByStatus(@RequestBody String roomStatus) {
-		String roomJson = "";
+	public RequestDTO getRoomsByStatus(@RequestBody RequestDTO requestDTO) {
+		String roomStatus = requestDTO.getRoomStatus();
 		log.info("getRoomsByStatus starts..." + roomStatus);
 		try {
 			Iterable<Room> roomList = adminService.getRoomsByStatus(roomStatus);
-			roomJson = new ObjectMapper().writeValueAsString(roomList);
+			requestDTO.setRoomsList(StreamSupport.stream(roomList.spliterator(), false).collect(Collectors.toList()));
 		} catch (Exception ex) {
+			requestDTO.setActionStatus(EXCEPTION_OCCURED);
 			log.error("Exception in getRoomsByStatus : " + ex.getMessage());
 		}
-		return roomJson;
+		return requestDTO;
 	}
 
 	@RequestMapping(value = "/brw/getRoomsByFloor", method = { RequestMethod.GET, RequestMethod.POST })
-	public String getRoomsByFloor(@RequestBody int floorNumber) {
-		String roomJson = "";
+	public RequestDTO getRoomsByFloor(@RequestBody RequestDTO requestDTO) {
+		int floorNumber = requestDTO.getFloorNumber();
 		log.info("getRoomsByFloor starts..." + floorNumber);
 		try {
-			Iterable<Room> roomList = adminService.getRoomsByFloor(floorNumber);
-			roomJson = new ObjectMapper().writeValueAsString(roomList);
+			if (floorNumber != 0) {
+				Iterable<Room> roomList = adminService.getRoomsByFloor(floorNumber);
+				requestDTO
+						.setRoomsList(StreamSupport.stream(roomList.spliterator(), false).collect(Collectors.toList()));
+			} else {
+				return this.getAllRooms();
+			}
 		} catch (Exception ex) {
+			requestDTO.setActionStatus(EXCEPTION_OCCURED);
 			log.error("Exception in getRoomsByFloor : " + ex.getMessage());
 		}
-		return roomJson;
-	}
-
-	@RequestMapping(value = "/brw/getAllRoomRequests", method = { RequestMethod.GET, RequestMethod.POST })
-	public String getAllRoomRequests() {
-		String roomRequestList = "";
-		log.info("getAllRoomRequests starts...");
-		try {
-			Iterable<RoomRequest> roomReqList = adminService.getUnallocatedRoomRequests();
-			roomRequestList = new ObjectMapper().writeValueAsString(roomReqList);
-		} catch (Exception ex) {
-			log.error("Exception in getAllRoomRequests : " + ex.getMessage());
-			ex.printStackTrace();
-		}
-		return roomRequestList;
+		return requestDTO;
 	}
 
 	@RequestMapping(value = "/brw/viewFeasibleRooms", method = { RequestMethod.GET, RequestMethod.POST })
-	public String viewFeasibleRooms(@RequestBody int roomRequestId) {
-		String roomsList = "";
+	public RequestDTO viewFeasibleRooms(@RequestBody RequestDTO requestDTO) {
+		int roomRequestId = requestDTO.getRoomRequestId();
 		log.info("viewFeasibleRooms starts...");
 		try {
 			RoomRequest roomRequest = adminService.getRoomRequestById(roomRequestId);
-			Room room = new Room();
-			room = util.constructRoomFromRequest(roomRequest);
+			Room room = util.constructRoomFromRequest(roomRequest);
 			Iterable<Room> roomList = adminService.findSimilarRooms(room);
-			roomsList = new ObjectMapper().writeValueAsString(roomList);
+			requestDTO.setRoomsList(StreamSupport.stream(roomList.spliterator(), false).collect(Collectors.toList()));
 		} catch (Exception ex) {
+			requestDTO.setActionStatus(EXCEPTION_OCCURED);
 			log.error("Exception in viewFeasibleRooms : " + ex.getMessage());
 			ex.printStackTrace();
 		}
-		return roomsList;
+		return requestDTO;
 	}
 
+	@GetMapping(value = "/brw/getAllRooms")
+	public RequestDTO getAllRooms() {
+		RequestDTO requestDTO = new RequestDTO();
+		log.info("getAllRooms starts...");
+		try {
+			Iterable<Room> roomList = adminService.getAllRooms();
+			requestDTO.setRoomsList(StreamSupport.stream(roomList.spliterator(), false).collect(Collectors.toList()));
+		} catch (Exception ex) {
+			requestDTO.setActionStatus(EXCEPTION_OCCURED);
+			log.error("Exception in getAllRooms : " + ex.getMessage());
+		}
+		return requestDTO;
+	}
+	
+	
+	/***********************
+	 * Employee Operations**
+	 ***********************/
+	
 	@PostMapping(value = "/brw/createEmployee")
-	public String createEmployee(@RequestBody Employee employee) {
-		String employeeString = "";
+	public RequestDTO createEmployee(@RequestBody RequestDTO requestDTO) {
+		Employee employee = requestDTO.getEmployee();
 		log.info("createEmployee starts...");
 		try {
 			Employee emp = adminService.createEmployee(employee);
-			employeeString = new ObjectMapper().writeValueAsString(emp);
-
+			requestDTO.setEmployee(emp);
+			requestDTO.setActionStatus((emp != null && emp.getEmpId() > 0) ? EMP_CRT_SXS : EMP_CRT_FAIL);
 		} catch (Exception ex) {
+			requestDTO.setActionStatus(EXCEPTION_OCCURED);
 			log.error("Exception in viewFeasibleRooms : " + ex.getMessage());
 			ex.printStackTrace();
 		}
-		return employeeString;
+		return requestDTO;
 	}
 
+	
+	/**********************
+	 * Amenity Operations**
+	 **********************/
+	
 	@PostMapping(value = "/brw/createAmenity")
-	public String createAmenity(@RequestBody Amenity amenity) {
-		String amenityJson = "";
+	public RequestDTO createAmenity(@RequestBody RequestDTO requestDTO) {
+		Amenity amenity=requestDTO.getAmenity();
 		log.info("createAmenity starts..." + amenity);
 		try {
 			amenity.setDeleted(NO);
 			amenity = adminService.saveAmenity(amenity);
-			amenity.setActionStatus(true);
-			amenityJson = new ObjectMapper().writeValueAsString(amenity);
+			requestDTO.setActionStatus((amenity != null && amenity.getAmenityId() > 0) ? AMNT_CRT_SXS : AMNT_CRT_FAIL);
+			return viewAllAmenities(requestDTO.getActionStatus());
 		} catch (Exception ex) {
+			requestDTO.setActionStatus(EXCEPTION_OCCURED);
 			log.error("Exception in createAmenity : " + ex.getMessage());
 		}
-		return amenityJson;
-	}
-
-	@GetMapping(value = "/brw/viewAllAmenities")
-	public String viewAllAmenities() {
-		String amenityJson = "";
-		log.info("viewAllAmenities starts...");
-		try {
-			Iterable<Amenity> amenitiesList = adminService.viewAllAmenities();
-			amenityJson = new ObjectMapper().writeValueAsString(amenitiesList);
-		} catch (Exception ex) {
-			log.error("Exception in viewAllAmenities : " + ex.getMessage());
-		}
-		return amenityJson;
-	}
-
-	@PostMapping(value = "/brw/requestAmenity")
-	public String requestAmenity(@RequestBody AmenityRequest amenityRequest) {
-		String amenityJson = "";
-		log.info("requestAmenity starts..." + amenityRequest);
-		try {
-			amenityRequest = adminService.requestAmenity(amenityRequest);
-			amenityRequest.setActionStatus((amenityRequest != null && amenityRequest.getAmenityRequestId() > 0));
-			amenityJson = new ObjectMapper().writeValueAsString(amenityRequest);
-		} catch (Exception ex) {
-			log.error("Exception in requestAmenity: " + ex.getMessage());
-		}
-		return amenityJson;
-	}
-
-	@PostMapping(value = "/brw/createTourPackage")
-	public String createTourPackage(@RequestBody TourPackage tourPackage) {
-		String tourPackageJson = "";
-		log.info("createTourPackage starts..." + tourPackage);
-		try {
-			tourPackage.setDeleted(NO);
-			tourPackage.setTourPackageName(util.generateName(tourPackage));
-			tourPackage = adminService.saveTourPackage(tourPackage);
-			tourPackage.setActionStatus(true);
-			tourPackageJson = new ObjectMapper().writeValueAsString(tourPackage);
-		} catch (Exception ex) {
-			log.error("Exception in createTourPackage : " + ex.getMessage());
-		}
-		return tourPackageJson;
-	}
-
-	@GetMapping(value = "/brw/viewAllTourPackages")
-	public String viewAllTourPackages() {
-		String tourPackagesJson = "";
-		log.info("viewAllTourPackages starts...");
-		try {
-			Iterable<TourPackage> tourPackagesList = adminService.viewAllTourPackages();
-			tourPackagesJson = new ObjectMapper().writeValueAsString(tourPackagesList);
-		} catch (Exception ex) {
-			log.error("Exception in viewAllTourPackages : " + ex.getMessage());
-		}
-		return tourPackagesJson;
-	}
-
-	@PostMapping(value = "/brw/toggleDeleteTourPackage")
-	public String toggleDeleteTourPackage(@RequestBody String tourPackageName) {
-		String tourPackageJson = "";
-		log.info("toggleDeleteTourPackage starts..." + tourPackageName);
-		try {
-			TourPackage tourPackage = adminService.findTourPackageByTourPackageName(tourPackageName);
-			tourPackage.setDeleted(YES.equals(tourPackage.getDeleted()) ? NO : YES);
-			TourPackage savedTourPackage = adminService.saveTourPackage(tourPackage);
-			tourPackageJson = new ObjectMapper().writeValueAsString(savedTourPackage);
-			return viewAllTourPackages();
-		} catch (Exception ex) {
-			log.error("Exception in toggleDeleteTourPackage : " + ex.getMessage());
-		}
-		return tourPackageJson;
+		return requestDTO;
 	}
 
 	@PostMapping(value = "/brw/updatePriceAmenity")
-	public String updatePriceAmenity(@RequestBody Amenity amenity) {
-		String tourPackageJson = "";
+	public RequestDTO updatePriceAmenity(@RequestBody RequestDTO requestDTO) {
+		Amenity amenity=requestDTO.getAmenity();
 		log.info("updatePriceAmenity starts..." + amenity);
 		try {
 			Amenity existingAmenity = adminService.findAmenityByAmenityName(amenity.getAmenityName());
 			existingAmenity.setPrice(amenity.getPrice());
 			amenity = adminService.saveAmenity(existingAmenity);
 			amenity.setActionStatus(true);
-			tourPackageJson = new ObjectMapper().writeValueAsString(amenity);
-			return viewAllAmenities();
+			requestDTO.setAmenity(amenity);
+			return viewAllAmenities(SUCCESS);
 		} catch (Exception ex) {
+			requestDTO.setActionStatus(EXCEPTION_OCCURED);
 			log.error("Exception in updatePriceAmenity : " + ex.getMessage());
 		}
-		return tourPackageJson;
+		return requestDTO;
 	}
 
 	@PostMapping(value = "/brw/toggleDeleteAmenity")
-	public String toggleDeleteAmenity(@RequestBody String amenityName) {
-		String tourPackageJson = "";
+	public RequestDTO toggleDeleteAmenity(@RequestBody RequestDTO requestDTO) {
+		String amenityName = requestDTO.getAmenity().getAmenityName();
 		log.info("toggleDeleteAmenity starts..." + amenityName);
 		try {
 			Amenity amenity = adminService.findAmenityByAmenityName(amenityName);
 			amenity.setDeleted(YES.equals(amenity.getDeleted()) ? NO : YES);
 			Amenity savedAmenity = adminService.saveAmenity(amenity);
-			tourPackageJson = new ObjectMapper().writeValueAsString(savedAmenity);
-			return viewAllAmenities();
+			requestDTO.setAmenity(savedAmenity);
+			return viewAllAmenities(SUCCESS);
 		} catch (Exception ex) {
+			requestDTO.setActionStatus(EXCEPTION_OCCURED);
 			log.error("Exception in toggleDeleteAmenity : " + ex.getMessage());
 		}
-		return tourPackageJson;
+		return requestDTO;
+	}
+
+	@GetMapping(value = "/brw/viewAllAmenities")
+	public RequestDTO viewAllAmenities(String status) {
+		RequestDTO requestDTO = new RequestDTO();
+		log.info("viewAllAmenities starts...");
+		try {
+			Iterable<Amenity> amenitiesList = adminService.viewAllAmenities();
+			requestDTO.setAmenityList(
+					StreamSupport.stream(amenitiesList.spliterator(), false).collect(Collectors.toList()));
+			if (!StringUtils.isEmpty(status)) {
+				requestDTO.setActionStatus(status);
+			}
+		} catch (Exception ex) {
+			requestDTO.setActionStatus(EXCEPTION_OCCURED);
+			log.error("Exception in viewAllAmenities : " + ex.getMessage());
+		}
+		return requestDTO;
+	}
+
+	
+	/***************************
+	 * Tour package Operations**
+	 ***************************/
+	
+	@PostMapping(value = "/brw/createTourPackage")
+	public RequestDTO createTourPackage(@RequestBody RequestDTO requestDTO) {
+		TourPackage tourPackage = requestDTO.getTourPackage();
+		log.info("createTourPackage starts..." + tourPackage);
+		try {
+			tourPackage.setDeleted(NO);
+			tourPackage.setTourPackageName(util.generateName(tourPackage));
+			tourPackage = adminService.saveTourPackage(tourPackage);
+			requestDTO.setActionStatus(TOUR_PKG_CRT_SXS);
+			requestDTO.setTourPackage(tourPackage);
+		} catch (Exception ex) {
+			requestDTO.setActionStatus(EXCEPTION_OCCURED);
+			log.error("Exception in createTourPackage : " + ex.getMessage());
+		}
+		return requestDTO;
 	}
 
 	@PostMapping(value = "/brw/updatePriceTourPackage")
-	public String updatePriceTourPackage(@RequestBody TourPackage tourPackage) {
-		String tourPackageJson = "";
+	public RequestDTO updatePriceTourPackage(@RequestBody RequestDTO requestDTO) {
+		TourPackage tourPackage=requestDTO.getTourPackage();
 		log.info("updatePriceTourPackage starts..." + tourPackage);
 		try {
 			TourPackage existingTourPackage = adminService
@@ -291,108 +275,159 @@ public class AdminController implements Constants {
 			existingTourPackage.setPricePerHead(tourPackage.getPricePerHead());
 			tourPackage = adminService.saveTourPackage(existingTourPackage);
 			tourPackage.setActionStatus(true);
-			tourPackageJson = new ObjectMapper().writeValueAsString(tourPackage);
-			return viewAllTourPackages();
+			requestDTO.setTourPackage(tourPackage);
+			return viewAllTourPackages(SUCCESS);
 		} catch (Exception ex) {
+			requestDTO.setActionStatus(EXCEPTION_OCCURED);
 			log.error("Exception in updatePriceTourPackage : " + ex.getMessage());
 		}
-		return tourPackageJson;
+		return requestDTO;
+	}
+	
+	@GetMapping(value = "/brw/viewAllTourPackages")
+	public RequestDTO viewAllTourPackages(String status) {
+		RequestDTO requestDTO = new RequestDTO();
+		log.info("viewAllTourPackages starts...");
+		try {
+			Iterable<TourPackage> tourPackagesList = adminService.viewAllTourPackages();
+			requestDTO.setTourPackageList(
+					StreamSupport.stream(tourPackagesList.spliterator(), false).collect(Collectors.toList()));
+			if (!StringUtils.isEmpty(status)) {
+				requestDTO.setActionStatus(status);
+			}
+		} catch (Exception ex) {
+			requestDTO.setActionStatus(EXCEPTION_OCCURED);
+			log.error("Exception in viewAllTourPackages : " + ex.getMessage());
+		}
+		return requestDTO;
 	}
 
+	@PostMapping(value = "/brw/toggleDeleteTourPackage")
+	public RequestDTO toggleDeleteTourPackage(@RequestBody RequestDTO requestDTO) {
+		String tourPackageName = requestDTO.getTourPackage().getTourPackageName();
+		log.info("toggleDeleteTourPackage starts..." + tourPackageName);
+		try {
+			TourPackage tourPackage = adminService.findTourPackageByTourPackageName(tourPackageName);
+			tourPackage.setDeleted(YES.equals(tourPackage.getDeleted()) ? NO : YES);
+			TourPackage savedTourPackage = adminService.saveTourPackage(tourPackage);
+			requestDTO.setTourPackage(savedTourPackage);
+			return viewAllTourPackages(SUCCESS);
+		} catch (Exception ex) {
+			requestDTO.setActionStatus(EXCEPTION_OCCURED);
+			log.error("Exception in toggleDeleteTourPackage : " + ex.getMessage());
+		}
+		return requestDTO;
+	}
+
+
+	/********************
+	 * Lookup Operations**
+	 *********************/
+
 	@PostMapping(value = "/brw/uploadLookupExcel")
-	public String uploadLookupExcel(@RequestParam("lookupExcel") MultipartFile multipartFile) {
-		String uploadLookupExcelJson = "";
+	public RequestDTO uploadLookupExcel(@RequestParam("lookupExcel") MultipartFile multipartFile) {
+		RequestDTO requestDTO = new RequestDTO();
 		log.info("uploadLookupExcel starts..." + multipartFile);
 		try {
 			List<Lookup> lookupList = util.generateLookupListFromExcelFile(multipartFile);
 			Iterable<Lookup> lookupIterables = adminService.saveLookups(lookupList);
-			uploadLookupExcelJson = new ObjectMapper().writeValueAsString(lookupIterables);
+			requestDTO.setLookupList(
+					StreamSupport.stream(lookupIterables.spliterator(), false).collect(Collectors.toList()));
+			requestDTO.setActionStatus(LOOKUP_SAVE_SXS);
+			return viewLookupList(LOOKUP_SAVE_SXS);
 		} catch (Exception e) {
+			requestDTO.setActionStatus(EXCEPTION_OCCURED);
 			log.error("Exception in uploadLookupExcel" + e);
 			e.printStackTrace();
 		}
-		return uploadLookupExcelJson;
+		return requestDTO;
 	}
 
-	@GetMapping(value = "/brw/viewLookupList")
-	public String viewLookupList() {
-		String viewLookupJson = "";
-		log.info("viewLookupList starts...");
+	@PostMapping(value = "/brw/createLookup")
+	public RequestDTO createLookup(@RequestBody RequestDTO requestDTO) {
+		Lookup lookup =requestDTO.getLookup();
+		log.info("createLookup starts..." + lookup);
 		try {
-			Iterable<Lookup> lookupIterables = adminService.getLookupList();
-			viewLookupJson = new ObjectMapper().writeValueAsString(lookupIterables);
+			lookup.setDeleted(NO);
+			lookup.setCreatedDate(new Date());
+			Lookup savedLookup = adminService.saveLookup(lookup);
+			requestDTO.setLookup(savedLookup);
 		} catch (Exception e) {
-			log.error("Exception in uploadLookupExcel" + e);
+			log.error("Exception in createLookup" + e);
 			e.printStackTrace();
 		}
-		return viewLookupJson;
+		return requestDTO;
 	}
-
+	
 	@PostMapping(value = "/brw/toggleDelete")
-	public String toggleDelete(@RequestBody long lookupId) {
-		String toggleDeleteLookupJson = "";
+	public RequestDTO toggleDelete(@RequestBody RequestDTO requestDTO) {
+		long lookupId = requestDTO.getLookup().getLookupId();
 		log.info("viewLookupList starts..." + lookupId);
 		try {
 			Lookup lookup = adminService.findLookupByLookupId(lookupId);
 			lookup.setDeleted(YES.equals(lookup.getDeleted()) ? NO : YES);
 			lookup.setUpdateDate(new Date());
 			Lookup savedLookup = adminService.saveLookup(lookup);
-			toggleDeleteLookupJson = new ObjectMapper().writeValueAsString(savedLookup);
-			return viewLookupList();
+			requestDTO.setLookup(savedLookup);
+			requestDTO.setActionStatus(SUCCESS);
+			return viewLookupList(SUCCESS);
 		} catch (Exception e) {
+			requestDTO.setActionStatus(EXCEPTION_OCCURED);
 			log.error("Exception in toggleDelete" + e);
 			e.printStackTrace();
 		}
-		return toggleDeleteLookupJson;
+		return requestDTO;
 	}
 
 	@GetMapping(value = "/brw/getLookupDefs")
-	public String getLookupDefs() {
-		String lookupDefsJson = "";
+	public RequestDTO getLookupDefs() {
+		RequestDTO requestDTO = new RequestDTO();
 		log.info("getLookupDefs starts...");
 		try {
 			Iterable<Lookup> lookupIterables = adminService.getLookupList();
-			List<String> lookupDefs = new ArrayList<>(new HashSet<String>(
+			requestDTO.setLookupDefsList(
 					StreamSupport.stream(lookupIterables.spliterator(), false).collect(Collectors.toList()).stream()
-							.distinct().map(Lookup::getLookupDefName).collect(Collectors.toList())));
-
-			lookupDefsJson = new ObjectMapper().writeValueAsString(lookupDefs);
+							.distinct().map(Lookup::getLookupDefName).collect(Collectors.toList()));
 		} catch (Exception e) {
+			requestDTO.setActionStatus(EXCEPTION_OCCURED);
 			log.error("Exception in getLookupDefs" + e);
 			e.printStackTrace();
 		}
-		return lookupDefsJson;
-	}
-
-	@PostMapping(value = "/brw/createLookup")
-	public String createLookup(@RequestBody Lookup lookup) {
-		String createLookupJson = "";
-		log.info("createLookup starts..." + lookup);
-		try {
-			lookup.setDeleted(NO);
-			lookup.setCreatedDate(new Date());
-			Lookup savedLookup = adminService.saveLookup(lookup);
-			createLookupJson = new ObjectMapper().writeValueAsString(savedLookup);
-			return createLookupJson;
-		} catch (Exception e) {
-			log.error("Exception in createLookup" + e);
-			e.printStackTrace();
-		}
-		return createLookupJson;
+		return requestDTO;
 	}
 
 	@PostMapping(value = "/brw/getLookupListByDefinition")
-	public String getLookupListByDefinition(@RequestBody String lookupDefinitionName) {
-		String createLookupJson = "";
+	public RequestDTO getLookupListByDefinition(@RequestBody RequestDTO requestDTO) {
+		String lookupDefinitionName = requestDTO.getLookupDefinitionName();
 		log.info("getLookupListByDefinition starts..." + lookupDefinitionName);
 		try {
 			Iterable<Lookup> lookupList = adminService.getLookupListByDefinition(lookupDefinitionName);
-			createLookupJson = new ObjectMapper().writeValueAsString(lookupList);
-			return createLookupJson;
+			requestDTO
+					.setLookupList(StreamSupport.stream(lookupList.spliterator(), false).collect(Collectors.toList()));
 		} catch (Exception e) {
 			log.error("Exception in getLookupListByDefinition..." + e);
 			e.printStackTrace();
 		}
-		return createLookupJson;
+		return requestDTO;
 	}
+
+	@GetMapping(value = "/brw/viewLookupList")
+	public RequestDTO viewLookupList(String status) {
+		RequestDTO requestDTO = new RequestDTO();
+		log.info("viewLookupList starts...");
+		try {
+			Iterable<Lookup> lookupIterables = adminService.getLookupList();
+			requestDTO.setLookupList(
+					StreamSupport.stream(lookupIterables.spliterator(), false).collect(Collectors.toList()));
+			if (!StringUtils.isEmpty(status)) {
+				requestDTO.setActionStatus(status);
+			}
+		} catch (Exception e) {
+			requestDTO.setActionStatus(EXCEPTION_OCCURED);
+			log.error("Exception in viewLookupList" + e);
+			e.printStackTrace();
+		}
+		return requestDTO;
+	}
+
 }

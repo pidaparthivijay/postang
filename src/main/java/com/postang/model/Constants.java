@@ -88,6 +88,24 @@ public interface Constants {
 	public static final String LOOK_UP ="Lookup";
 	public static final String XLSX_EXTN=".xlsx";
 	public static final String UNDER_SCORE="_";
-
+	public static final String RM_CRT_SXS="Room Creation Success";
+	public static final String TOUR_PKG_CRT_SXS="Tour Package Create Success";
+	public static final String TOUR_PKG_CRT_FAIL="Tour Package Create Failure";
+	public static final String LOOKUP_SAVE_SXS="Lookups Save Success";
+	public static final String AMNT_RQST_SXS="Amenity Request Success";
+	public static final String AMNT_CRT_SXS="Amenity Creation Success";
+	public static final String AMNT_CRT_FAIL="Amenity Creation Failure";
+	public static final String AMNT_RQST_FAIL="Amenity Request Failure";
+	public static final String EMP_CRT_SXS="Employee Creation Success";
+	public static final String EMP_CRT_FAIL="Employee Creation Failure";
+	public static final String RM_CRT_FAIL="Room Creation Failed";
+	public static final String TOUR_PKG_BOOK_SXS="Tour Package Booking Success";
+	public static final String TOUR_PKG_BOOK_FAIL="Tour Package Booking Failed";
+	public static final String EXCEPTION_OCCURED="Exception Occured";
+	public static final String ROOM_BOOK_SXS="Room Booking Success";
+	public static final String ROOM_BOOK_FAIL="Room Booking Failed";
+	public static final String CUST_REG_SXS="Customer Registration Success";
+	public static final String CUST_REG_FAIL="Customer Registration Failed";
+	public static final String SUCCESS="success";
+	public static final String FAILURE="failure";
 }
-

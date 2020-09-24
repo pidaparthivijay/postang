@@ -49,8 +49,6 @@ public interface AdminService {
 
 	Iterable<Amenity> viewAllAmenities();
 
-	AmenityRequest requestAmenity(AmenityRequest amenityRequest);
-
 	TourPackage saveTourPackage(TourPackage tourPackage);
 	
 	Iterable<TourPackage> viewAllTourPackages();

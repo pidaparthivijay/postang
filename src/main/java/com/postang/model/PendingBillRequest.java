@@ -12,7 +12,7 @@ import lombok.Data;
  *
  */
 @Data
-public class BillPendingRequest {
+public class PendingBillRequest {
 
 	private long id;
 	private long requestId;

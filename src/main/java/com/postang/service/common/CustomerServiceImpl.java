@@ -13,7 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import com.postang.model.BillPendingRequest;
+import com.postang.model.AmenityRequest;
+import com.postang.model.PendingBillRequest;
 import com.postang.model.Constants;
 import com.postang.model.Customer;
 import com.postang.model.Employee;
@@ -21,6 +22,7 @@ import com.postang.model.Room;
 import com.postang.model.RoomRequest;
 import com.postang.model.TourPackageRequest;
 import com.postang.model.User;
+import com.postang.repo.AmenityRequestRepository;
 import com.postang.repo.CustomerRepository;
 import com.postang.repo.EmployeeRepository;
 import com.postang.repo.RoomRepository;
@@ -58,9 +60,17 @@ public class CustomerServiceImpl implements CustomerService,Constants {
 	@Autowired
 	TourPackageRequestRepository tourPackageRequestRepository;
 	
+	@Autowired
+	AmenityRequestRepository amenityRequestRepository;
+	
 	Util util = new Util();
 
 	MailUtil mailUtil = new MailUtil();
+	
+	@Override
+	public AmenityRequest requestAmenity(AmenityRequest amenityRequest) {
+		return amenityRequestRepository.save(amenityRequest);
+	}
 	
 	@Override
 	public Customer saveCustomer(Customer customer) {
@@ -203,13 +213,13 @@ public class CustomerServiceImpl implements CustomerService,Constants {
 }
 
 	@Override
-	public List<BillPendingRequest> getPendingBillRequests(String custEmail) {
-		List<BillPendingRequest> billPendingRequests=new ArrayList<>();
+	public List<PendingBillRequest> getPendingBillRequests(String custEmail) {
+		List<PendingBillRequest> pendingBillRequests=new ArrayList<>();
 		User user= userRepo.findByUserMail(custEmail);
 		List<RoomRequest> roomRequestList=roomReqRepo.findByUserId((int) user.getUserId());
 		List<RoomRequest> billPendingList = roomRequestList.stream().filter(p -> BILL_PENDING.equals(p.getBillStatus())).collect(Collectors.toList());
-		billPendingRequests.addAll(util.convertToBillPendingRequest(billPendingList));
-		return billPendingRequests;
+		pendingBillRequests.addAll(util.convertToBillPendingRequest(billPendingList));
+		return pendingBillRequests;
 	}
 
 	@Override
