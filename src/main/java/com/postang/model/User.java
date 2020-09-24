@@ -10,6 +10,10 @@ import javax.persistence.Table;
 
 import lombok.Data;
 
+/**
+ * @author Subrahmanya Vijay
+ *
+ */
 @Entity
 @Data
 @Table(name="users")

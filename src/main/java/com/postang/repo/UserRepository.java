@@ -4,6 +4,10 @@ import org.springframework.data.repository.CrudRepository;
 
 import com.postang.model.User;
 
+/**
+ * @author Subrahmanya Vijay
+ *
+ */
 public interface UserRepository extends CrudRepository<User, Long> {
 
 	public User findByUserName(String userName);

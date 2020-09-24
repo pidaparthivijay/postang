@@ -16,6 +16,10 @@ import com.postang.util.Util;
 
 import lombok.extern.log4j.Log4j2;
 
+/**
+ * @author Subrahmanya Vijay
+ *
+ */
 @Service
 @Log4j2
 public class LoginServiceImpl implements Constants,LoginService {

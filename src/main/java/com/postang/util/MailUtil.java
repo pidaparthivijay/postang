@@ -20,6 +20,10 @@ import com.postang.model.User;
 
 import lombok.extern.log4j.Log4j2;
 
+/**
+ * @author Subrahmanya Vijay
+ *
+ */
 @Log4j2
 public class MailUtil implements Constants{
 	Properties mailProperties = new Properties();

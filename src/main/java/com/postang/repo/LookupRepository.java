@@ -4,6 +4,10 @@ import org.springframework.data.repository.CrudRepository;
 
 import com.postang.model.Lookup;
 
+/**
+ * @author Subrahmanya Vijay
+ *
+ */
 public interface LookupRepository extends CrudRepository<Lookup, Long> {
 
 	Lookup findByLookupId(long lookupId);

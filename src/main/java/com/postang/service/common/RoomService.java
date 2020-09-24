@@ -8,7 +8,7 @@ import com.postang.model.RoomRequest;
 import com.postang.model.User;
 
 /**
- * @author Vijay
+ * @author Subrahmanya Vijay
  *
  */
 public interface RoomService {

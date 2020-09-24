@@ -6,6 +6,10 @@ import java.util.List;
 
 import lombok.Data;
 
+/**
+ * @author Subrahmanya Vijay
+ *
+ */
 @Data
 public class RequestDTO implements Serializable{
 	/**

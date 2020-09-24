@@ -32,7 +32,7 @@ import com.postang.util.MailUtil;
 import lombok.extern.log4j.Log4j2;
 
 /**
- * @author Vijay
+ * @author Subrahmanya Vijay
  *
  */
 @RestController

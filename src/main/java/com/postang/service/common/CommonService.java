@@ -10,7 +10,7 @@ import com.postang.model.RewardPoints;
 import com.postang.model.User;
 
 /**
- * @author Vijay
+ * @author Subrahmanya Vijay
  *
  */
 public interface CommonService {

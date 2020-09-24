@@ -17,6 +17,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Data;
 
+/**
+ * @author Subrahmanya Vijay
+ *
+ */
 @Entity
 @Data
 public class RoomRequest implements Serializable{

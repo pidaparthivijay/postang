@@ -21,6 +21,10 @@ import com.postang.util.MailUtil;
 
 import lombok.extern.log4j.Log4j2;
 
+/**
+ * @author Subrahmanya Vijay
+ *
+ */
 @Log4j2
 @RestController
 public class RoomAllocationController implements Constants{

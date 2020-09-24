@@ -11,6 +11,10 @@ import javax.persistence.Transient;
 
 import lombok.Data;
 
+/**
+ * @author Subrahmanya Vijay
+ *
+ */
 @Entity
 @Data
 public class Customer implements Serializable {

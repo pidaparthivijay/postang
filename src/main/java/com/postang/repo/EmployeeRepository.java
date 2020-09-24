@@ -10,7 +10,7 @@ import org.springframework.data.repository.CrudRepository;
 import com.postang.model.Employee;
 
 /**
- * @author Vijay
+ * @author Subrahmanya Vijay
  *
  */
 public interface EmployeeRepository extends CrudRepository<Employee, Long> {

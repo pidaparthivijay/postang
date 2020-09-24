@@ -13,7 +13,7 @@ import com.postang.model.RoomRequest;
 import com.postang.model.TourPackageRequest;
 
 /**
- * @author Vijay
+ * @author Subrahmanya Vijay
  *
  */
 public interface CustomerService {

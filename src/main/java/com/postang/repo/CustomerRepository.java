@@ -9,8 +9,9 @@ import org.springframework.data.repository.CrudRepository;
 
 import com.postang.model.Customer;
 
+
 /**
- * @author Vijay
+ * @author Subrahmanya Vijay
  *
  */
 public interface CustomerRepository extends CrudRepository<Customer, Long> {

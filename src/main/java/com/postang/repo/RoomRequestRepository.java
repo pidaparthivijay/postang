@@ -10,7 +10,7 @@ import org.springframework.data.repository.CrudRepository;
 import com.postang.model.RoomRequest;
 
 /**
- * @author Vijay
+ * @author Subrahmanya Vijay
  *
  */
 public interface RoomRequestRepository extends CrudRepository<RoomRequest, Long> {

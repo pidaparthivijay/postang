@@ -12,6 +12,10 @@ import javax.persistence.SequenceGenerator;
 
 import lombok.Data;
 
+/**
+ * @author Subrahmanya Vijay
+ *
+ */
 @Entity
 @Data
 public class RewardPoints implements Serializable{

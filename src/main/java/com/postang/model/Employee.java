@@ -15,7 +15,7 @@ import javax.persistence.Transient;
 import lombok.Data;
 
 /**
- * @author Vijay
+ * @author Subrahmanya Vijay
  *
  */
 @Entity

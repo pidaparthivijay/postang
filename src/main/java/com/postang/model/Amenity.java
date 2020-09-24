@@ -11,6 +11,10 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Transient;
 
 import lombok.Data;
+/**
+ * @author Subrahmanya Vijay
+ *
+ */
 @Entity
 @Data
 public class Amenity implements Serializable{

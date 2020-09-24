@@ -6,15 +6,15 @@ package com.postang.service.common;
 import java.util.List;
 
 import com.postang.model.Amenity;
-import com.postang.model.AmenityRequest;
 import com.postang.model.Employee;
 import com.postang.model.Lookup;
 import com.postang.model.Room;
 import com.postang.model.RoomRequest;
 import com.postang.model.TourPackage;
 
+
 /**
- * @author Vijay
+ * @author Subrahmanya Vijay
  *
  */
 public interface AdminService {

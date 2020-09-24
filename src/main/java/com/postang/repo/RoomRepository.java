@@ -9,8 +9,9 @@ import org.springframework.data.repository.CrudRepository;
 
 import com.postang.model.Room;
 
+
 /**
- * @author Vijay
+ * @author Subrahmanya Vijay
  *
  */
 public interface RoomRepository extends CrudRepository<Room, Long> {

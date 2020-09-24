@@ -13,13 +13,11 @@ import com.postang.repo.RoomRepository;
 import com.postang.repo.RoomRequestRepository;
 import com.postang.repo.UserRepository;
 import com.postang.util.Util;
-
-import lombok.extern.log4j.Log4j2;
 /**
  * @author Subrahmanya Vijay
  *
  */
-@Log4j2
+
 @Service
 public class RoomServiceImpl implements RoomService {
 

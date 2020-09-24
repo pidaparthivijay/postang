@@ -3,6 +3,7 @@
  */
 package com.postang.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import lombok.Data;
@@ -12,8 +13,12 @@ import lombok.Data;
  *
  */
 @Data
-public class PendingBillRequest {
+public class PendingBillRequest implements Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3389527743644443690L;
 	private long id;
 	private long requestId;
 	private String typeOfRequest;

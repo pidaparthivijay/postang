@@ -3,6 +3,10 @@ package com.postang.service.login;
 import com.postang.model.OneTimePassword;
 import com.postang.model.User;
 
+/**
+ * @author Subrahmanya Vijay
+ *
+ */
 public interface LoginService {
 
 	public User getUserDetailsByUserName(String userName);
