@@ -181,15 +181,12 @@ public class AdminController implements Constants {
 		return requestDTO;
 	}
 
-	@PostMapping(value = "/brw/updatePriceAmenity")
-	public RequestDTO updatePriceAmenity(@RequestBody RequestDTO requestDTO) {
+	@PostMapping(value = "/brw/updateAmenity")
+	public RequestDTO updateAmenity(@RequestBody RequestDTO requestDTO) {
 		Amenity amenity=requestDTO.getAmenity();
 		log.info("updatePriceAmenity starts..." + amenity);
 		try {
-			Amenity existingAmenity = adminService.findAmenityByAmenityName(amenity.getAmenityName());
-			existingAmenity.setPrice(amenity.getPrice());
-			amenity = adminService.saveAmenity(existingAmenity);
-			amenity.setActionStatus(true);
+			amenity = adminService.saveAmenity(amenity);
 			requestDTO.setAmenity(amenity);
 			return viewAllAmenities(SUCCESS);
 		} catch (Exception ex) {
@@ -256,15 +253,12 @@ public class AdminController implements Constants {
 		return requestDTO;
 	}
 
-	@PostMapping(value = "/brw/updatePriceTourPackage")
-	public RequestDTO updatePriceTourPackage(@RequestBody RequestDTO requestDTO) {
+	@PostMapping(value = "/brw/updateTourPackage")
+	public RequestDTO updateTourPackage(@RequestBody RequestDTO requestDTO) {
 		TourPackage tourPackage=requestDTO.getTourPackage();
 		log.info("updatePriceTourPackage starts..." + tourPackage);
 		try {
-			TourPackage existingTourPackage = adminService
-					.findTourPackageByTourPackageName(tourPackage.getTourPackageName());
-			existingTourPackage.setPricePerHead(tourPackage.getPricePerHead());
-			tourPackage = adminService.saveTourPackage(existingTourPackage);
+			tourPackage = adminService.saveTourPackage(tourPackage);
 			tourPackage.setActionStatus(true);
 			requestDTO.setTourPackage(tourPackage);
 			return viewAllTourPackages(SUCCESS);
@@ -350,6 +344,20 @@ public class AdminController implements Constants {
 		return requestDTO;
 	}
 	
+	@PostMapping(value = "/brw/updateLookup")
+	public RequestDTO updateLookup(@RequestBody RequestDTO requestDTO) {
+		Lookup lookup = requestDTO.getLookup();
+		log.info("updateLookup starts..." + lookup);
+		try {
+			lookup.setUpdateDate(new Date());
+			Lookup savedLookup = adminService.saveLookup(lookup);
+			requestDTO.setLookup(savedLookup);
+		} catch (Exception e) {
+			log.error("Exception in updateLookup" + e);
+		}
+		return requestDTO;
+	}
+
 	@PostMapping(value = "/brw/toggleDelete")
 	public RequestDTO toggleDelete(@RequestBody RequestDTO requestDTO) {
 		long lookupId = requestDTO.getLookup().getLookupId();
