@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import lombok.Data;
 
 /**
@@ -45,6 +47,7 @@ public class RequestDTO implements Serializable{
 	private List<Lookup> lookupList= new ArrayList<>();
 	private List<String> lookupDefsList= new ArrayList<>();
 	private List<RewardPoints> rewardPointsList= new ArrayList<>();
+	private MultipartFile lookupExcel;
 	private int roomRequestId;
 	private List<PendingBillRequest> pendingBillRequests= new ArrayList<>();
 }

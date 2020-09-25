@@ -1,6 +1,7 @@
 package com.postang.controller;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -9,6 +10,7 @@ import java.util.stream.StreamSupport;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,7 +26,6 @@ import com.postang.model.Employee;
 import com.postang.model.Lookup;
 import com.postang.model.RequestDTO;
 import com.postang.model.Room;
-import com.postang.model.RoomRequest;
 import com.postang.model.TourPackage;
 import com.postang.service.common.AdminService;
 import com.postang.util.MailUtil;
@@ -38,6 +39,7 @@ import lombok.extern.log4j.Log4j2;
  */
 @Log4j2
 @RestController
+@CrossOrigin
 public class AdminController implements Constants {
 
 	@Autowired
@@ -121,30 +123,15 @@ public class AdminController implements Constants {
 		return requestDTO;
 	}
 
-	@RequestMapping(value = "/brw/viewFeasibleRooms", method = { RequestMethod.GET, RequestMethod.POST })
-	public RequestDTO viewFeasibleRooms(@RequestBody RequestDTO requestDTO) {
-		int roomRequestId = requestDTO.getRoomRequestId();
-		log.info("viewFeasibleRooms starts...");
-		try {
-			RoomRequest roomRequest = adminService.getRoomRequestById(roomRequestId);
-			Room room = util.constructRoomFromRequest(roomRequest);
-			Iterable<Room> roomList = adminService.findSimilarRooms(room);
-			requestDTO.setRoomsList(StreamSupport.stream(roomList.spliterator(), false).collect(Collectors.toList()));
-		} catch (Exception ex) {
-			requestDTO.setActionStatus(EXCEPTION_OCCURED);
-			log.error("Exception in viewFeasibleRooms : " + ex.getMessage());
-			ex.printStackTrace();
-		}
-		return requestDTO;
-	}
-
 	@GetMapping(value = "/brw/getAllRooms")
 	public RequestDTO getAllRooms() {
 		RequestDTO requestDTO = new RequestDTO();
 		log.info("getAllRooms starts...");
 		try {
-			Iterable<Room> roomList = adminService.getAllRooms();
-			requestDTO.setRoomsList(StreamSupport.stream(roomList.spliterator(), false).collect(Collectors.toList()));
+			Iterable<Room> roomIterables = adminService.getAllRooms();
+			List<Room> roomList = StreamSupport.stream(roomIterables.spliterator(), false).collect(Collectors.toList());
+			roomList.sort(Comparator.comparing(Room::getRoomNumber));
+			requestDTO.setRoomsList(roomList);
 		} catch (Exception ex) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
 			log.error("Exception in getAllRooms : " + ex.getMessage());
@@ -329,8 +316,8 @@ public class AdminController implements Constants {
 	 *********************/
 
 	@PostMapping(value = "/brw/uploadLookupExcel")
-	public RequestDTO uploadLookupExcel(@RequestParam("lookupExcel") MultipartFile multipartFile) {
-		RequestDTO requestDTO = new RequestDTO();
+	public RequestDTO uploadLookupExcel(@RequestParam("lookupExcel") RequestDTO requestDTO) {
+		MultipartFile multipartFile = requestDTO.getLookupExcel();
 		log.info("uploadLookupExcel starts..." + multipartFile);
 		try {
 			List<Lookup> lookupList = util.generateLookupListFromExcelFile(multipartFile);

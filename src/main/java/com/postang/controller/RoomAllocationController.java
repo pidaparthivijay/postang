@@ -1,12 +1,17 @@
 package com.postang.controller;
 
+import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.postang.model.Constants;
@@ -18,6 +23,7 @@ import com.postang.service.common.AdminService;
 import com.postang.service.common.CommonService;
 import com.postang.service.common.RoomService;
 import com.postang.util.MailUtil;
+import com.postang.util.Util;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -27,6 +33,7 @@ import lombok.extern.log4j.Log4j2;
  */
 @Log4j2
 @RestController
+@CrossOrigin
 public class RoomAllocationController implements Constants{
 
 	@Autowired
@@ -37,6 +44,8 @@ public class RoomAllocationController implements Constants{
 	
 	@Autowired
 	RoomService roomService;
+
+	Util util = new Util();
 
 	MailUtil mailUtil = new MailUtil();
 
@@ -59,6 +68,25 @@ public class RoomAllocationController implements Constants{
 		return requestDTO;
 	}
 	
+	@RequestMapping(value = "/brw/viewFeasibleRooms", method = { RequestMethod.GET, RequestMethod.POST })
+	public RequestDTO viewFeasibleRooms(@RequestBody RequestDTO requestDTO) {
+		int roomRequestId = requestDTO.getRoomRequest().getRequestId();
+		log.info("viewFeasibleRooms starts...");
+		try {
+			RoomRequest roomRequest = adminService.getRoomRequestById(roomRequestId);
+			Room room = util.constructRoomFromRequest(roomRequest);
+			Iterable<Room> roomIterables = adminService.findSimilarRooms(room);
+			List<Room> roomList = StreamSupport.stream(roomIterables.spliterator(), false).collect(Collectors.toList());
+			roomList.sort(Comparator.comparing(Room::getRoomNumber));
+			requestDTO.setRoomsList(roomList);
+		} catch (Exception ex) {
+			requestDTO.setActionStatus(EXCEPTION_OCCURED);
+			log.error("Exception in viewFeasibleRooms : " + ex.getMessage());
+			ex.printStackTrace();
+		}
+		return requestDTO;
+	}
+
 	@PostMapping(value = "/brw/assignRoomToRequest")
 	public RequestDTO assignRoomToRequest(@RequestBody RequestDTO requestDTO) {
 		RoomRequest roomRequest=requestDTO.getRoomRequest();
