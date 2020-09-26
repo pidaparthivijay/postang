@@ -29,6 +29,7 @@ public class RequestDTO implements Serializable{
 	private int countOfRooms;
 	private User user;
 	private Employee employee;
+	private List<Employee> employeesList = new ArrayList<>();
 	private TourPackage tourPackage;
 	private TourPackageRequest tourPackageRequest;
 	private Amenity amenity;
