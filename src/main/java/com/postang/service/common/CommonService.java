@@ -14,9 +14,9 @@ import com.postang.model.User;
  *
  */
 public interface CommonService {
-	public Employee getEmployeeByUserName(String userName);
+	public RewardPoints allocateRewardPoints(User user, String reasonCode);
 
-	public RewardPoints allocateRewardPoints(User user,String reasonCode);
+	public Employee getEmployeeByUserName(String userName);
 
 	public List<RewardPoints> getRewardPointsByUserId(long userId);
 

@@ -29,15 +29,29 @@ import lombok.extern.log4j.Log4j2;
 public class CommonServiceImpl implements CommonService {
 
 	@Autowired
+	CustomerRepository customerRepo;
+
+	@Autowired
 	EmployeeRepository empRepo;
-	
+
 	@Autowired
 	RewardPointsRepository rewardPointsRepo;
 
-	@Autowired
-	CustomerRepository customerRepo;
-	
 	Util util = new Util();
+
+	@Override
+	public RewardPoints allocateRewardPoints(User user, String reasonCode) {
+
+		RewardPoints rewardPoints = new RewardPoints();
+		rewardPoints.setPointsTransactionName(reasonCode);
+		rewardPoints.setPointsEarned(util.getPointsForTrxn(reasonCode));
+		rewardPoints.setPointsEarnedDate(new Date());
+		rewardPoints.setPointsExpiryDate(util.getOneYearFromToday());
+		rewardPoints.setUserId(user.getUserId());
+		List<Customer> customerList = customerRepo.findByUserName(user.getUserName());
+		rewardPoints.setCustId(customerList.get(0).getCustId());
+		return rewardPointsRepo.save(rewardPoints);
+	}
 
 	@Override
 	public Employee getEmployeeByUserName(String userName) {
@@ -55,22 +69,6 @@ public class CommonServiceImpl implements CommonService {
 			e.printStackTrace();
 		}
 		return null;
-	}
-
-	@Override
-	public RewardPoints allocateRewardPoints(User user, String reasonCode) {
-		
-		RewardPoints rewardPoints= new RewardPoints();
-		rewardPoints.setPointsTransactionName(reasonCode);
-		rewardPoints.setPointsEarned(util.getPointsForTrxn(reasonCode));
-		rewardPoints.setPointsEarnedDate(new Date());
-		rewardPoints.setPointsExpiryDate(util.getOneYearFromToday());
-		rewardPoints.setUserId(user.getUserId());
-		List<Customer> customerList=customerRepo.findByUserName(user.getUserName());
-		rewardPoints.setCustId(customerList.get(0).getCustId());
-		
-		
-		return rewardPointsRepo.save(rewardPoints);
 	}
 
 	@Override

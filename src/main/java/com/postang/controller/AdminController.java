@@ -104,21 +104,16 @@ public class AdminController implements Constants {
 		return requestDTO;
 	}
 
-	@RequestMapping(value = "/brw/getRoomsByFloor", method = { RequestMethod.GET, RequestMethod.POST })
-	public RequestDTO getRoomsByFloor(@RequestBody RequestDTO requestDTO) {
-		int floorNumber = requestDTO.getFloorNumber();
-		log.info("getRoomsByFloor starts..." + floorNumber);
+	@PostMapping(value = "/brw/updateRoom")
+	public RequestDTO updateRoom(@RequestBody RequestDTO requestDTO) {
+		log.info("updateRoom starts..." + requestDTO.getRoom());
 		try {
-			if (floorNumber != 0) {
-				Iterable<Room> roomList = adminService.getRoomsByFloor(floorNumber);
-				requestDTO
-						.setRoomsList(StreamSupport.stream(roomList.spliterator(), false).collect(Collectors.toList()));
-			} else {
-				return this.getAllRooms();
-			}
+			Room room = adminService.saveRoom(requestDTO.getRoom());
+			requestDTO.setRoom(room);
+			requestDTO.setActionStatus(room.getRoomNumber() > 0 ? "Room Update Success" : "Room Update Failed");
 		} catch (Exception ex) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
-			log.error("Exception in getRoomsByFloor : " + ex.getMessage());
+			log.error("Exception in updateRoom: " + ex.getMessage());
 		}
 		return requestDTO;
 	}
@@ -154,12 +149,29 @@ public class AdminController implements Constants {
 			requestDTO.setActionStatus((emp != null && emp.getEmpId() > 0) ? EMP_CRT_SXS : EMP_CRT_FAIL);
 		} catch (Exception ex) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
-			log.error("Exception in viewFeasibleRooms : " + ex.getMessage());
+			log.error("Exception in createEmployee : " + ex.getMessage());
 			ex.printStackTrace();
 		}
 		return requestDTO;
 	}
 
+	@GetMapping(value = "/brw/getAllEmployees")
+	public RequestDTO getAllEmployees() {
+		RequestDTO requestDTO = new RequestDTO();
+		log.info("getAllEmployees starts...");
+		try {
+			Iterable<Employee> empIterable = adminService.getAllEmployees();
+			List<Employee> empList = StreamSupport.stream(empIterable.spliterator(), false)
+					.collect(Collectors.toList());
+			empList.sort(Comparator.comparing(Employee::getEmpId));
+			requestDTO.setEmployeesList(empList);
+		} catch (Exception ex) {
+			requestDTO.setActionStatus(EXCEPTION_OCCURED);
+			log.error("Exception in getAllEmployees : " + ex.getMessage());
+			ex.printStackTrace();
+		}
+		return requestDTO;
+	}
 	
 	/**********************
 	 * Amenity Operations**

@@ -19,52 +19,54 @@ import com.postang.model.TourPackage;
  */
 public interface AdminService {
 
-	Room saveRoom(Room room);
-	
-	Iterable<Room> saveMultipleRooms(List<Room> roomsList);
-
-	Iterable<Room> getAllRooms();
-
-	Iterable<Room> getRoomsByStatus(String roomStatus);
-
-	Iterable<Room> getRoomsByFloor(int floorNumber);
-
-	Iterable<Room> getRoomsByType(String roomType);
-
-	Iterable<Room> getRoomsByModel(String roomModel);
-
-	Iterable<Room> getRoomsByCategory(String roomCategory);
-
-	Iterable<RoomRequest> getAllRoomRequests();
-	
-	Iterable<RoomRequest> getUnallocatedRoomRequests();
-
-	RoomRequest getRoomRequestById(int roomRequestId);
-
-	Iterable<Room> findSimilarRooms(Room room);
-
 	Employee createEmployee(Employee employee);
-
-	Amenity saveAmenity(Amenity amenity);
-
-	Iterable<Amenity> viewAllAmenities();
-
-	TourPackage saveTourPackage(TourPackage tourPackage);
 	
-	Iterable<TourPackage> viewAllTourPackages();
-
-	TourPackage findTourPackageByTourPackageName(String tourPackageName);
-
 	Amenity findAmenityByAmenityName(String amenityName);
-
-	Iterable<Lookup> saveLookups(List<Lookup> lookupList);
-
-	Iterable<Lookup> getLookupList();
 
 	Lookup findLookupByLookupId(long lookupId);
 
+	Iterable<Room> findSimilarRooms(Room room);
+
+	TourPackage findTourPackageByTourPackageName(String tourPackageName);
+
+	Iterable<Employee> getAllEmployees();
+
+	Iterable<RoomRequest> getAllRoomRequests();
+
+	Iterable<Room> getAllRooms();
+
+	Iterable<Lookup> getLookupList();
+	
+	Iterable<Lookup> getLookupListByDefinition(String lookupDefinitionName);
+
+	RoomRequest getRoomRequestById(int roomRequestId);
+
+	Iterable<Room> getRoomsByCategory(String roomCategory);
+
+	Iterable<Room> getRoomsByFloor(int floorNumber);
+
+	Iterable<Room> getRoomsByModel(String roomModel);
+
+	Iterable<Room> getRoomsByStatus(String roomStatus);
+
+	Iterable<Room> getRoomsByType(String roomType);
+	
+	Iterable<RoomRequest> getUnallocatedRoomRequests();
+
+	Amenity saveAmenity(Amenity amenity);
+
 	Lookup saveLookup(Lookup lookup);
 
-	Iterable<Lookup> getLookupListByDefinition(String lookupDefinitionName);
+	Iterable<Lookup> saveLookups(List<Lookup> lookupList);
+
+	Iterable<Room> saveMultipleRooms(List<Room> roomsList);
+
+	Room saveRoom(Room room);
+
+	TourPackage saveTourPackage(TourPackage tourPackage);
+
+	Iterable<Amenity> viewAllAmenities();
+
+	Iterable<TourPackage> viewAllTourPackages();
 
 }

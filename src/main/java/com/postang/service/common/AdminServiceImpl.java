@@ -39,91 +39,29 @@ import lombok.extern.log4j.Log4j2;
 public class AdminServiceImpl implements AdminService, Constants {
 
 	@Autowired
+	AmenityRepository amenityRepository;
+
+	@Autowired
+	EmployeeRepository employeeRepository;
+
+	@Autowired
+	LookupRepository lookupRepository;
+
+	MailUtil mailUtil = new MailUtil();
+
+	@Autowired
 	RoomRepository roomRepo;
 
 	@Autowired
 	RoomRequestRepository roomRequestRepo;
 
 	@Autowired
-	EmployeeRepository employeeRepository;
+	TourPackageRepository tourPackageRepository;
 
 	@Autowired
 	UserRepository userRepository;
 
-	@Autowired
-	AmenityRepository amenityRepository;
-
-	@Autowired
-	TourPackageRepository tourPackageRepository;
-
-	@Autowired
-	LookupRepository lookupRepository;
-
 	Util util = new Util();
-
-	MailUtil mailUtil = new MailUtil();
-
-	@Override
-	public Room saveRoom(Room room) {
-		return roomRepo.save(room);
-	}
-
-	@Override
-	public Iterable<Room> saveMultipleRooms(List<Room> roomsList) {
-		return roomRepo.saveAll(roomsList);
-	}
-
-	@Override
-	public Iterable<Room> getAllRooms() {
-		return roomRepo.findAll();
-	}
-
-	@Override
-	public Iterable<Room> getRoomsByStatus(String roomStatus) {
-		return roomRepo.findByRoomStatus(roomStatus);
-	}
-
-	@Override
-	public Iterable<Room> getRoomsByType(String roomType) {
-		return roomRepo.findByRoomType(roomType);
-	}
-
-	@Override
-	public Iterable<Room> getRoomsByFloor(int floorNumber) {
-		return roomRepo.findByFloorNumber(floorNumber);
-	}
-
-	@Override
-	public Iterable<Room> getRoomsByModel(String roomModel) {
-		return roomRepo.findByRoomModel(roomModel);
-	}
-
-	@Override
-	public Iterable<Room> getRoomsByCategory(String roomCategory) {
-		return roomRepo.findByRoomCategory(roomCategory);
-	}
-
-	@Override
-	public Iterable<RoomRequest> getAllRoomRequests() {
-		return roomRequestRepo.findAll();
-	}
-
-	@Override
-	public RoomRequest getRoomRequestById(int roomRequestId) {
-		return roomRequestRepo.findByRequestId(roomRequestId);
-	}
-
-	@Override
-	public Iterable<Room> findSimilarRooms(Room room) {
-		log.info(room);
-		return roomRepo.findByRoomModelAndRoomTypeAndRoomCategoryAndRoomStatus(room.getRoomModel(), room.getRoomType(),
-				room.getRoomCategory(), VACANT);
-	}
-
-	@Override
-	public Iterable<RoomRequest> getUnallocatedRoomRequests() {
-		return roomRequestRepo.findByRoomRequestStatus(PENDING);
-	}
 
 	@Override
 	public Employee createEmployee(Employee employee) {
@@ -160,6 +98,129 @@ public class AdminServiceImpl implements AdminService, Constants {
 		return null;
 	}
 
+	@Override
+	public Amenity findAmenityByAmenityName(String amenityName) {
+		return amenityRepository.findByAmenityName(amenityName);
+	}
+
+	@Override
+	public Lookup findLookupByLookupId(long lookupId) {
+		return lookupRepository.findByLookupId(lookupId);
+	}
+
+	@Override
+	public Iterable<Room> findSimilarRooms(Room room) {
+		log.info(room);
+		return roomRepo.findByRoomModelAndRoomTypeAndRoomCategoryAndRoomStatus(room.getRoomModel(), room.getRoomType(),
+				room.getRoomCategory(), VACANT);
+	}
+
+	@Override
+	public TourPackage findTourPackageByTourPackageName(String tourPackageName) {
+		return tourPackageRepository.findByTourPackageName(tourPackageName);
+	}
+
+	@Override
+	public Iterable<Employee> getAllEmployees() {
+		return employeeRepository.findAll();
+	}
+
+	@Override
+	public Iterable<RoomRequest> getAllRoomRequests() {
+		return roomRequestRepo.findAll();
+	}
+
+	@Override
+	public Iterable<Room> getAllRooms() {
+		return roomRepo.findAll();
+	}
+
+	@Override
+	public Iterable<Lookup> getLookupList() {
+		return lookupRepository.findAll();
+	}
+
+	@Override
+	public Iterable<Lookup> getLookupListByDefinition(String lookupDefinitionName) {
+		return lookupRepository.findByLookupDefName(lookupDefinitionName);
+		}
+
+	@Override
+	public RoomRequest getRoomRequestById(int roomRequestId) {
+		return roomRequestRepo.findByRequestId(roomRequestId);
+	}
+
+	@Override
+	public Iterable<Room> getRoomsByCategory(String roomCategory) {
+		return roomRepo.findByRoomCategory(roomCategory);
+	}
+
+	@Override
+	public Iterable<Room> getRoomsByFloor(int floorNumber) {
+		return roomRepo.findByFloorNumber(floorNumber);
+	}
+
+	@Override
+	public Iterable<Room> getRoomsByModel(String roomModel) {
+		return roomRepo.findByRoomModel(roomModel);
+	}
+
+	@Override
+	public Iterable<Room> getRoomsByStatus(String roomStatus) {
+		return roomRepo.findByRoomStatus(roomStatus);
+	}
+
+	@Override
+	public Iterable<Room> getRoomsByType(String roomType) {
+		return roomRepo.findByRoomType(roomType);
+	}
+
+	@Override
+	public Iterable<RoomRequest> getUnallocatedRoomRequests() {
+		return roomRequestRepo.findByRoomRequestStatus(PENDING);
+	}
+
+	@Override
+	public Amenity saveAmenity(Amenity amenity) {
+		return amenityRepository.save(amenity);
+	}
+
+	@Override
+	public Lookup saveLookup(Lookup lookup) {
+		return lookupRepository.save(lookup);
+	}
+
+	@Override
+	public Iterable<Lookup> saveLookups(List<Lookup> lookupList) {
+		return lookupRepository.saveAll(lookupList);
+
+	}
+
+	@Override
+	public Iterable<Room> saveMultipleRooms(List<Room> roomsList) {
+		return roomRepo.saveAll(roomsList);
+	}
+
+	@Override
+	public Room saveRoom(Room room) {
+		return roomRepo.save(room);
+	}
+
+	@Override
+	public TourPackage saveTourPackage(TourPackage tourPackage) {
+		return tourPackageRepository.save(tourPackage);
+	}
+
+	@Override
+	public Iterable<Amenity> viewAllAmenities() {
+		return amenityRepository.findAll();
+	}
+
+	@Override
+	public Iterable<TourPackage> viewAllTourPackages() {
+		return tourPackageRepository.findAll();
+	}
+
 	private Employee validate(Employee employee) {
 		List<Employee> customerList = null;
 		customerList = employeeRepository.findByUserName(employee.getUserName());
@@ -172,61 +233,5 @@ public class AdminServiceImpl implements AdminService, Constants {
 		}
 		return employee;
 	}
-
-	@Override
-	public Amenity saveAmenity(Amenity amenity) {
-		return amenityRepository.save(amenity);
-	}
-
-	@Override
-	public Iterable<Amenity> viewAllAmenities() {
-		return amenityRepository.findAll();
-	}
-
-	@Override
-	public TourPackage saveTourPackage(TourPackage tourPackage) {
-		return tourPackageRepository.save(tourPackage);
-	}
-
-	@Override
-	public Iterable<TourPackage> viewAllTourPackages() {
-		return tourPackageRepository.findAll();
-	}
-
-	@Override
-	public TourPackage findTourPackageByTourPackageName(String tourPackageName) {
-		return tourPackageRepository.findByTourPackageName(tourPackageName);
-	}
-
-	@Override
-	public Amenity findAmenityByAmenityName(String amenityName) {
-		return amenityRepository.findByAmenityName(amenityName);
-	}
-
-	@Override
-	public Iterable<Lookup> saveLookups(List<Lookup> lookupList) {
-		return lookupRepository.saveAll(lookupList);
-
-	}
-
-	@Override
-	public Iterable<Lookup> getLookupList() {
-		return lookupRepository.findAll();
-	}
-
-	@Override
-	public Lookup findLookupByLookupId(long lookupId) {
-		return lookupRepository.findByLookupId(lookupId);
-	}
-
-	@Override
-	public Lookup saveLookup(Lookup lookup) {
-		return lookupRepository.save(lookup);
-	}
-
-	@Override
-	public Iterable<Lookup> getLookupListByDefinition(String lookupDefinitionName) {
-		return lookupRepository.findByLookupDefName(lookupDefinitionName);
-		}
 
 }
