@@ -20,6 +20,8 @@ public interface Constants {
 	public static final String AMNT_CRT_SXS="Amenity Creation Success";
 	public static final String AMNT_RQST_FAIL="Amenity Request Failure";
 	public static final String AMNT_RQST_SXS="Amenity Request Success";
+	public static final String BILL_AMOUNT = "Bill Amount";
+	public static final String BILL_CODE = "Bill Code";
 	public static final String BILL_PENDING = "PEND";
 	public static final String CANCEL = "C";
 	public static final String CANCEL_FAIL_MAIL = "cancellationFailMail";
@@ -30,6 +32,7 @@ public interface Constants {
 	public static final String CANCEL_SUCCESS_MAIL = "cancellationSuccessMail";
 	public static final String CANCEL_SUCCESS_MAIL_FALIURE = "Cancellation Success mail is not sent";
 	public static final String CANCEL_SUCCESS_MAIL_SUCCESS = "Cancellation Success mail has been sent";
+	public static final String CONTENT_DISPOSITION = "Content-Disposition";
 	public static final String CUST_LOG_SUCCESS = "Customer Login Success";
 	public static final String CUST_REG_FAIL="Customer Registration Failed";
 	public static final String CUST_REG_SXS="Customer Registration Success";
@@ -43,12 +46,14 @@ public interface Constants {
 	public static final String EMP_LOG_SUCCESS = "Employee Login Success";
 	public static final String EMP_SIGNUP_MAIL = "signUpEmpMail";
 	public static final String EMPLOYEE = "Employee";
+	public static final String EMPTY_STRING = "";
 	public static final String EXCEPTION_OCCURED="Exception Occured";
 	public static final String EXPIRED = "E";
 	public static final String EXPIRED_OTP = "OTP has been expired";
 	public static final String FAILURE="failure";
 	public static final String FRM_ADR = "fromAddress";
 	public static final String FRM_PWD = "fromPass";
+	public static final String SNO = "S.No";
 	public static final String INVALID = "Invalid details";
 	public static final String INVALID_MAIL = "Invalid Mail Address";
 	public static final String INVALID_OTP = "OTP is invalid";
@@ -80,6 +85,8 @@ public interface Constants {
 	public static final String PENDING = "P";
 	public static final String PWD_RESET_FAILURE = "Password Reset Failure";
 	public static final String PWD_RESET_SUCCESS = "Password Reset Success";
+	public static final String REQ_DATE = "Request Date";
+	public static final String REQ_ID = "Request Id";
 	public static final String RM_CRT_FAIL="Room Creation Failed";
 	public static final String RM_CRT_SXS="Room Creation Success";
 	public static final String ROOM_ALLOCATED = "Room has been Allocated";
@@ -105,6 +112,7 @@ public interface Constants {
 	public static final String TOUR_PKG_CRT_FAIL="Tour Package Create Failure";
 	public static final String TOUR_PKG_CRT_SXS="Tour Package Create Success";
 	public static final String TRUE = "true";
+	public static final String TYPE = "Type";
 	public static final String UNDER_SCORE="_";
 	public static final String USER_INVALID = "User is Invalid.";
 	public static final String USERNAME_TAKEN = "Username is already taken";

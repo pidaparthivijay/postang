@@ -20,7 +20,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.postang.model.PendingBillRequest;
 import com.postang.model.Constants;
 import com.postang.model.Customer;
 import com.postang.model.Employee;
@@ -186,22 +185,6 @@ public class Util implements Constants {
 		return totalBill;
 	}
 
-	public List<PendingBillRequest> convertToBillPendingRequest(List<RoomRequest> billPendingList) {
-		List<PendingBillRequest> billPendingRequestList = new ArrayList<>();
-		if (!billPendingList.isEmpty()) {
-			for (RoomRequest roomRequest : billPendingList) {
-				PendingBillRequest pendingBillRequest = new PendingBillRequest();
-				pendingBillRequest.setRequestId(roomRequest.getRequestId());
-				pendingBillRequest.setTypeOfRequest(ROOM_REQUEST);
-				pendingBillRequest.setRequestDate(roomRequest.getRequestDate());
-				billPendingRequestList.add(pendingBillRequest);
-			}
-		} else {
-			return new ArrayList<>();
-		}
-
-		return billPendingRequestList;
-	}
 
 	public String generateName(TourPackage tourPackage) {
 		String generatedName = "";

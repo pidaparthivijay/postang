@@ -14,10 +14,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.postang.model.AmenityRequest;
-import com.postang.model.PendingBillRequest;
 import com.postang.model.Constants;
 import com.postang.model.Customer;
 import com.postang.model.Employee;
+import com.postang.model.PendingBillRequest;
 import com.postang.model.Room;
 import com.postang.model.RoomRequest;
 import com.postang.model.TourPackageRequest;
@@ -207,8 +207,7 @@ public class CustomerServiceImpl implements CustomerService,Constants {
 			List<Room> roomsList=roomRepo.findByRoomRequestId(roomRequest.getRequestId());
 			totalRoomsList.addAll(roomsList);
 		}
-		double roomBill=util.generateBillForRooms(totalRoomsList);
-		return roomBill;
+		return util.generateBillForRooms(totalRoomsList);
 		
 }
 
@@ -218,7 +217,7 @@ public class CustomerServiceImpl implements CustomerService,Constants {
 		User user= userRepo.findByUserMail(custEmail);
 		List<RoomRequest> roomRequestList=roomReqRepo.findByUserId((int) user.getUserId());
 		List<RoomRequest> billPendingList = roomRequestList.stream().filter(p -> BILL_PENDING.equals(p.getBillStatus())).collect(Collectors.toList());
-		pendingBillRequests.addAll(util.convertToBillPendingRequest(billPendingList));
+		pendingBillRequests.addAll(this.convertToBillPendingRequest(billPendingList));
 		return pendingBillRequests;
 	}
 
@@ -230,5 +229,27 @@ public class CustomerServiceImpl implements CustomerService,Constants {
 	@Override
 	public Iterable<TourPackageRequest> getAllTourPackageBookings() {
 		return tourPackageRequestRepository.findAll();
+	}
+
+	public List<PendingBillRequest> convertToBillPendingRequest(List<RoomRequest> billPendingList) {
+		List<PendingBillRequest> billPendingRequestList = new ArrayList<>();
+		if (!CollectionUtils.isEmpty(billPendingList)) {
+			for (RoomRequest roomRequest : billPendingList) {
+				PendingBillRequest pendingBillRequest = new PendingBillRequest();
+				pendingBillRequest.setBillCode(roomRequest.getGuestName() + UNDER_SCORE + roomRequest.getRoomModel()
+						+ UNDER_SCORE + roomRequest.getRoomCategory() + UNDER_SCORE + roomRequest.getRoomType());
+				pendingBillRequest.setRequestId(roomRequest.getRequestId());
+				List<Room> roomsList = roomRepo.findByRoomRequestId(roomRequest.getRequestId());
+				pendingBillRequest.setBillAmount(util.generateBillForRooms(roomsList));
+				pendingBillRequest.setTypeOfRequest(ROOM_REQUEST);
+				pendingBillRequest.setRequestDate(roomRequest.getRequestDate());
+				if (!CollectionUtils.isEmpty(roomsList)) {
+					billPendingRequestList.add(pendingBillRequest);
+				}
+			}
+		} else {
+			return new ArrayList<>();
+		}
+		return billPendingRequestList;
 	}
 }

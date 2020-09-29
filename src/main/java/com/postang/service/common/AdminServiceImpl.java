@@ -234,4 +234,9 @@ public class AdminServiceImpl implements AdminService, Constants {
 		return employee;
 	}
 
+	@Override
+	public Employee getEmployeeDetails(Employee employee) {
+		return employeeRepository.findByUserName(employee.getUserName()).get(0);
+	}
+
 }

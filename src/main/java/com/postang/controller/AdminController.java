@@ -364,7 +364,9 @@ public class AdminController implements Constants {
 			lookup.setUpdateDate(new Date());
 			Lookup savedLookup = adminService.saveLookup(lookup);
 			requestDTO.setLookup(savedLookup);
+			requestDTO.setActionStatus(SUCCESS);
 		} catch (Exception e) {
+			requestDTO.setActionStatus(EXCEPTION_OCCURED);
 			log.error("Exception in updateLookup" + e);
 		}
 		return requestDTO;

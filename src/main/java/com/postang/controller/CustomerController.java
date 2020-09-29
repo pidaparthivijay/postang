@@ -4,12 +4,17 @@
 package com.postang.controller;
 
 import java.util.Date;
+import java.util.DoubleSummaryStatistics;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,6 +34,7 @@ import com.postang.model.TourPackageRequest;
 import com.postang.service.common.CommonService;
 import com.postang.service.common.CustomerService;
 import com.postang.util.MailUtil;
+import com.postang.util.PDFUtil;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -39,23 +45,25 @@ import lombok.extern.log4j.Log4j2;
 @RestController
 @Log4j2
 @CrossOrigin
-public class CustomerController implements Constants{
+public class CustomerController implements Constants {
 
 	@Autowired
 	CustomerService customerService;
 
 	MailUtil mailUtil = new MailUtil();
-	
+
+	PDFUtil pdfUtil = new PDFUtil();
+
 	@Autowired
 	CommonService commonService;
-	
+
 	/*************************
-	 ***Customer Operations***
+	 *** Customer Operations***
 	 *************************/
-	
+
 	@PostMapping(value = "/brw/registerCustomer")
 	public RequestDTO registerCustomer(@RequestBody RequestDTO requestDTO) {
-		Customer customer=requestDTO.getCustomer();
+		Customer customer = requestDTO.getCustomer();
 		log.info("registerCustomer starts..." + customer);
 		try {
 			customer = customerService.saveCustomer(customer);
@@ -67,8 +75,7 @@ public class CustomerController implements Constants{
 				log.info(mailStatus);
 			}
 			requestDTO.setCustomer(customer);
-			requestDTO.setActionStatus(customer.getCustId()>0?
-					CUST_REG_SXS:CUST_REG_FAIL);
+			requestDTO.setActionStatus(customer.getCustId() > 0 ? CUST_REG_SXS : CUST_REG_FAIL);
 			log.info("registerCustomer ends..." + customer.getCustId());
 		} catch (Exception ex) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
@@ -76,11 +83,11 @@ public class CustomerController implements Constants{
 		}
 		return requestDTO;
 	}
-	
+
 	@RequestMapping(value = "/brw/getCustomerDetails", method = { RequestMethod.GET, RequestMethod.POST })
 	public RequestDTO getCustomerDetails(@RequestBody RequestDTO requestDTO) {
-		 Customer customer=requestDTO.getCustomer();
-		 log.info("getCustomerDetails starts...");
+		Customer customer = requestDTO.getCustomer();
+		log.info("getCustomerDetails starts...");
 		try {
 			customer = customerService.getCustomerDetails(customer);
 			log.info("Infor is: " + customerService.getCustomerDetails(customer).toString());
@@ -93,23 +100,24 @@ public class CustomerController implements Constants{
 	}
 
 	/*********************
-	 ***Bill Operations***
+	 *** Bill Operations***
 	 *********************/
-	
+
 	@PostMapping(value = "/brw/getPendingBillRequests")
 	public RequestDTO getPendingBillRequests(@RequestBody RequestDTO requestDTO) {
-		String custEmail=requestDTO.getCustomer().getCustEmail();
+		String custEmail = requestDTO.getCustomer().getCustEmail();
 		log.info("getPendingBillRequests starts..." + custEmail);
 		try {
-			List<PendingBillRequest> pendingBillRequests= customerService.getPendingBillRequests(custEmail);
-			PendingBillRequest totalBillPendingRequest= new PendingBillRequest(); 
-			double customerBill=customerService.generateBill(custEmail);
-			totalBillPendingRequest.setBillAmount(customerBill);
+			List<PendingBillRequest> pendingBillRequests = customerService.getPendingBillRequests(custEmail);
+			PendingBillRequest totalBillPendingRequest = new PendingBillRequest();
+			DoubleSummaryStatistics stats = pendingBillRequests.stream()
+					.collect(Collectors.summarizingDouble(PendingBillRequest::getBillAmount));
+			totalBillPendingRequest.setBillAmount(stats.getSum());
 			totalBillPendingRequest.setTypeOfRequest(TOTAL_BILL_AMOUNT);
 			pendingBillRequests.add(totalBillPendingRequest);
 			requestDTO.setPendingBillRequests(pendingBillRequests);
 		} catch (Exception e) {
-			requestDTO.setActionStatus(EXCEPTION_OCCURED);  
+			requestDTO.setActionStatus(EXCEPTION_OCCURED);
 			log.error("Exception occured in getPendingBillRequests: " + e);
 			e.printStackTrace();
 
@@ -117,19 +125,43 @@ public class CustomerController implements Constants{
 		return requestDTO;
 	}
 
-	
+	@PostMapping(value = "/brw/generatePDF", produces = MediaType.APPLICATION_PDF_VALUE)
+	public ResponseEntity<InputStreamResource> generatePDF(@RequestBody RequestDTO requestDTO) {
+		String custEmail = requestDTO.getCustomer().getCustEmail();
+		log.info("generatePDF starts..." + custEmail);
+		HttpHeaders headers = new HttpHeaders();
+		headers.add(CONTENT_DISPOSITION, "attachment;filename=bill.pdf");
+		try {
+			List<PendingBillRequest> pendingBillRequests = customerService.getPendingBillRequests(custEmail);
+			PendingBillRequest totalBillPendingRequest = new PendingBillRequest();
+			DoubleSummaryStatistics stats = pendingBillRequests.stream()
+					.collect(Collectors.summarizingDouble(PendingBillRequest::getBillAmount));
+			totalBillPendingRequest.setBillAmount(stats.getSum());
+			totalBillPendingRequest.setTypeOfRequest(TOTAL_BILL_AMOUNT);
+			pendingBillRequests.add(totalBillPendingRequest);
+			return ResponseEntity.ok().headers(headers).contentType(MediaType.APPLICATION_PDF)
+					.body(new InputStreamResource(pdfUtil.generatePDF(pendingBillRequests)));
+		} catch (Exception e) {
+			requestDTO.setActionStatus(EXCEPTION_OCCURED);
+			log.error("Exception occured in generatePDF: " + e);
+			e.printStackTrace();
+
+		}
+		return ResponseEntity.ok().headers(headers).contentType(MediaType.APPLICATION_PDF)
+				.body(new InputStreamResource(null));
+	}
+
 	/*****************************
-	 ***Room Request Operations***
+	 *** Room Request Operations***
 	 *****************************/
-	
+
 	@RequestMapping(value = "/brw/requestRoom", method = { RequestMethod.GET, RequestMethod.POST })
-	public RequestDTO requestRoom(@RequestBody RequestDTO requestDTO) {		
-		 RoomRequest roomRequest = requestDTO.getRoomRequest();
+	public RequestDTO requestRoom(@RequestBody RequestDTO requestDTO) {
+		RoomRequest roomRequest = requestDTO.getRoomRequest();
 		log.info("requestRoom starts..." + roomRequest.getUserId());
 		try {
-			roomRequest= customerService.requestRoom(roomRequest);
-			requestDTO.setActionStatus(roomRequest.getRequestId()>0?
-					ROOM_BOOK_SXS:ROOM_BOOK_FAIL);	
+			roomRequest = customerService.requestRoom(roomRequest);
+			requestDTO.setActionStatus(roomRequest.getRequestId() > 0 ? ROOM_BOOK_SXS : ROOM_BOOK_FAIL);
 		} catch (Exception ex) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
 			log.error("Exception occured in requestRoom: " + ex);
@@ -139,7 +171,7 @@ public class CustomerController implements Constants{
 
 	@RequestMapping(value = "/brw/cancelRequest", method = { RequestMethod.GET, RequestMethod.POST })
 	public RequestDTO cancelRequest(@RequestBody RequestDTO requestDTO) {
-		int roomRequestId=requestDTO.getRoomRequestId();
+		int roomRequestId = requestDTO.getRoomRequestId();
 		log.info("cancelRequest starts...");
 		try {
 			requestDTO.setActionStatus(customerService.cancelRoomRequest(roomRequestId));
@@ -150,10 +182,10 @@ public class CustomerController implements Constants{
 		}
 		return requestDTO;
 	}
-	
+
 	@RequestMapping(value = "/brw/getMyRequestsList", method = { RequestMethod.GET, RequestMethod.POST })
 	public RequestDTO getMyRequestsList(@RequestBody RequestDTO requestDTO) {
-		Customer customer=requestDTO.getCustomer();
+		Customer customer = requestDTO.getCustomer();
 		List<RoomRequest> roomReqDetails = null;
 		log.info("getMyRequestsList starts...");
 		try {
@@ -166,22 +198,21 @@ public class CustomerController implements Constants{
 		}
 		return requestDTO;
 	}
-		
 
 	/*****************************
-	 ***Tour Package Operations***
+	 *** Tour Package Operations***
 	 *****************************/
 
 	@PostMapping(value = "/brw/bookTourPackage")
-	public RequestDTO bookTourPackage(@RequestBody RequestDTO requestDTO){
-		TourPackageRequest tourPackageRequest=requestDTO.getTourPackageRequest();		
+	public RequestDTO bookTourPackage(@RequestBody RequestDTO requestDTO) {
+		TourPackageRequest tourPackageRequest = requestDTO.getTourPackageRequest();
 		log.info("bookTourPackage starts..." + tourPackageRequest.getUserId());
 		try {
 			tourPackageRequest.setRequestDate(new Date());
 			tourPackageRequest.setBillStatus(BILL_PENDING);
-			tourPackageRequest= customerService.bookTourPackage(tourPackageRequest);
-			requestDTO.setActionStatus(tourPackageRequest.getTourPackageRequestId()>0?
-					TOUR_PKG_BOOK_SXS:TOUR_PKG_BOOK_FAIL);				
+			tourPackageRequest = customerService.bookTourPackage(tourPackageRequest);
+			requestDTO.setActionStatus(
+					tourPackageRequest.getTourPackageRequestId() > 0 ? TOUR_PKG_BOOK_SXS : TOUR_PKG_BOOK_FAIL);
 			requestDTO.setTourPackageRequest(tourPackageRequest);
 		} catch (Exception ex) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
@@ -190,14 +221,13 @@ public class CustomerController implements Constants{
 		return requestDTO;
 	}
 
-	
 	/******************************
-	 ***Reward Points Operations***
+	 *** Reward Points Operations***
 	 ******************************/
-	
+
 	@PostMapping(value = "/brw/viewRewardPoints")
 	public RequestDTO viewRewardPoints(@RequestBody RequestDTO requestDTO) {
-		long userId=requestDTO.getUserId();
+		long userId = requestDTO.getUserId();
 		log.info("viewRewardPoints starts..." + userId);
 		try {
 			List<RewardPoints> rewardPointsList = commonService.getRewardPointsByUserId(userId);
@@ -220,7 +250,8 @@ public class CustomerController implements Constants{
 				rewardPoints.setPointsExpiryDate(null);
 				rewardPoints.setPointsEarnedDate(null);
 				rewardPointsList.add(rewardPoints);
-				requestDTO.setRewardPointsList(StreamSupport.stream(rewardPointsList.spliterator(), false).collect(Collectors.toList()));
+				requestDTO.setRewardPointsList(
+						StreamSupport.stream(rewardPointsList.spliterator(), false).collect(Collectors.toList()));
 				log.info("viewRewardPoints ends with" + totalCount);
 			}
 
@@ -233,14 +264,13 @@ public class CustomerController implements Constants{
 		return requestDTO;
 	}
 
-	
 	/************************
-	 ***Amenity Operations***
+	 *** Amenity Operations***
 	 ************************/
-	
+
 	@PostMapping(value = "/brw/requestAmenity")
 	public RequestDTO requestAmenity(@RequestBody RequestDTO requestDTO) {
-		AmenityRequest amenityRequest=requestDTO.getAmenityRequest();
+		AmenityRequest amenityRequest = requestDTO.getAmenityRequest();
 		log.info("requestAmenity starts..." + amenityRequest);
 		try {
 			amenityRequest = customerService.requestAmenity(amenityRequest);

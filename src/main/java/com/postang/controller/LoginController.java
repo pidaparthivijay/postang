@@ -11,7 +11,9 @@ import com.postang.model.Constants;
 import com.postang.model.Customer;
 import com.postang.model.Employee;
 import com.postang.model.OneTimePassword;
+import com.postang.model.RequestDTO;
 import com.postang.model.User;
+import com.postang.service.common.AdminService;
 import com.postang.service.common.CustomerService;
 import com.postang.service.login.LoginService;
 import com.postang.util.Util;
@@ -31,6 +33,9 @@ public class LoginController implements Constants{
 
 	@Autowired
 	LoginService loginService;
+
+	@Autowired
+	AdminService adminService;
 
 	@Autowired
 	CustomerService customerService;
@@ -112,6 +117,37 @@ public class LoginController implements Constants{
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	@PostMapping(value = "/brw/viewEmployeeDetails")
+	public RequestDTO viewEmployeeDetails(@RequestBody RequestDTO requestDTO) {
+		Employee employee = requestDTO.getEmployee();
+		log.info("viewEmployeeDetails starts...");
+		try {
+			Employee emp = adminService.getEmployeeDetails(employee);
+			requestDTO.setEmployee(emp);
+		} catch (Exception ex) {
+			requestDTO.setActionStatus(EXCEPTION_OCCURED);
+			log.error("Exception in viewEmployeeDetails : " + ex.getMessage());
+			ex.printStackTrace();
+		}
+		return requestDTO;
+	}
+
+	@PostMapping(value = "/brw/udpateEmployee")
+	public RequestDTO udpateEmployee(@RequestBody RequestDTO requestDTO) {
+		Employee employee = requestDTO.getEmployee();
+		log.info("udpateEmployee starts...");
+		try {
+			Employee emp = adminService.createEmployee(employee);
+			requestDTO.setEmployee(emp);
+			requestDTO.setActionStatus((emp != null && emp.getEmpId() > 0) ? EMP_CRT_SXS : EMP_CRT_FAIL);
+		} catch (Exception ex) {
+			requestDTO.setActionStatus(EXCEPTION_OCCURED);
+			log.error("Exception in udpateEmployee : " + ex.getMessage());
+			ex.printStackTrace();
+		}
+		return requestDTO;
 	}
 
 	@PostMapping(value = "/brw/resetPwd")
