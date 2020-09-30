@@ -62,7 +62,7 @@ public class AdminController implements RequestMappings,Constants {
 		try {
 			Room room = adminService.saveRoom(requestDTO.getRoom());
 			requestDTO.setRoom(room);
-			requestDTO.setActionStatus(room.getRoomNumber() > 0 ? "Room Creation Success" : "Room Creation Failed");
+			requestDTO.setActionStatus(room.getRoomNumber() > 0 ? RM_CRT_SXS : RM_CRT_FAIL);
 		} catch (Exception ex) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
 			log.error("Exception in createRoom : " + ex.getMessage());
@@ -112,7 +112,7 @@ public class AdminController implements RequestMappings,Constants {
 		try {
 			Room room = adminService.saveRoom(requestDTO.getRoom());
 			requestDTO.setRoom(room);
-			requestDTO.setActionStatus(room.getRoomNumber() > 0 ? "Room Update Success" : "Room Update Failed");
+			requestDTO.setActionStatus(room.getRoomNumber() > 0 ? RM_UPDATE_SXS : RM_UPDATE_FAIL);
 		} catch (Exception ex) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
 			log.error("Exception in updateRoom: " + ex.getMessage());

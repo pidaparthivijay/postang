@@ -44,6 +44,8 @@ public interface Constants {
 	public static final double DOUBLE_BASE_FARE= 1500;
 	public static final String EMP_CRT_FAIL="Employee Creation Failure";
 	public static final String EMP_CRT_SXS="Employee Creation Success";
+	public static final String EMP_UPDATE_FAIL = "Employee Update Failure";
+	public static final String EMP_UPDATE_SXS = "Employee Update Success";
 	public static final String EMP_LOG_SUCCESS = "Employee Login Success";
 	public static final String EMP_SIGNUP_MAIL = "signUpEmpMail";
 	public static final String EMPLOYEE = "Employee";
@@ -93,6 +95,8 @@ public interface Constants {
 	public static final String ROOM_ALLOCATED = "Room has been Allocated";
 	public static final String ROOM_BOOK_FAIL="Room Booking Failed";
 	public static final String ROOM_BOOK_SXS="Room Booking Success";
+	public static final String RM_UPDATE_FAIL = "Room Update Failed";
+	public static final String RM_UPDATE_SXS = "Room Update Success";
 	public static final String ROOM_BOOKING = "RoomBooking";
 	public static final long ROOM_BOOKING_REWARD = 300;
 	public static final String ROOM_REQUEST="Room Request";

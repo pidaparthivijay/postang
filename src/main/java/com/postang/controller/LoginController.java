@@ -142,7 +142,7 @@ public class LoginController implements RequestMappings, Constants {
 		try {
 			Employee emp = adminService.createEmployee(employee);
 			requestDTO.setEmployee(emp);
-			requestDTO.setActionStatus((emp != null && emp.getEmpId() > 0) ? EMP_CRT_SXS : EMP_CRT_FAIL);
+			requestDTO.setActionStatus((emp != null && emp.getEmpId() > 0) ? EMP_UPDATE_SXS : EMP_UPDATE_FAIL);
 		} catch (Exception ex) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
 			log.error("Exception in udpateEmployee : " + ex.getMessage());
