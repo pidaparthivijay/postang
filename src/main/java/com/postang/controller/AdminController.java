@@ -20,8 +20,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.postang.constants.Constants;
+import com.postang.constants.RequestMappings;
 import com.postang.model.Amenity;
-import com.postang.model.Constants;
 import com.postang.model.Employee;
 import com.postang.model.Lookup;
 import com.postang.model.RequestDTO;
@@ -40,7 +41,8 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 @RestController
 @CrossOrigin
-public class AdminController implements Constants {
+@RequestMapping(RequestMappings.BRW)
+public class AdminController implements RequestMappings,Constants {
 
 	@Autowired
 	AdminService adminService;
@@ -54,7 +56,7 @@ public class AdminController implements Constants {
 	 * Room Operations**
 	 *******************/
 	
-	@PostMapping(value = "/brw/createRoom")
+	@PostMapping(value = ROOM_CREATE)
 	public RequestDTO createRoom(@RequestBody RequestDTO requestDTO) {
 		log.info("createRoom starts..." + requestDTO.getRoom());
 		try {
@@ -68,7 +70,7 @@ public class AdminController implements Constants {
 		return requestDTO;
 	}
 
-	@PostMapping(value = "/brw/createRoomMultiple")
+	@PostMapping(value = ROOM_CREATE_MULTIPLE)
 	public RequestDTO createMultipleRooms(@RequestBody RequestDTO requestDTO) {
 		int countOfRooms = requestDTO.getCountOfRooms() == 0 ? 1 : requestDTO.getCountOfRooms();
 		log.info("createMultipleRooms starts with count of rooms: " + countOfRooms);
@@ -90,7 +92,7 @@ public class AdminController implements Constants {
 		return requestDTO;
 	}
 
-	@RequestMapping(value = "/brw/getRoomsByStatus", method = { RequestMethod.GET, RequestMethod.POST })
+	@RequestMapping(value = ROOM_VIEW_BY_STATUS, method = { RequestMethod.GET, RequestMethod.POST })
 	public RequestDTO getRoomsByStatus(@RequestBody RequestDTO requestDTO) {
 		String roomStatus = requestDTO.getRoomStatus();
 		log.info("getRoomsByStatus starts..." + roomStatus);
@@ -104,7 +106,7 @@ public class AdminController implements Constants {
 		return requestDTO;
 	}
 
-	@PostMapping(value = "/brw/updateRoom")
+	@PostMapping(value = ROOM_UPDATE)
 	public RequestDTO updateRoom(@RequestBody RequestDTO requestDTO) {
 		log.info("updateRoom starts..." + requestDTO.getRoom());
 		try {
@@ -118,7 +120,7 @@ public class AdminController implements Constants {
 		return requestDTO;
 	}
 
-	@GetMapping(value = "/brw/getAllRooms")
+	@GetMapping(value = ROOM_VIEW_ALL)
 	public RequestDTO getAllRooms() {
 		RequestDTO requestDTO = new RequestDTO();
 		log.info("getAllRooms starts...");
@@ -139,7 +141,7 @@ public class AdminController implements Constants {
 	 * Employee Operations**
 	 ***********************/
 	
-	@PostMapping(value = "/brw/createEmployee")
+	@PostMapping(value = EMP_CREATE)
 	public RequestDTO createEmployee(@RequestBody RequestDTO requestDTO) {
 		Employee employee = requestDTO.getEmployee();
 		log.info("createEmployee starts...");
@@ -155,7 +157,7 @@ public class AdminController implements Constants {
 		return requestDTO;
 	}
 
-	@GetMapping(value = "/brw/getAllEmployees")
+	@GetMapping(value = EMP_VIEW_ALL)
 	public RequestDTO getAllEmployees() {
 		RequestDTO requestDTO = new RequestDTO();
 		log.info("getAllEmployees starts...");
@@ -177,7 +179,7 @@ public class AdminController implements Constants {
 	 * Amenity Operations**
 	 **********************/
 	
-	@PostMapping(value = "/brw/createAmenity")
+	@PostMapping(value = AMENITY_CREATE)
 	public RequestDTO createAmenity(@RequestBody RequestDTO requestDTO) {
 		Amenity amenity=requestDTO.getAmenity();
 		log.info("createAmenity starts..." + amenity);
@@ -193,7 +195,7 @@ public class AdminController implements Constants {
 		return requestDTO;
 	}
 
-	@PostMapping(value = "/brw/updateAmenity")
+	@PostMapping(value = AMENITY_UPDATE)
 	public RequestDTO updateAmenity(@RequestBody RequestDTO requestDTO) {
 		Amenity amenity=requestDTO.getAmenity();
 		log.info("updatePriceAmenity starts..." + amenity);
@@ -208,7 +210,7 @@ public class AdminController implements Constants {
 		return requestDTO;
 	}
 
-	@PostMapping(value = "/brw/toggleDeleteAmenity")
+	@PostMapping(value = AMENITY_DELETE_TOGGLE)
 	public RequestDTO toggleDeleteAmenity(@RequestBody RequestDTO requestDTO) {
 		String amenityName = requestDTO.getAmenity().getAmenityName();
 		log.info("toggleDeleteAmenity starts..." + amenityName);
@@ -225,7 +227,7 @@ public class AdminController implements Constants {
 		return requestDTO;
 	}
 
-	@GetMapping(value = "/brw/viewAllAmenities")
+	@GetMapping(value = AMENITY_VIEW_ALL)
 	public RequestDTO viewAllAmenities(String status) {
 		RequestDTO requestDTO = new RequestDTO();
 		log.info("viewAllAmenities starts...");
@@ -248,7 +250,7 @@ public class AdminController implements Constants {
 	 * Tour package Operations**
 	 ***************************/
 	
-	@PostMapping(value = "/brw/createTourPackage")
+	@PostMapping(value = TOUR_PKG_CREATE)
 	public RequestDTO createTourPackage(@RequestBody RequestDTO requestDTO) {
 		TourPackage tourPackage = requestDTO.getTourPackage();
 		log.info("createTourPackage starts..." + tourPackage);
@@ -281,7 +283,7 @@ public class AdminController implements Constants {
 		return requestDTO;
 	}
 	
-	@GetMapping(value = "/brw/viewAllTourPackages")
+	@GetMapping(value = TOUR_PKG_VIEW_ALL)
 	public RequestDTO viewAllTourPackages(String status) {
 		RequestDTO requestDTO = new RequestDTO();
 		log.info("viewAllTourPackages starts...");
@@ -299,7 +301,7 @@ public class AdminController implements Constants {
 		return requestDTO;
 	}
 
-	@PostMapping(value = "/brw/toggleDeleteTourPackage")
+	@PostMapping(value = TOUR_PKG_DELETE_TOGGLE)
 	public RequestDTO toggleDeleteTourPackage(@RequestBody RequestDTO requestDTO) {
 		String tourPackageName = requestDTO.getTourPackage().getTourPackageName();
 		log.info("toggleDeleteTourPackage starts..." + tourPackageName);
@@ -321,7 +323,7 @@ public class AdminController implements Constants {
 	 * Lookup Operations**
 	 *********************/
 
-	@PostMapping(value = "/brw/uploadLookupExcel")
+	@PostMapping(value = LOOKUP_EXCEL_UPLOAD)
 	public RequestDTO uploadLookupExcel(@RequestParam("lookupExcel") RequestDTO requestDTO) {
 		MultipartFile multipartFile = requestDTO.getLookupExcel();
 		log.info("uploadLookupExcel starts..." + multipartFile);
@@ -340,7 +342,7 @@ public class AdminController implements Constants {
 		return requestDTO;
 	}
 
-	@PostMapping(value = "/brw/createLookup")
+	@PostMapping(value = LOOKUP_CREATE)
 	public RequestDTO createLookup(@RequestBody RequestDTO requestDTO) {
 		Lookup lookup =requestDTO.getLookup();
 		log.info("createLookup starts..." + lookup);
@@ -356,7 +358,7 @@ public class AdminController implements Constants {
 		return requestDTO;
 	}
 	
-	@PostMapping(value = "/brw/updateLookup")
+	@PostMapping(value = LOOKUP_UPDATE)
 	public RequestDTO updateLookup(@RequestBody RequestDTO requestDTO) {
 		Lookup lookup = requestDTO.getLookup();
 		log.info("updateLookup starts..." + lookup);
@@ -372,10 +374,10 @@ public class AdminController implements Constants {
 		return requestDTO;
 	}
 
-	@PostMapping(value = "/brw/toggleDelete")
+	@PostMapping(value = LOOKUP_DELETE_TOGGLE)
 	public RequestDTO toggleDelete(@RequestBody RequestDTO requestDTO) {
 		long lookupId = requestDTO.getLookup().getLookupId();
-		log.info("viewLookupList starts..." + lookupId);
+		log.info("toggleDelete starts..." + lookupId);
 		try {
 			Lookup lookup = adminService.findLookupByLookupId(lookupId);
 			lookup.setDeleted(YES.equals(lookup.getDeleted()) ? NO : YES);
@@ -392,15 +394,16 @@ public class AdminController implements Constants {
 		return requestDTO;
 	}
 
-	@GetMapping(value = "/brw/getLookupDefs")
+	@GetMapping(value = LOOKUP_VIEW_DEF)
 	public RequestDTO getLookupDefs() {
 		RequestDTO requestDTO = new RequestDTO();
 		log.info("getLookupDefs starts...");
 		try {
 			Iterable<Lookup> lookupIterables = adminService.getLookupList();
-			requestDTO.setLookupDefsList(
-					StreamSupport.stream(lookupIterables.spliterator(), false).collect(Collectors.toList()).stream()
-							.distinct().map(Lookup::getLookupDefName).collect(Collectors.toList()));
+			List<String> lookupDefsList = StreamSupport.stream(lookupIterables.spliterator(), false)
+					.collect(Collectors.toList()).stream().distinct().map(Lookup::getLookupDefName)
+					.collect(Collectors.toList());
+			requestDTO.setLookupDefsList(lookupDefsList.stream().distinct().collect(Collectors.toList()));
 		} catch (Exception e) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
 			log.error("Exception in getLookupDefs" + e);
@@ -409,7 +412,7 @@ public class AdminController implements Constants {
 		return requestDTO;
 	}
 
-	@PostMapping(value = "/brw/getLookupListByDefinition")
+	@PostMapping(value = LOOKUP_VIEW_BY_DEF)
 	public RequestDTO getLookupListByDefinition(@RequestBody RequestDTO requestDTO) {
 		String lookupDefinitionName = requestDTO.getLookupDefinitionName();
 		log.info("getLookupListByDefinition starts..." + lookupDefinitionName);
@@ -424,7 +427,7 @@ public class AdminController implements Constants {
 		return requestDTO;
 	}
 
-	@GetMapping(value = "/brw/viewLookupList")
+	@GetMapping(value = LOOKUP_VIEW_ALL)
 	public RequestDTO viewLookupList(String status) {
 		RequestDTO requestDTO = new RequestDTO();
 		log.info("viewLookupList starts...");

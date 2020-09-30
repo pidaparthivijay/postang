@@ -20,7 +20,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.postang.model.Constants;
+import com.postang.constants.Constants;
 import com.postang.model.Customer;
 import com.postang.model.Employee;
 import com.postang.model.Lookup;
@@ -195,7 +195,7 @@ public class Util implements Constants {
 		} else if (tourPackage.getDuration().equals(LONG)) {
 			generatedName += MAX;
 		}
-		generatedName = generatedName + UNDER_SCORE + tourPackage.getLocation().toUpperCase();
+		generatedName = generatedName + UNDERSCORE + tourPackage.getLocation().toUpperCase();
 		return generatedName;
 	}
 
@@ -230,4 +230,49 @@ public class Util implements Constants {
 		}
 		return lookupList;
 	}
+
+//	private List<Room> roomCreation(int count, Room room){
+//		//A floor can have only 10 rooms
+//		int floorNumber=1;
+//		List<Room> roomsInFloor=adminService.getRoomsByFloor();
+//		if(roomsInFloor<10){
+//			//find single rooms
+//			switch type:
+//			case single:
+//			if(single_rooms<6){
+//			switch model:
+//			case STE:
+//			if(ste_rooms<3){
+//		//create a new room and save
+//			}else{
+//		increase the floor number and perform same
+//			}
+//			case DLX:
+//			if(dlx_rooms<3){
+//		//create a new room and save
+//			}else{
+//			increase the floor number and perform same
+//			}
+//			case double:
+//			if(double_rooms<6){
+//			switch model:
+//			case STE:
+//			if(ste_rooms<3){
+//		//create a new room and save
+//			}else{
+//				increase the floor number and perform same
+//			}
+//			case DLX:
+//			if(dlx_rooms<3){
+//		//create a new room and save
+//			}else{
+//			increase the floor number and perform same
+//			}
+//			}else{
+//			increase the floor number and perform same
+//			}
+//		} else{
+//			increase the floor number and perform same
+//		}
+//	}
 }

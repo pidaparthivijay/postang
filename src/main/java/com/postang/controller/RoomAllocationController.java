@@ -14,7 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.postang.model.Constants;
+import com.postang.constants.Constants;
+import com.postang.constants.RequestMappings;
 import com.postang.model.RequestDTO;
 import com.postang.model.Room;
 import com.postang.model.RoomRequest;
@@ -34,7 +35,8 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 @RestController
 @CrossOrigin
-public class RoomAllocationController implements Constants{
+@RequestMapping(RequestMappings.BRW)
+public class RoomAllocationController implements RequestMappings, Constants {
 
 	@Autowired
 	CommonService commonService;
@@ -53,7 +55,7 @@ public class RoomAllocationController implements Constants{
 	 * Room Request Operations**
 	 ***************************/	
 
-	@GetMapping(value = "/brw/getAllRoomRequests")
+	@GetMapping(value = ROOM_REQUEST_VIEW_ALL)
 	public RequestDTO getAllRoomRequests() {
 		RequestDTO requestDTO = new RequestDTO();
 		log.info("getAllRoomRequests starts...");
@@ -68,7 +70,7 @@ public class RoomAllocationController implements Constants{
 		return requestDTO;
 	}
 	
-	@RequestMapping(value = "/brw/viewFeasibleRooms", method = { RequestMethod.GET, RequestMethod.POST })
+	@RequestMapping(value = ROOM_REQUEST_FEASIBLE, method = { RequestMethod.GET, RequestMethod.POST })
 	public RequestDTO viewFeasibleRooms(@RequestBody RequestDTO requestDTO) {
 		int roomRequestId = requestDTO.getRoomRequest().getRequestId();
 		log.info("viewFeasibleRooms starts...");
@@ -87,7 +89,7 @@ public class RoomAllocationController implements Constants{
 		return requestDTO;
 	}
 
-	@PostMapping(value = "/brw/assignRoomToRequest")
+	@PostMapping(value = ROOM_REQUEST_ASSIGN_ROOM)
 	public RequestDTO assignRoomToRequest(@RequestBody RequestDTO requestDTO) {
 		RoomRequest roomRequest=requestDTO.getRoomRequest();
 		log.info("assignRoomToRequest starts..." + roomRequest);

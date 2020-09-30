@@ -3,12 +3,13 @@
  */
 package com.postang.service.common;
 
+import java.io.ByteArrayInputStream;
 import java.util.List;
 
 import com.postang.model.AmenityRequest;
-import com.postang.model.PendingBillRequest;
 import com.postang.model.Customer;
 import com.postang.model.Employee;
+import com.postang.model.PendingBillRequest;
 import com.postang.model.RoomRequest;
 import com.postang.model.TourPackageRequest;
 
@@ -44,6 +45,10 @@ public interface CustomerService {
 
 	public TourPackageRequest bookTourPackage(TourPackageRequest tourPackageRequest);
 
-	Iterable<TourPackageRequest> getAllTourPackageBookings();
+	public Iterable<TourPackageRequest> getAllTourPackageBookings();
+
+	public ByteArrayInputStream generatedBillPdf(String custEmail);
+
+	public String triggerMailBill(String custEmail);
 
 }

@@ -17,7 +17,7 @@ import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
-import com.postang.model.Constants;
+import com.postang.constants.Constants;
 import com.postang.model.PendingBillRequest;
 
 public class PDFUtil implements Constants {

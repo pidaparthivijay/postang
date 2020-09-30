@@ -1,4 +1,4 @@
-package com.postang.model;
+package com.postang.constants;
 
 /**
  * @author Subrahmanya Vijay
@@ -23,6 +23,7 @@ public interface Constants {
 	public static final String BILL_AMOUNT = "Bill Amount";
 	public static final String BILL_CODE = "Bill Code";
 	public static final String BILL_PENDING = "PEND";
+	public static final String BILL_MAIL = "billMail";
 	public static final String CANCEL = "C";
 	public static final String CANCEL_FAIL_MAIL = "cancellationFailMail";
 	public static final String CANCEL_FAILED = "Room Request Cancellation Failed";
@@ -113,7 +114,7 @@ public interface Constants {
 	public static final String TOUR_PKG_CRT_SXS="Tour Package Create Success";
 	public static final String TRUE = "true";
 	public static final String TYPE = "Type";
-	public static final String UNDER_SCORE="_";
+	public static final String UNDERSCORE="_";
 	public static final String USER_INVALID = "User is Invalid.";
 	public static final String USERNAME_TAKEN = "Username is already taken";
 	public static final String VACANT="vacant";

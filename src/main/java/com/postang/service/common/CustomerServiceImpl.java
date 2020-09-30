@@ -3,7 +3,9 @@
  */
 package com.postang.service.common;
 
+import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
+import java.util.DoubleSummaryStatistics;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -13,8 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import com.postang.constants.Constants;
 import com.postang.model.AmenityRequest;
-import com.postang.model.Constants;
 import com.postang.model.Customer;
 import com.postang.model.Employee;
 import com.postang.model.PendingBillRequest;
@@ -30,6 +32,7 @@ import com.postang.repo.RoomRequestRepository;
 import com.postang.repo.TourPackageRequestRepository;
 import com.postang.repo.UserRepository;
 import com.postang.util.MailUtil;
+import com.postang.util.PDFUtil;
 import com.postang.util.Util;
 
 import lombok.extern.log4j.Log4j2;
@@ -67,6 +70,8 @@ public class CustomerServiceImpl implements CustomerService,Constants {
 
 	MailUtil mailUtil = new MailUtil();
 	
+	PDFUtil pdfUtil = new PDFUtil();
+
 	@Override
 	public AmenityRequest requestAmenity(AmenityRequest amenityRequest) {
 		return amenityRequestRepository.save(amenityRequest);
@@ -218,6 +223,12 @@ public class CustomerServiceImpl implements CustomerService,Constants {
 		List<RoomRequest> roomRequestList=roomReqRepo.findByUserId((int) user.getUserId());
 		List<RoomRequest> billPendingList = roomRequestList.stream().filter(p -> BILL_PENDING.equals(p.getBillStatus())).collect(Collectors.toList());
 		pendingBillRequests.addAll(this.convertToBillPendingRequest(billPendingList));
+		PendingBillRequest totalBillPendingRequest = new PendingBillRequest();
+		DoubleSummaryStatistics stats = pendingBillRequests.stream()
+				.collect(Collectors.summarizingDouble(PendingBillRequest::getBillAmount));
+		totalBillPendingRequest.setBillAmount(stats.getSum());
+		totalBillPendingRequest.setTypeOfRequest(TOTAL_BILL_AMOUNT);
+		pendingBillRequests.add(totalBillPendingRequest);
 		return pendingBillRequests;
 	}
 
@@ -236,8 +247,8 @@ public class CustomerServiceImpl implements CustomerService,Constants {
 		if (!CollectionUtils.isEmpty(billPendingList)) {
 			for (RoomRequest roomRequest : billPendingList) {
 				PendingBillRequest pendingBillRequest = new PendingBillRequest();
-				pendingBillRequest.setBillCode(roomRequest.getGuestName() + UNDER_SCORE + roomRequest.getRoomModel()
-						+ UNDER_SCORE + roomRequest.getRoomCategory() + UNDER_SCORE + roomRequest.getRoomType());
+				pendingBillRequest.setBillCode(roomRequest.getGuestName() + UNDERSCORE + roomRequest.getRoomModel()
+						+ UNDERSCORE + roomRequest.getRoomCategory() + UNDERSCORE + roomRequest.getRoomType());
 				pendingBillRequest.setRequestId(roomRequest.getRequestId());
 				List<Room> roomsList = roomRepo.findByRoomRequestId(roomRequest.getRequestId());
 				pendingBillRequest.setBillAmount(util.generateBillForRooms(roomsList));
@@ -251,5 +262,16 @@ public class CustomerServiceImpl implements CustomerService,Constants {
 			return new ArrayList<>();
 		}
 		return billPendingRequestList;
+	}
+
+	@Override
+	public ByteArrayInputStream generatedBillPdf(String custEmail) {
+		return pdfUtil.generatePDF(this.getPendingBillRequests(custEmail));
+	}
+
+	@Override
+	public String triggerMailBill(String custEmail) {
+		User user = userRepo.findByUserMail(custEmail);
+		return mailUtil.sendBillMail(user, pdfUtil.generatePDF(this.getPendingBillRequests(custEmail)));
 	}
 }

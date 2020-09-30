@@ -9,8 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import com.postang.constants.Constants;
 import com.postang.model.Amenity;
-import com.postang.model.Constants;
 import com.postang.model.Employee;
 import com.postang.model.Lookup;
 import com.postang.model.Room;
@@ -235,8 +235,8 @@ public class AdminServiceImpl implements AdminService, Constants {
 	}
 
 	@Override
-	public Employee getEmployeeDetails(Employee employee) {
-		return employeeRepository.findByUserName(employee.getUserName()).get(0);
+	public Employee getEmployeeDetails(String userName) {
+		return employeeRepository.findByUserName(userName).get(0);
 	}
 
 }

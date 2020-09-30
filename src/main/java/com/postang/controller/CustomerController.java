@@ -3,8 +3,8 @@
  */
 package com.postang.controller;
 
+import java.io.ByteArrayInputStream;
 import java.util.Date;
-import java.util.DoubleSummaryStatistics;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -23,8 +23,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.postang.constants.Constants;
+import com.postang.constants.RequestMappings;
 import com.postang.model.AmenityRequest;
-import com.postang.model.Constants;
 import com.postang.model.Customer;
 import com.postang.model.PendingBillRequest;
 import com.postang.model.RequestDTO;
@@ -45,7 +46,8 @@ import lombok.extern.log4j.Log4j2;
 @RestController
 @Log4j2
 @CrossOrigin
-public class CustomerController implements Constants {
+@RequestMapping(RequestMappings.BRW)
+public class CustomerController implements RequestMappings, Constants {
 
 	@Autowired
 	CustomerService customerService;
@@ -61,7 +63,7 @@ public class CustomerController implements Constants {
 	 *** Customer Operations***
 	 *************************/
 
-	@PostMapping(value = "/brw/registerCustomer")
+	@PostMapping(value = CUSTOMER_REGISTER)
 	public RequestDTO registerCustomer(@RequestBody RequestDTO requestDTO) {
 		Customer customer = requestDTO.getCustomer();
 		log.info("registerCustomer starts..." + customer);
@@ -84,7 +86,7 @@ public class CustomerController implements Constants {
 		return requestDTO;
 	}
 
-	@RequestMapping(value = "/brw/getCustomerDetails", method = { RequestMethod.GET, RequestMethod.POST })
+	@PostMapping(value = CUSTOMER_DETAILS)
 	public RequestDTO getCustomerDetails(@RequestBody RequestDTO requestDTO) {
 		Customer customer = requestDTO.getCustomer();
 		log.info("getCustomerDetails starts...");
@@ -103,44 +105,31 @@ public class CustomerController implements Constants {
 	 *** Bill Operations***
 	 *********************/
 
-	@PostMapping(value = "/brw/getPendingBillRequests")
+	@PostMapping(value = PENDING_BILL_VIEW)
 	public RequestDTO getPendingBillRequests(@RequestBody RequestDTO requestDTO) {
 		String custEmail = requestDTO.getCustomer().getCustEmail();
 		log.info("getPendingBillRequests starts..." + custEmail);
 		try {
 			List<PendingBillRequest> pendingBillRequests = customerService.getPendingBillRequests(custEmail);
-			PendingBillRequest totalBillPendingRequest = new PendingBillRequest();
-			DoubleSummaryStatistics stats = pendingBillRequests.stream()
-					.collect(Collectors.summarizingDouble(PendingBillRequest::getBillAmount));
-			totalBillPendingRequest.setBillAmount(stats.getSum());
-			totalBillPendingRequest.setTypeOfRequest(TOTAL_BILL_AMOUNT);
-			pendingBillRequests.add(totalBillPendingRequest);
 			requestDTO.setPendingBillRequests(pendingBillRequests);
 		} catch (Exception e) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
 			log.error("Exception occured in getPendingBillRequests: " + e);
 			e.printStackTrace();
-
 		}
 		return requestDTO;
 	}
 
-	@PostMapping(value = "/brw/generatePDF", produces = MediaType.APPLICATION_PDF_VALUE)
+	@PostMapping(value = PENDING_BILL_PDF, produces = MediaType.APPLICATION_PDF_VALUE)
 	public ResponseEntity<InputStreamResource> generatePDF(@RequestBody RequestDTO requestDTO) {
 		String custEmail = requestDTO.getCustomer().getCustEmail();
 		log.info("generatePDF starts..." + custEmail);
 		HttpHeaders headers = new HttpHeaders();
 		headers.add(CONTENT_DISPOSITION, "attachment;filename=bill.pdf");
 		try {
-			List<PendingBillRequest> pendingBillRequests = customerService.getPendingBillRequests(custEmail);
-			PendingBillRequest totalBillPendingRequest = new PendingBillRequest();
-			DoubleSummaryStatistics stats = pendingBillRequests.stream()
-					.collect(Collectors.summarizingDouble(PendingBillRequest::getBillAmount));
-			totalBillPendingRequest.setBillAmount(stats.getSum());
-			totalBillPendingRequest.setTypeOfRequest(TOTAL_BILL_AMOUNT);
-			pendingBillRequests.add(totalBillPendingRequest);
+			ByteArrayInputStream billPdfStream = customerService.generatedBillPdf(custEmail);
 			return ResponseEntity.ok().headers(headers).contentType(MediaType.APPLICATION_PDF)
-					.body(new InputStreamResource(pdfUtil.generatePDF(pendingBillRequests)));
+					.body(new InputStreamResource(billPdfStream));
 		} catch (Exception e) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
 			log.error("Exception occured in generatePDF: " + e);
@@ -151,11 +140,25 @@ public class CustomerController implements Constants {
 				.body(new InputStreamResource(null));
 	}
 
+	@PostMapping(value = EMPLOYEE_MAIL_BILL, produces = MediaType.APPLICATION_PDF_VALUE)
+	public RequestDTO mailBill(@RequestBody RequestDTO requestDTO) {
+		String custEmail = requestDTO.getCustomer().getCustEmail();
+		log.info("mailBill starts..." + custEmail);
+		try {
+			requestDTO.setActionStatus(customerService.triggerMailBill(custEmail));
+		} catch (Exception e) {
+			requestDTO.setActionStatus(EXCEPTION_OCCURED);
+			log.error("Exception occured in mailBill: " + e);
+			e.printStackTrace();
+		}
+		return requestDTO;
+	}
+
 	/*****************************
 	 *** Room Request Operations***
 	 *****************************/
 
-	@RequestMapping(value = "/brw/requestRoom", method = { RequestMethod.GET, RequestMethod.POST })
+	@RequestMapping(value = ROOM_REQUEST_CREATE, method = { RequestMethod.GET, RequestMethod.POST })
 	public RequestDTO requestRoom(@RequestBody RequestDTO requestDTO) {
 		RoomRequest roomRequest = requestDTO.getRoomRequest();
 		log.info("requestRoom starts..." + roomRequest.getUserId());
@@ -169,7 +172,7 @@ public class CustomerController implements Constants {
 		return requestDTO;
 	}
 
-	@RequestMapping(value = "/brw/cancelRequest", method = { RequestMethod.GET, RequestMethod.POST })
+	@RequestMapping(value = CUSTOMER_CANCEL_ROOM, method = { RequestMethod.GET, RequestMethod.POST })
 	public RequestDTO cancelRequest(@RequestBody RequestDTO requestDTO) {
 		int roomRequestId = requestDTO.getRoomRequestId();
 		log.info("cancelRequest starts...");
@@ -183,7 +186,7 @@ public class CustomerController implements Constants {
 		return requestDTO;
 	}
 
-	@RequestMapping(value = "/brw/getMyRequestsList", method = { RequestMethod.GET, RequestMethod.POST })
+	@RequestMapping(value = CUSTOMER_GET_ALL_REQUESTS, method = { RequestMethod.GET, RequestMethod.POST })
 	public RequestDTO getMyRequestsList(@RequestBody RequestDTO requestDTO) {
 		Customer customer = requestDTO.getCustomer();
 		List<RoomRequest> roomReqDetails = null;
@@ -203,7 +206,7 @@ public class CustomerController implements Constants {
 	 *** Tour Package Operations***
 	 *****************************/
 
-	@PostMapping(value = "/brw/bookTourPackage")
+	@PostMapping(value = TOUR_PKG_BOOK)
 	public RequestDTO bookTourPackage(@RequestBody RequestDTO requestDTO) {
 		TourPackageRequest tourPackageRequest = requestDTO.getTourPackageRequest();
 		log.info("bookTourPackage starts..." + tourPackageRequest.getUserId());
@@ -225,7 +228,7 @@ public class CustomerController implements Constants {
 	 *** Reward Points Operations***
 	 ******************************/
 
-	@PostMapping(value = "/brw/viewRewardPoints")
+	@PostMapping(value = CUSTOMER_VIEW_RWD_POINTS)
 	public RequestDTO viewRewardPoints(@RequestBody RequestDTO requestDTO) {
 		long userId = requestDTO.getUserId();
 		log.info("viewRewardPoints starts..." + userId);
@@ -268,7 +271,7 @@ public class CustomerController implements Constants {
 	 *** Amenity Operations***
 	 ************************/
 
-	@PostMapping(value = "/brw/requestAmenity")
+	@PostMapping(value = CUSTOMER_AMENITY_REQUEST)
 	public RequestDTO requestAmenity(@RequestBody RequestDTO requestDTO) {
 		AmenityRequest amenityRequest = requestDTO.getAmenityRequest();
 		log.info("requestAmenity starts..." + amenityRequest);

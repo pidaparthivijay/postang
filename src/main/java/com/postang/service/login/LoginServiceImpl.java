@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.postang.model.Constants;
+import com.postang.constants.Constants;
 import com.postang.model.OneTimePassword;
 import com.postang.model.User;
 import com.postang.repo.OneTimePassRepo;

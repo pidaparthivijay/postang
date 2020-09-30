@@ -1,5 +1,6 @@
 package com.postang.util;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.Properties;
@@ -11,9 +12,12 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import org.apache.commons.compress.utils.IOUtils;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.util.StringUtils;
 
-import com.postang.model.Constants;
+import com.postang.constants.Constants;
 import com.postang.model.Customer;
 import com.postang.model.Employee;
 import com.postang.model.User;
@@ -25,10 +29,11 @@ import lombok.extern.log4j.Log4j2;
  *
  */
 @Log4j2
-public class MailUtil implements Constants{
+public class MailUtil implements Constants {
 	Properties mailProperties = new Properties();
 	ClassLoader loader = Thread.currentThread().getContextClassLoader();
 	InputStream stream = loader.getResourceAsStream("mailApp.properties");
+	PDFUtil pdfUtil = new PDFUtil();
 
 	public String sendOTPMail(User user, String oneTimePassword) {
 		/*
@@ -254,6 +259,47 @@ public class MailUtil implements Constants{
 			mex.printStackTrace();
 		}
 		return SINGUP_MAIL_SUCCESS;
+	}
+
+	public String sendBillMail(User user, ByteArrayInputStream byteArrayInputStream) {
+		try {
+			mailProperties.load(stream);
+			String mailAddress = mailProperties.getProperty(FRM_ADR);
+			String mailPass = mailProperties.getProperty(FRM_PWD);
+			Session session = Session.getInstance(mailProperties, new javax.mail.Authenticator() {
+				protected PasswordAuthentication getPasswordAuthentication() {
+					return new PasswordAuthentication(mailAddress, mailPass);
+				}
+			});
+
+			MimeMessage msg = new MimeMessage(session);
+			if (user != null) {
+				{
+					if (!StringUtils.isEmpty(user.getUserMail())) {
+						InternetAddress[] address = InternetAddress.parse(user.getUserMail(), true);
+						// Setting the recepients from the address variable
+						msg.setRecipients(Message.RecipientType.TO, address);
+					}
+				}
+			} else {
+				return INVALID_MAIL;
+			}
+			msg.setSubject("Bill Generated: " + user.getUserName());
+			msg.setSentDate(new Date());
+			MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(msg, true);
+			mimeMessageHelper.addAttachment("Bill.pdf",
+					new ByteArrayResource(IOUtils.toByteArray(byteArrayInputStream)));
+			String mailText = mailProperties.getProperty(BILL_MAIL);
+			mailText = mailText.replace(MAIL_USERNAME, user.getUserName());
+			msg.setText(mailText);
+			msg.setHeader("XPriority", "1");
+			Transport.send(msg);
+			log.info(MAIL_SUCCESS);
+		} catch (Exception mex) {
+			log.info("Unable to send an email " + mex);
+			mex.printStackTrace();
+		}
+		return MAIL_SUCCESS;
 	}
 
 }

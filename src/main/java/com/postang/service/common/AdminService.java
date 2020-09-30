@@ -69,6 +69,6 @@ public interface AdminService {
 
 	Iterable<TourPackage> viewAllTourPackages();
 
-	Employee getEmployeeDetails(Employee employee);
+	Employee getEmployeeDetails(String userName);
 
 }

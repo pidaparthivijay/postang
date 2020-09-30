@@ -4,10 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.postang.model.Constants;
+import com.postang.constants.Constants;
+import com.postang.constants.RequestMappings;
 import com.postang.model.Customer;
 import com.postang.model.Employee;
 import com.postang.model.OneTimePassword;
@@ -27,7 +29,8 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 @RestController
 @CrossOrigin
-public class LoginController implements Constants{
+@RequestMapping(value = RequestMappings.BRW)
+public class LoginController implements RequestMappings, Constants {
 
 	Util util = new Util();
 
@@ -40,7 +43,7 @@ public class LoginController implements Constants{
 	@Autowired
 	CustomerService customerService;
 
-	@PostMapping(value = "/brw/login")
+	@PostMapping(value = LOGIN)
 	public String loginMethod(@RequestBody User user) {
 		User loginUser = null;
 		log.info("loginMethod starts: ");
@@ -74,7 +77,7 @@ public class LoginController implements Constants{
 		return null;
 	}
 
-	@PostMapping(value = "/brw/requestOTP")
+	@PostMapping(value = OTP_REQUEST)
 	public String restorePwd(@RequestBody User user) {
 		log.info("restorePwd starts: ");
 		try {
@@ -89,7 +92,7 @@ public class LoginController implements Constants{
 		return null;
 	}
 
-	@PostMapping(value = "/brw/submitOtp")
+	@PostMapping(value = OTP_SUBMIT)
 	public String submitOtp(@RequestBody OneTimePassword oneTimePassword) {
 		try {
 			String otpStatus = loginService.validateOtp(oneTimePassword);
@@ -103,12 +106,10 @@ public class LoginController implements Constants{
 					customer.setStatusMessage(VALID_OTP);
 					return new ObjectMapper().writeValueAsString(customer);
 				} else if (EMPLOYEE.equals(user.getUserType())) {
-					/*
-					 * Customer customer=commonService.getCustomerByUserName(user.getUserName());
-					 * customer.setActionStatus(true);
-					 * customer.setStatusMessage(VALID_OTP); return new
-					 * ObjectMapper().writeValueAsString(customer);
-					 */
+					Employee employee = adminService.getEmployeeDetails(user.getUserName());
+					employee.setActionStatus(true);
+					employee.setStatusMessage(VALID_OTP);
+					return new ObjectMapper().writeValueAsString(employee);
 				}
 			} else
 				return new ObjectMapper().writeValueAsString(otpStatus);
@@ -119,12 +120,12 @@ public class LoginController implements Constants{
 		return null;
 	}
 
-	@PostMapping(value = "/brw/viewEmployeeDetails")
+	@PostMapping(value = EMPLOYEE_VIEW_DETAILS)
 	public RequestDTO viewEmployeeDetails(@RequestBody RequestDTO requestDTO) {
 		Employee employee = requestDTO.getEmployee();
 		log.info("viewEmployeeDetails starts...");
 		try {
-			Employee emp = adminService.getEmployeeDetails(employee);
+			Employee emp = adminService.getEmployeeDetails(employee.getUserName());
 			requestDTO.setEmployee(emp);
 		} catch (Exception ex) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
@@ -134,7 +135,7 @@ public class LoginController implements Constants{
 		return requestDTO;
 	}
 
-	@PostMapping(value = "/brw/udpateEmployee")
+	@PostMapping(value = EMPLOYEE_UPDATE)
 	public RequestDTO udpateEmployee(@RequestBody RequestDTO requestDTO) {
 		Employee employee = requestDTO.getEmployee();
 		log.info("udpateEmployee starts...");
@@ -150,7 +151,7 @@ public class LoginController implements Constants{
 		return requestDTO;
 	}
 
-	@PostMapping(value = "/brw/resetPwd")
+	@PostMapping(value = RESET_PWD)
 	public String resetPwd(@RequestBody User user) {
 		String statusMsg = "";
 		try {
