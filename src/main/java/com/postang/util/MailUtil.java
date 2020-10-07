@@ -1,25 +1,29 @@
 package com.postang.util;
 
-import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.Date;
+import java.util.List;
 import java.util.Properties;
 
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
 import javax.mail.Message;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+import javax.mail.util.ByteArrayDataSource;
 
-import org.apache.commons.compress.utils.IOUtils;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.util.StringUtils;
 
 import com.postang.constants.Constants;
 import com.postang.model.Customer;
 import com.postang.model.Employee;
+import com.postang.model.PendingBillRequest;
 import com.postang.model.User;
 
 import lombok.extern.log4j.Log4j2;
@@ -36,13 +40,8 @@ public class MailUtil implements Constants {
 	PDFUtil pdfUtil = new PDFUtil();
 
 	public String sendOTPMail(User user, String oneTimePassword) {
-		/*
-		 * Properties mailProperties = new Properties(); ClassLoader loader =
-		 * Thread.currentThread().getContextClassLoader();
-		 */ try {
-			/*
-			 * InputStream stream = loader.getResourceAsStream("mailApp.properties");
-			 */ mailProperties.load(stream);
+		try {
+			mailProperties.load(stream);
 			String mailAddress = mailProperties.getProperty(FRM_ADR);
 			String mailPass = mailProperties.getProperty(FRM_PWD);
 			// Establishing a session with required user details
@@ -54,20 +53,17 @@ public class MailUtil implements Constants {
 			// Creating a Message object to set the email content
 			MimeMessage msg = new MimeMessage(session);
 			// Storing the comma seperated values to email addresses
-			// String to = "vijayaditya6894@gmail.com";
 			/*
 			 * Parsing the String with defualt delimiter as a comma by marking the boolean
 			 * as true and storing the email addresses in an array of InternetAddress
 			 * objects
 			 */
 			if (user != null) {
-				{
 					if (!StringUtils.isEmpty(user.getUserMail())) {
 						InternetAddress[] address = InternetAddress.parse(user.getUserMail(), true);
 						// Setting the recepients from the address variable
 						msg.setRecipients(Message.RecipientType.TO, address);
 					}
-				}
 			} else {
 				return INVALID_MAIL;
 			}
@@ -261,7 +257,7 @@ public class MailUtil implements Constants {
 		return SINGUP_MAIL_SUCCESS;
 	}
 
-	public String sendBillMail(User user, ByteArrayInputStream byteArrayInputStream) {
+	public String sendBillMail(User user, List<PendingBillRequest> pendingBillRequests) {
 		try {
 			mailProperties.load(stream);
 			String mailAddress = mailProperties.getProperty(FRM_ADR);
@@ -272,28 +268,45 @@ public class MailUtil implements Constants {
 				}
 			});
 
-			MimeMessage msg = new MimeMessage(session);
+			MimeMessage mimeMessage = new MimeMessage(session);
 			if (user != null) {
-				{
-					if (!StringUtils.isEmpty(user.getUserMail())) {
-						InternetAddress[] address = InternetAddress.parse(user.getUserMail(), true);
-						// Setting the recepients from the address variable
-						msg.setRecipients(Message.RecipientType.TO, address);
-					}
+
+				if (!StringUtils.isEmpty(user.getUserMail())) {
+					InternetAddress[] address = InternetAddress.parse(user.getUserMail(), true);
+					mimeMessage.setRecipients(Message.RecipientType.TO, address);
 				}
+
 			} else {
 				return INVALID_MAIL;
 			}
-			msg.setSubject("Bill Generated: " + user.getUserName());
-			msg.setSentDate(new Date());
-			MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(msg, true);
-			mimeMessageHelper.addAttachment("Bill.pdf",
-					new ByteArrayResource(IOUtils.toByteArray(byteArrayInputStream)));
+			mimeMessage.setSubject("Bill Generated: " + user.getUserName());
+			mimeMessage.setSentDate(new Date());
+			ByteArrayOutputStream outputStream = null;
+
+			// construct the text body part
+			MimeBodyPart textBodyPart = new MimeBodyPart();
 			String mailText = mailProperties.getProperty(BILL_MAIL);
 			mailText = mailText.replace(MAIL_USERNAME, user.getUserName());
-			msg.setText(mailText);
-			msg.setHeader("XPriority", "1");
-			Transport.send(msg);
+			textBodyPart.setText(mailText);
+
+			outputStream = new ByteArrayOutputStream();
+			pdfUtil.writePdf(outputStream, pendingBillRequests, user.getName());
+			byte[] bytes = outputStream.toByteArray();
+
+			// construct the pdf body part
+			DataSource dataSource = new ByteArrayDataSource(bytes, "application/pdf");
+			MimeBodyPart pdfBodyPart = new MimeBodyPart();
+			pdfBodyPart.setDataHandler(new DataHandler(dataSource));
+			pdfBodyPart.setFileName(user.getUserName() + UNDERSCORE + new Date().toString() + PDF_EXTENSION);
+
+			// construct the mime multi part
+			MimeMultipart mimeMultipart = new MimeMultipart();
+			mimeMultipart.addBodyPart(textBodyPart);
+			mimeMultipart.addBodyPart(pdfBodyPart);
+			// construct the mime message
+			mimeMessage.setContent(mimeMultipart);
+			mimeMessage.setHeader("XPriority", "1");
+			Transport.send(mimeMessage);
 			log.info(MAIL_SUCCESS);
 		} catch (Exception mex) {
 			log.info("Unable to send an email " + mex);

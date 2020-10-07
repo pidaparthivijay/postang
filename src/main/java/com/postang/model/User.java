@@ -7,6 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import lombok.Data;
 
@@ -32,6 +33,8 @@ public class User implements Serializable{
 	private String name;
 	private String userMob;
 	private String userMail;
+	@Transient
+	private String statusMessage;
 
 
 }

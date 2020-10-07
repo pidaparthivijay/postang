@@ -140,7 +140,7 @@ public class CustomerController implements RequestMappings, Constants {
 				.body(new InputStreamResource(null));
 	}
 
-	@PostMapping(value = EMPLOYEE_MAIL_BILL, produces = MediaType.APPLICATION_PDF_VALUE)
+	@PostMapping(value = EMPLOYEE_MAIL_BILL)
 	public RequestDTO mailBill(@RequestBody RequestDTO requestDTO) {
 		String custEmail = requestDTO.getCustomer().getCustEmail();
 		log.info("mailBill starts..." + custEmail);

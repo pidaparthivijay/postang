@@ -66,7 +66,7 @@ public class LoginController implements RequestMappings, Constants {
 					return new ObjectMapper().writeValueAsString(employee);
 				}
 			} else {
-				user.setUserType(INVALID);
+				user.setStatusMessage(INVALID);
 				return new ObjectMapper().writeValueAsString(user);
 			}
 		} catch (Exception ex) {

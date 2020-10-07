@@ -219,7 +219,7 @@ public class AdminController implements RequestMappings,Constants {
 			amenity.setDeleted(YES.equals(amenity.getDeleted()) ? NO : YES);
 			Amenity savedAmenity = adminService.saveAmenity(amenity);
 			requestDTO.setAmenity(savedAmenity);
-			return viewAllAmenities(SUCCESS);
+			return viewAllAmenities(YES.equals(savedAmenity.getDeleted()) ? DEL_SXS : UN_DEL_SXS);
 		} catch (Exception ex) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
 			log.error("Exception in toggleDeleteAmenity : " + ex.getMessage());
@@ -310,7 +310,7 @@ public class AdminController implements RequestMappings,Constants {
 			tourPackage.setDeleted(YES.equals(tourPackage.getDeleted()) ? NO : YES);
 			TourPackage savedTourPackage = adminService.saveTourPackage(tourPackage);
 			requestDTO.setTourPackage(savedTourPackage);
-			return viewAllTourPackages(SUCCESS);
+			return viewAllTourPackages(YES.equals(savedTourPackage.getDeleted()) ? DEL_SXS : UN_DEL_SXS);
 		} catch (Exception ex) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
 			log.error("Exception in toggleDeleteTourPackage : " + ex.getMessage());
@@ -324,16 +324,16 @@ public class AdminController implements RequestMappings,Constants {
 	 *********************/
 
 	@PostMapping(value = LOOKUP_EXCEL_UPLOAD)
-	public RequestDTO uploadLookupExcel(@RequestParam("lookupExcel") RequestDTO requestDTO) {
-		MultipartFile multipartFile = requestDTO.getLookupExcel();
+	public RequestDTO uploadLookupExcel(@RequestParam("lookupExcel") MultipartFile multipartFile) {
+		RequestDTO requestDTO = new RequestDTO();
 		log.info("uploadLookupExcel starts..." + multipartFile);
 		try {
 			List<Lookup> lookupList = util.generateLookupListFromExcelFile(multipartFile);
 			Iterable<Lookup> lookupIterables = adminService.saveLookups(lookupList);
 			requestDTO.setLookupList(
 					StreamSupport.stream(lookupIterables.spliterator(), false).collect(Collectors.toList()));
-			requestDTO.setActionStatus(LOOKUP_SAVE_SXS);
-			return viewLookupList(LOOKUP_SAVE_SXS);
+			requestDTO.setActionStatus(LOOKUP_EXCEL_SXS);
+			return viewLookupList(LOOKUP_EXCEL_SXS);
 		} catch (Exception e) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
 			log.error("Exception in uploadLookupExcel" + e);
@@ -351,6 +351,7 @@ public class AdminController implements RequestMappings,Constants {
 			lookup.setCreatedDate(new Date());
 			Lookup savedLookup = adminService.saveLookup(lookup);
 			requestDTO.setLookup(savedLookup);
+			requestDTO.setActionStatus(savedLookup.getLookupId() > 0 ? SUCCESS : FAILURE);
 		} catch (Exception e) {
 			log.error("Exception in createLookup" + e);
 			e.printStackTrace();
@@ -366,7 +367,7 @@ public class AdminController implements RequestMappings,Constants {
 			lookup.setUpdateDate(new Date());
 			Lookup savedLookup = adminService.saveLookup(lookup);
 			requestDTO.setLookup(savedLookup);
-			requestDTO.setActionStatus(SUCCESS);
+			requestDTO.setActionStatus(UPDATE_SXS);
 		} catch (Exception e) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
 			log.error("Exception in updateLookup" + e);
@@ -384,8 +385,7 @@ public class AdminController implements RequestMappings,Constants {
 			lookup.setUpdateDate(new Date());
 			Lookup savedLookup = adminService.saveLookup(lookup);
 			requestDTO.setLookup(savedLookup);
-			requestDTO.setActionStatus(SUCCESS);
-			return viewLookupList(SUCCESS);
+			return viewLookupList(YES.equals(savedLookup.getDeleted()) ? DEL_SXS : UN_DEL_SXS);
 		} catch (Exception e) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
 			log.error("Exception in toggleDelete" + e);

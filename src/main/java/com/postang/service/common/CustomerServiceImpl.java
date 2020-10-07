@@ -265,13 +265,14 @@ public class CustomerServiceImpl implements CustomerService,Constants {
 	}
 
 	@Override
-	public ByteArrayInputStream generatedBillPdf(String custEmail) {
-		return pdfUtil.generatePDF(this.getPendingBillRequests(custEmail));
+	public ByteArrayInputStream generatedBillPdf(String custEmail){
+		return pdfUtil.generatePdf(this.getPendingBillRequests(custEmail),
+				userRepo.findByUserMail(custEmail).getName());
 	}
 
 	@Override
 	public String triggerMailBill(String custEmail) {
 		User user = userRepo.findByUserMail(custEmail);
-		return mailUtil.sendBillMail(user, pdfUtil.generatePDF(this.getPendingBillRequests(custEmail)));
+		return mailUtil.sendBillMail(user, this.getPendingBillRequests(custEmail));
 	}
 }
