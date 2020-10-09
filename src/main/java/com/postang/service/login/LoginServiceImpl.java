@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import com.postang.constants.Constants;
 import com.postang.model.OneTimePassword;
@@ -57,9 +58,8 @@ public class LoginServiceImpl implements Constants,LoginService {
 	}
 
 	@Override
-	public String restoreAccount(User user) {
+	public String requestOTPMail(User user) {
 		OneTimePassword oneTimePassword= util.generateOTP(user);		
-		//String toList=customerService.getCustomerByUserName(user.getUserName()).getCustEmail();
 		String mailStatus=mailUtil.sendOTPMail(user, oneTimePassword.getOtpValue());
 		oneTimePassRepo.save(oneTimePassword);
 		return mailStatus;
@@ -67,38 +67,37 @@ public class LoginServiceImpl implements Constants,LoginService {
 
 	@Override
 	public String validateOtp(OneTimePassword oneTimePassword) {
+		log.info("validateOtp starts with: " + oneTimePassword);
 		List<OneTimePassword> savedOTPList = oneTimePassRepo.findByUserName(oneTimePassword.getUserName());
-		for(OneTimePassword otp:savedOTPList) {			
-			if(otp.isValid()) {
-				log.info("inside otp valid");
-				log.info(Integer.parseInt(oneTimePassword.getOtpValue()));
-				log.info(Integer.parseInt(otp.getOtpValue()));
-				if(Integer.parseInt(oneTimePassword.getOtpValue()) != Integer.parseInt(otp.getOtpValue())) {
-					log.info("inequal");
-					return INVALID_OTP;
+		if (!CollectionUtils.isEmpty(savedOTPList)) {
+			for (OneTimePassword otp : savedOTPList) {
+				if (otp.isValid()) {
+					if (Integer.parseInt(oneTimePassword.getOtpValue()) != Integer.parseInt(otp.getOtpValue())) {
+						log.info("inequal");
+						return INVALID_OTP;
+					} else if (Integer.parseInt(oneTimePassword.getOtpValue()) == Integer.parseInt(otp.getOtpValue())) {
+						log.info("Equal");
+						return VALID_OTP;
+					}
+				} else {
+					return NO_OTP_GIVEN_USERNAME;
 				}
-				else if(Integer.parseInt(oneTimePassword.getOtpValue()) == Integer.parseInt(otp.getOtpValue())) {
-					log.info("Equal");
-					return VALID_OTP;
-				}	
 			}
-			
-		}		
+		} else {
+			return NO_OTP_GIVEN_USERNAME;
+		}
 		return null;
 	}
 
 	@Override
 	public String resetPwd(User user) {
 		try {
-			User savedUser=this.getUserDetailsByUserName(user.getUserName());
-			if (savedUser != null) {
-				savedUser.setPassword(user.getPassword());
-				User newUser = userRepository.save(savedUser);
-				if (newUser != null) {
-					return PWD_RESET_SUCCESS;
-				} else {
-					return PWD_RESET_FAILURE;
-				}
+			String newPwd = user.getPassword();
+			User existingDetails = this.getUserDetailsByUserName(user.getUserName());
+			if (existingDetails != null) {
+				existingDetails.setPassword(user.getPassword());
+				User newDetails = userRepository.save(existingDetails);
+				return newPwd.equalsIgnoreCase(newDetails.getPassword()) ? PWD_RESET_SUCCESS : PWD_RESET_FAILURE;
 			} else {
 				log.info("There is no user with given userName: "+user.getUserName());
 				return NO_USER_WITH_GIVEN_NAME;

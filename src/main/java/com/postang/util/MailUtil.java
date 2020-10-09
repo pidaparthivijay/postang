@@ -36,7 +36,7 @@ import lombok.extern.log4j.Log4j2;
 public class MailUtil implements Constants {
 	Properties mailProperties = new Properties();
 	ClassLoader loader = Thread.currentThread().getContextClassLoader();
-	InputStream stream = loader.getResourceAsStream("mailApp.properties");
+	InputStream stream = loader.getResourceAsStream(MAILAPP_PROPERTIES);
 	PDFUtil pdfUtil = new PDFUtil();
 
 	public String sendOTPMail(User user, String oneTimePassword) {
@@ -77,7 +77,7 @@ public class MailUtil implements Constants {
 			Transport.send(msg);
 			log.info(MAIL_SUCCESS);
 		} catch (Exception mex) {
-			log.info("Unable to send an email " + mex);
+			log.info("Exception Occurred in sendOTPMail:" + mex);
 			mex.printStackTrace();
 		}
 		return MAIL_SUCCESS;
@@ -112,7 +112,7 @@ public class MailUtil implements Constants {
 			Transport.send(msg);
 			log.info(SINGUP_MAIL_SUCCESS);
 		} catch (Exception mex) {
-			log.info("Unable to send an email " + mex);
+			log.info("Exception Occurred in sendSignUpMail:" + mex);
 			mex.printStackTrace();
 		}
 		return SINGUP_MAIL_SUCCESS;
@@ -145,7 +145,7 @@ public class MailUtil implements Constants {
 			Transport.send(msg);
 			log.info(ALLOCATION_MAIL_SUCCESS);
 		} catch (Exception mex) {
-			log.info("Unable to send an email " + mex);
+			log.info("Exception Occurred in sendAllocationMail:" + mex);
 			mex.printStackTrace();
 		}
 		return ALLOCATION_MAIL_SUCCESS;
@@ -180,7 +180,7 @@ public class MailUtil implements Constants {
 			Transport.send(msg);
 			log.info(CANCEL_SUCCESS_MAIL_SUCCESS);
 		} catch (Exception mex) {
-			log.info("Unable to send an email " + mex);
+			log.info("Exception Occurred in sendCancellationMail:" + mex);
 			mex.printStackTrace();
 		}
 		return CANCEL_SUCCESS_MAIL_SUCCESS;
@@ -215,7 +215,7 @@ public class MailUtil implements Constants {
 			Transport.send(msg);
 			log.info(CANCEL_FAILURE_MAIL_SUCCESS);
 		} catch (Exception mex) {
-			log.info("Unable to send an email " + mex);
+			log.info("Exception Occurred in sendCancellationFailMail:" + mex);
 			mex.printStackTrace();
 		}
 		return CANCEL_FAILURE_MAIL_SUCCESS;
@@ -251,7 +251,7 @@ public class MailUtil implements Constants {
 			Transport.send(msg);
 			log.info(SINGUP_MAIL_SUCCESS);
 		} catch (Exception mex) {
-			log.info("Unable to send an email " + mex);
+			log.info("Exception Occurred in sendSignUpMailForEmployee:" + mex);
 			mex.printStackTrace();
 		}
 		return SINGUP_MAIL_SUCCESS;
@@ -309,7 +309,7 @@ public class MailUtil implements Constants {
 			Transport.send(mimeMessage);
 			log.info(MAIL_SUCCESS);
 		} catch (Exception mex) {
-			log.info("Unable to send an email " + mex);
+			log.info("Exception Occurred in sendBillMail:" + mex);
 			mex.printStackTrace();
 		}
 		return MAIL_SUCCESS;

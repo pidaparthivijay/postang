@@ -75,9 +75,13 @@ public class CustomerController implements RequestMappings, Constants {
 				customer.setStatusMessage("");
 				String mailStatus = mailUtil.sendSignUpMail(customer);
 				log.info(mailStatus);
+
+			} else {
+				requestDTO.setStatusMessage(customer.getStatusMessage());
 			}
-			requestDTO.setCustomer(customer);
 			requestDTO.setActionStatus(customer.getCustId() > 0 ? CUST_REG_SXS : CUST_REG_FAIL);
+			requestDTO.setCustomer(customer);
+
 			log.info("registerCustomer ends..." + customer.getCustId());
 		} catch (Exception ex) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
@@ -111,6 +115,9 @@ public class CustomerController implements RequestMappings, Constants {
 		log.info("getPendingBillRequests starts..." + custEmail);
 		try {
 			List<PendingBillRequest> pendingBillRequests = customerService.getPendingBillRequests(custEmail);
+			if (CollectionUtils.isEmpty(pendingBillRequests)) {
+				requestDTO.setActionStatus(INVALID_MAIL);
+			}
 			requestDTO.setPendingBillRequests(pendingBillRequests);
 		} catch (Exception e) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
@@ -126,18 +133,26 @@ public class CustomerController implements RequestMappings, Constants {
 		log.info("generatePDF starts..." + custEmail);
 		HttpHeaders headers = new HttpHeaders();
 		headers.add(CONTENT_DISPOSITION, "attachment;filename=bill.pdf");
+		InputStreamResource inputStreamResource = new InputStreamResource(
+				new ByteArrayInputStream(INVALID_MAIL.getBytes()));
 		try {
 			ByteArrayInputStream billPdfStream = customerService.generatedBillPdf(custEmail);
+			if (billPdfStream != null) {
 			return ResponseEntity.ok().headers(headers).contentType(MediaType.APPLICATION_PDF)
 					.body(new InputStreamResource(billPdfStream));
+			} else {
+				return ResponseEntity.ok().headers(headers).contentType(MediaType.APPLICATION_PDF)
+						.body(inputStreamResource);
+			}
 		} catch (Exception e) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
 			log.error("Exception occured in generatePDF: " + e);
 			e.printStackTrace();
 
 		}
+		inputStreamResource = new InputStreamResource(new ByteArrayInputStream(EXCEPTION_OCCURED.getBytes()));
 		return ResponseEntity.ok().headers(headers).contentType(MediaType.APPLICATION_PDF)
-				.body(new InputStreamResource(null));
+				.body(inputStreamResource);
 	}
 
 	@PostMapping(value = EMPLOYEE_MAIL_BILL)

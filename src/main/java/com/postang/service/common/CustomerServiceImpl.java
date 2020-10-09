@@ -220,16 +220,25 @@ public class CustomerServiceImpl implements CustomerService,Constants {
 	public List<PendingBillRequest> getPendingBillRequests(String custEmail) {
 		List<PendingBillRequest> pendingBillRequests=new ArrayList<>();
 		User user= userRepo.findByUserMail(custEmail);
-		List<RoomRequest> roomRequestList=roomReqRepo.findByUserId((int) user.getUserId());
-		List<RoomRequest> billPendingList = roomRequestList.stream().filter(p -> BILL_PENDING.equals(p.getBillStatus())).collect(Collectors.toList());
-		pendingBillRequests.addAll(this.convertToBillPendingRequest(billPendingList));
-		PendingBillRequest totalBillPendingRequest = new PendingBillRequest();
-		DoubleSummaryStatistics stats = pendingBillRequests.stream()
-				.collect(Collectors.summarizingDouble(PendingBillRequest::getBillAmount));
-		totalBillPendingRequest.setBillAmount(stats.getSum());
-		totalBillPendingRequest.setTypeOfRequest(TOTAL_BILL_AMOUNT);
-		pendingBillRequests.add(totalBillPendingRequest);
-		return pendingBillRequests;
+		if (user != null) {
+			List<RoomRequest> roomRequestList = roomReqRepo.findByUserId((int) user.getUserId());
+			List<RoomRequest> billPendingList = roomRequestList.stream()
+					.filter(p -> BILL_PENDING.equals(p.getBillStatus())).collect(Collectors.toList());
+			PendingBillRequest totalBillPendingRequest = new PendingBillRequest();
+			if (!CollectionUtils.isEmpty(billPendingList)) {
+				pendingBillRequests.addAll(this.convertToBillPendingRequest(billPendingList));
+				DoubleSummaryStatistics stats = pendingBillRequests.stream()
+						.collect(Collectors.summarizingDouble(PendingBillRequest::getBillAmount));
+				totalBillPendingRequest.setBillAmount(stats.getSum());
+				totalBillPendingRequest.setTypeOfRequest(TOTAL_BILL_AMOUNT);
+			} else {
+				totalBillPendingRequest.setBillCode(NO_PENDING_BILLS);
+			}
+			pendingBillRequests.add(totalBillPendingRequest);
+			return pendingBillRequests;
+		}
+		return new ArrayList<>();
+
 	}
 
 	@Override
@@ -266,8 +275,13 @@ public class CustomerServiceImpl implements CustomerService,Constants {
 
 	@Override
 	public ByteArrayInputStream generatedBillPdf(String custEmail){
-		return pdfUtil.generatePdf(this.getPendingBillRequests(custEmail),
-				userRepo.findByUserMail(custEmail).getName());
+		User user = userRepo.findByUserMail(custEmail);
+		if (user != null) {
+			return pdfUtil.generatePdf(this.getPendingBillRequests(custEmail),
+					userRepo.findByUserMail(custEmail).getName());
+		} else {
+			return null;
+		}
 	}
 
 	@Override

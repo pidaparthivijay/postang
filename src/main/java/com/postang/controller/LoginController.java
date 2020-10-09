@@ -78,24 +78,26 @@ public class LoginController implements RequestMappings, Constants {
 	}
 
 	@PostMapping(value = OTP_REQUEST)
-	public String restorePwd(@RequestBody User user) {
-		log.info("restorePwd starts: ");
+	public String requestOTP(@RequestBody User user) {
+		log.info("requestOTP starts: ");
 		try {
-			String statusMsg = loginService.restoreAccount(user);
+			String statusMsg = loginService.requestOTPMail(user);
 			if (statusMsg.equals(MAIL_SUCCESS)) {
 				return TRUE;
 			}
 		} catch (Exception ex) {
 			log.error("Exception occured in restorePwd: " + ex);
 		}
-		log.info("restorePwd ends: ");
+		log.info("requestOTP ends: ");
 		return null;
 	}
 
 	@PostMapping(value = OTP_SUBMIT)
 	public String submitOtp(@RequestBody OneTimePassword oneTimePassword) {
 		try {
+			log.info("submitOtp starts: ");
 			String otpStatus = loginService.validateOtp(oneTimePassword);
+			log.info("otpStatus: " + otpStatus);
 			if (VALID_OTP.equalsIgnoreCase(otpStatus)) {
 				User user = new User();
 				user.setUserName(oneTimePassword.getUserName());
@@ -152,14 +154,16 @@ public class LoginController implements RequestMappings, Constants {
 	}
 
 	@PostMapping(value = RESET_PWD)
-	public String resetPwd(@RequestBody User user) {
+	public RequestDTO resetPwd(@RequestBody User user) {
+		RequestDTO requestDTO = new RequestDTO();
 		String statusMsg = "";
 		try {
 			statusMsg = loginService.resetPwd(user);
+			requestDTO.setActionStatus(statusMsg);
 		} catch (Exception e) {
 			log.error("Exception occured in resetPwd: " + e);
 			e.printStackTrace();
 		}
-		return statusMsg;
+		return requestDTO;
 	}
 }

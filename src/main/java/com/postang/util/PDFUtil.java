@@ -28,7 +28,7 @@ import com.postang.model.PendingBillRequest;
 public class PDFUtil implements Constants {
 	Properties mailProperties = new Properties();
 	ClassLoader loader = Thread.currentThread().getContextClassLoader();
-	InputStream stream = loader.getResourceAsStream("mailApp.properties");
+	InputStream stream = loader.getResourceAsStream(MAILAPP_PROPERTIES);
 	private static final Logger log = LoggerFactory.getLogger(PDFUtil.class);
 
 	public ByteArrayInputStream generatePdf(List<PendingBillRequest> billRequestList, String custName) {

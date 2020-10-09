@@ -202,7 +202,8 @@ public class AdminController implements RequestMappings,Constants {
 		try {
 			amenity = adminService.saveAmenity(amenity);
 			requestDTO.setAmenity(amenity);
-			return viewAllAmenities(SUCCESS);
+			return viewAllAmenities(
+					(amenity != null && amenity.getAmenityId() > 0) ? AMNT_UPDATE_SXS : AMNT_UPDATE_FAIL);
 		} catch (Exception ex) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
 			log.error("Exception in updatePriceAmenity : " + ex.getMessage());

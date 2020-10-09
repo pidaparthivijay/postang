@@ -11,7 +11,7 @@ public interface LoginService {
 
 	public User getUserDetailsByUserName(String userName);
 
-	public String restoreAccount(User user);
+	public String requestOTPMail(User user);
 
 	public String validateOtp(OneTimePassword oneTimePassword);
 
