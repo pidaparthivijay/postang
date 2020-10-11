@@ -15,13 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.postang.constants.Constants;
-import com.postang.model.Customer;
-import com.postang.model.MailDTO;
 import com.postang.model.Room;
-import com.postang.model.RoomRequest;
 import com.postang.model.User;
 import com.postang.repo.RoomRepository;
-import com.postang.repo.RoomRequestRepository;
 import com.postang.repo.UserRepository;
 import com.postang.util.MailUtil;
 
@@ -36,42 +32,13 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class RoomServiceImpl implements RoomService, Constants {
 
-	@Autowired
-	RoomRequestRepository roomReqRepo;
+	MailUtil mailUtil = new MailUtil();
 
 	@Autowired
 	RoomRepository roomRepo;
 
 	@Autowired
 	UserRepository userRepo;
-
-	MailUtil mailUtil = new MailUtil();
-
-	@Override
-	public RoomRequest getRoomRequestByRequestId(int requestId) {
-		return roomReqRepo.findByRequestId(requestId);
-	}
-
-	@Override
-	public Room getRoomByRoomNumber(int roomNumber) {
-		return roomRepo.findByRoomNumber(roomNumber);
-	}
-
-	@Override
-	public RoomRequest saveRoomRequest(RoomRequest roomReq) {
-		return roomReqRepo.save(roomReq);
-
-	}
-
-	@Override
-	public Room saveRoom(Room room) {
-		return roomRepo.save(room);
-	}
-
-	@Override
-	public User getUserById(int userId) {
-		return userRepo.findByUserId(userId);
-	}
 
 	@Override
 	public Iterable<Room> findSimilarRooms(Room room) {
@@ -83,6 +50,11 @@ public class RoomServiceImpl implements RoomService, Constants {
 	@Override
 	public Iterable<Room> getAllRooms() {
 		return roomRepo.findAll();
+	}
+
+	@Override
+	public Room getRoomByRoomNumber(int roomNumber) {
+		return roomRepo.findByRoomNumber(roomNumber);
 	}
 
 	@Override
@@ -111,51 +83,35 @@ public class RoomServiceImpl implements RoomService, Constants {
 	}
 
 	@Override
+	public User getUserById(int userId) {
+		return userRepo.findByUserId(userId);
+	}
+
+	@Override
 	public void saveMultipleRooms(Room room, int count) {
 		this.roomCreation(count, room, 1);
 	}
 
 	@Override
-	public RoomRequest requestRoom(RoomRequest roomRequest) {
-		roomRequest.setRoomRequestStatus(PENDING);
-		return roomReqRepo.save(roomRequest);
+	public Room saveRoom(Room room) {
+		return roomRepo.save(room);
 	}
 
-	@Override
-	public List<RoomRequest> getMyRequestsList(Customer customer) {
-		return roomReqRepo.findByUserId((int) customer.getUserId());
-	}
-
-	@Override
-	public String cancelRoomRequest(int roomRequestId) {
-		String cancellationStatus = "";
-		RoomRequest roomRequest = roomReqRepo.findByRequestId(roomRequestId);
-		roomRequest.setRoomRequestStatus(CANCEL);
-		RoomRequest roomReq = roomReqRepo.save(roomRequest);
-		int userId = roomReq.getUserId();
-		User user = userRepo.findByUserId(userId);
-		MailDTO mailDTO = new MailDTO();
-		mailDTO.setUser(user);
-		mailDTO.setRoomRequestId(roomRequestId);
-		mailDTO.setTemplateName(
-				roomReq.getRoomRequestStatus().equals(CANCEL) ? TEMPLATE_CANCEL_MAIL : TEMPLATE_CANCEL_FAIL_MAIL);
-		cancellationStatus = mailUtil.triggerMail(mailDTO);
-		return cancellationStatus;
-	}
-
-	@Override
-	public Iterable<RoomRequest> getAllRoomRequests() {
-		return roomReqRepo.findAll();
-	}
-
-	@Override
-	public RoomRequest getRoomRequestById(int roomRequestId) {
-		return roomReqRepo.findByRequestId(roomRequestId);
-	}
-
-	@Override
-	public Iterable<RoomRequest> getUnallocatedRoomRequests() {
-		return roomReqRepo.findByRoomRequestStatus(PENDING);
+	private Map<Integer, Integer> getUnfilledFloors() {
+		Iterable<Room> roomsIterable = roomRepo.findAll();
+		List<Room> roomsList = StreamSupport.stream(roomsIterable.spliterator(), false).collect(Collectors.toList());
+		List<Integer> floorsList = roomsList.stream().distinct().map(Room::getFloorNumber).collect(Collectors.toList());
+		List<Integer> unfilledFloors = new ArrayList<>();
+		Map<Integer, Integer> unfilledMap = new HashMap<>();
+		for (Integer floor : floorsList) {
+			Integer currentRoomsCount = roomsList.stream().filter(room -> room.getFloorNumber() == floor)
+					.collect(Collectors.toList()).size();
+			if (currentRoomsCount < FC_TOTAL) {
+				unfilledFloors.add(floor);
+				unfilledMap.put(floor, FC_TOTAL - currentRoomsCount);
+			}
+		}
+		return unfilledMap;
 	}
 
 	private void roomCreation(int count, Room roomObject, int floorNumber) {
@@ -315,23 +271,6 @@ public class RoomServiceImpl implements RoomService, Constants {
 				break;
 			}
 		}
-	}
-
-	private Map<Integer, Integer> getUnfilledFloors() {
-		Iterable<Room> roomsIterable = roomRepo.findAll();
-		List<Room> roomsList = StreamSupport.stream(roomsIterable.spliterator(), false).collect(Collectors.toList());
-		List<Integer> floorsList = roomsList.stream().distinct().map(Room::getFloorNumber).collect(Collectors.toList());
-		List<Integer> unfilledFloors = new ArrayList<>();
-		Map<Integer, Integer> unfilledMap = new HashMap<>();
-		for (Integer floor : floorsList) {
-			Integer currentRoomsCount = roomsList.stream().filter(room -> room.getFloorNumber() == floor)
-					.collect(Collectors.toList()).size();
-			if (currentRoomsCount < FC_TOTAL) {
-				unfilledFloors.add(floor);
-				unfilledMap.put(floor, FC_TOTAL - currentRoomsCount);
-			}
-		}
-		return unfilledMap;
 	}
 
 }

@@ -37,20 +37,42 @@ import lombok.extern.log4j.Log4j2;
 public class BillingServiceImpl implements BillingService, Constants {
 
 
+	MailUtil mailUtil = new MailUtil();
+
+	PDFUtil pdfUtil = new PDFUtil();
+
 	@Autowired
-	UserRepository userRepo;
+	RoomRepository roomRepo;
 
 	@Autowired
 	RoomRequestRepository roomReqRepo;
 
 	@Autowired
-	RoomRepository roomRepo;
+	UserRepository userRepo;
 
 	Util util = new Util();
 
-	MailUtil mailUtil = new MailUtil();
-
-	PDFUtil pdfUtil = new PDFUtil();
+	public List<PendingBillRequest> convertToBillPendingRequest(List<RoomRequest> billPendingList) {
+		List<PendingBillRequest> billPendingRequestList = new ArrayList<>();
+		if (!CollectionUtils.isEmpty(billPendingList)) {
+			for (RoomRequest roomRequest : billPendingList) {
+				PendingBillRequest pendingBillRequest = new PendingBillRequest();
+				pendingBillRequest.setBillCode(roomRequest.getGuestName() + UNDERSCORE + roomRequest.getRoomModel()
+						+ UNDERSCORE + roomRequest.getRoomCategory() + UNDERSCORE + roomRequest.getRoomType());
+				pendingBillRequest.setRequestId(roomRequest.getRequestId());
+				List<Room> roomsList = roomRepo.findByRoomRequestId(roomRequest.getRequestId());
+				pendingBillRequest.setBillAmount(util.generateBillForRooms(roomsList));
+				pendingBillRequest.setTypeOfRequest(ROOM_REQUEST);
+				pendingBillRequest.setRequestDate(roomRequest.getRequestDate());
+				if (!CollectionUtils.isEmpty(roomsList)) {
+					billPendingRequestList.add(pendingBillRequest);
+				}
+			}
+		} else {
+			return new ArrayList<>();
+		}
+		return billPendingRequestList;
+	}
 
 	@Override
 	public double generateBill(String custEmail) {
@@ -65,6 +87,17 @@ public class BillingServiceImpl implements BillingService, Constants {
 		}
 		return util.generateBillForRooms(totalRoomsList);
 
+	}
+
+	@Override
+	public ByteArrayInputStream generatedBillPdf(String custEmail) {
+		User user = userRepo.findByUserMail(custEmail);
+		if (user != null) {
+			return pdfUtil.generatePdf(this.getPendingBillRequests(custEmail),
+					userRepo.findByUserMail(custEmail).getName());
+		} else {
+			return null;
+		}
 	}
 
 	@Override
@@ -90,39 +123,6 @@ public class BillingServiceImpl implements BillingService, Constants {
 		}
 		return new ArrayList<>();
 
-	}
-
-	public List<PendingBillRequest> convertToBillPendingRequest(List<RoomRequest> billPendingList) {
-		List<PendingBillRequest> billPendingRequestList = new ArrayList<>();
-		if (!CollectionUtils.isEmpty(billPendingList)) {
-			for (RoomRequest roomRequest : billPendingList) {
-				PendingBillRequest pendingBillRequest = new PendingBillRequest();
-				pendingBillRequest.setBillCode(roomRequest.getGuestName() + UNDERSCORE + roomRequest.getRoomModel()
-						+ UNDERSCORE + roomRequest.getRoomCategory() + UNDERSCORE + roomRequest.getRoomType());
-				pendingBillRequest.setRequestId(roomRequest.getRequestId());
-				List<Room> roomsList = roomRepo.findByRoomRequestId(roomRequest.getRequestId());
-				pendingBillRequest.setBillAmount(util.generateBillForRooms(roomsList));
-				pendingBillRequest.setTypeOfRequest(ROOM_REQUEST);
-				pendingBillRequest.setRequestDate(roomRequest.getRequestDate());
-				if (!CollectionUtils.isEmpty(roomsList)) {
-					billPendingRequestList.add(pendingBillRequest);
-				}
-			}
-		} else {
-			return new ArrayList<>();
-		}
-		return billPendingRequestList;
-	}
-
-	@Override
-	public ByteArrayInputStream generatedBillPdf(String custEmail) {
-		User user = userRepo.findByUserMail(custEmail);
-		if (user != null) {
-			return pdfUtil.generatePdf(this.getPendingBillRequests(custEmail),
-					userRepo.findByUserMail(custEmail).getName());
-		} else {
-			return null;
-		}
 	}
 
 	@Override

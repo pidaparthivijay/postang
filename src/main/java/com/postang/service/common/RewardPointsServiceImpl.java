@@ -36,7 +36,6 @@ public class RewardPointsServiceImpl implements RewardPointsService {
 
 	@Override
 	public RewardPoints allocateRewardPoints(User user, String reasonCode) {
-
 		RewardPoints rewardPoints = new RewardPoints();
 		rewardPoints.setPointsTransactionName(reasonCode);
 		rewardPoints.setPointsEarned(util.getPointsForTrxn(reasonCode));
@@ -47,7 +46,6 @@ public class RewardPointsServiceImpl implements RewardPointsService {
 		rewardPoints.setCustId(customerList.get(0).getCustId());
 		return rewardPointsRepo.save(rewardPoints);
 	}
-
 
 	@Override
 	public List<RewardPoints> getRewardPointsByUserId(long userId) {

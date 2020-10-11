@@ -26,6 +26,7 @@ import com.postang.model.Room;
 import com.postang.model.RoomRequest;
 import com.postang.model.User;
 import com.postang.service.common.RewardPointsService;
+import com.postang.service.common.RoomRequestService;
 import com.postang.service.common.RoomService;
 import com.postang.util.MailUtil;
 import com.postang.util.PDFUtil;
@@ -44,8 +45,11 @@ import lombok.extern.log4j.Log4j2;
 public class RoomRequestController implements RequestMappings, Constants {
 
 	@Autowired
-	RoomService roomService;
+	RoomRequestService roomRequestService;
 
+	@Autowired
+	RoomService roomService;
+	
 	MailUtil mailUtil = new MailUtil();
 	Util util = new Util();
 
@@ -63,7 +67,7 @@ public class RoomRequestController implements RequestMappings, Constants {
 		RoomRequest roomRequest = requestDTO.getRoomRequest();
 		log.info("requestRoom starts..." + roomRequest.getUserId());
 		try {
-			roomRequest = roomService.requestRoom(roomRequest);
+			roomRequest = roomRequestService.requestRoom(roomRequest);
 			requestDTO.setActionStatus(roomRequest.getRequestId() > 0 ? ROOM_BOOK_SXS : ROOM_BOOK_FAIL);
 		} catch (Exception ex) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
@@ -77,7 +81,7 @@ public class RoomRequestController implements RequestMappings, Constants {
 		int roomRequestId = requestDTO.getRoomRequestId();
 		log.info("cancelRequest starts...");
 		try {
-			requestDTO.setActionStatus(roomService.cancelRoomRequest(roomRequestId));
+			requestDTO.setActionStatus(roomRequestService.cancelRoomRequest(roomRequestId));
 		} catch (Exception ex) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
 			log.error("Exception occured in cancelRequest : " + ex);
@@ -92,7 +96,7 @@ public class RoomRequestController implements RequestMappings, Constants {
 		List<RoomRequest> roomReqDetails = null;
 		log.info("getMyRequestsList starts...");
 		try {
-			roomReqDetails = roomService.getMyRequestsList(customer);
+			roomReqDetails = roomRequestService.getMyRequestsList(customer);
 			requestDTO.setRoomRequestList(roomReqDetails);
 		} catch (Exception ex) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
@@ -107,7 +111,7 @@ public class RoomRequestController implements RequestMappings, Constants {
 		RequestDTO requestDTO = new RequestDTO();
 		log.info("getAllRoomRequests starts...");
 		try {
-			Iterable<RoomRequest> roomReqList = roomService.getUnallocatedRoomRequests();
+			Iterable<RoomRequest> roomReqList = roomRequestService.getUnallocatedRoomRequests();
 			requestDTO.setRoomRequestList(
 					StreamSupport.stream(roomReqList.spliterator(), false).collect(Collectors.toList()));
 		} catch (Exception ex) {
@@ -122,7 +126,7 @@ public class RoomRequestController implements RequestMappings, Constants {
 		int roomRequestId = requestDTO.getRoomRequest().getRequestId();
 		log.info("viewFeasibleRooms starts...");
 		try {
-			RoomRequest roomRequest = roomService.getRoomRequestById(roomRequestId);
+			RoomRequest roomRequest = roomRequestService.getRoomRequestById(roomRequestId);
 			Room room = util.constructRoomFromRequest(roomRequest);
 			Iterable<Room> roomIterables = roomService.findSimilarRooms(room);
 			List<Room> roomList = StreamSupport.stream(roomIterables.spliterator(), false).collect(Collectors.toList());
@@ -141,10 +145,10 @@ public class RoomRequestController implements RequestMappings, Constants {
 		RoomRequest roomRequest = requestDTO.getRoomRequest();
 		log.info("assignRoomToRequest starts..." + roomRequest);
 		try {
-			RoomRequest roomReq = roomService.getRoomRequestByRequestId(roomRequest.getRequestId());
+			RoomRequest roomReq = roomRequestService.getRoomRequestByRequestId(roomRequest.getRequestId());
 			roomReq.setRoomNumber(roomRequest.getRoomNumber());
 			roomReq.setRoomRequestStatus(ALLOCATED);
-			roomReq = roomService.saveRoomRequest(roomReq);
+			roomReq = roomRequestService.saveRoomRequest(roomReq);
 			Room room = roomService.getRoomByRoomNumber(roomRequest.getRoomNumber());
 			room.setRoomRequestId(roomReq.getRequestId());
 			room.setRoomStatus(OCCUPIED);

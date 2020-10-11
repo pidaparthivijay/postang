@@ -13,9 +13,9 @@ public interface LoginService {
 
 	public String requestOTPMail(User user);
 
-	public String validateOtp(OneTimePassword oneTimePassword);
-
 	public String resetPwd(User user);
+
+	public String validateOtp(OneTimePassword oneTimePassword);
 
 	public User validateUserDetails(User user);
 

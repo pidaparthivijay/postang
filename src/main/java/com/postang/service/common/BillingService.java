@@ -14,13 +14,12 @@ import com.postang.model.PendingBillRequest;
  */
 public interface BillingService {
 
+	double generateBill(String custEmail);
 
-	public double generateBill(String custEmail);
+	ByteArrayInputStream generatedBillPdf(String custEmail);
 
-	public ByteArrayInputStream generatedBillPdf(String custEmail);
+	List<PendingBillRequest> getPendingBillRequests(String custEmail);
 
-	public List<PendingBillRequest> getPendingBillRequests(String custEmail);
-
-	public String triggerMailBill(String custEmail);
+	String triggerMailBill(String custEmail);
 
 }

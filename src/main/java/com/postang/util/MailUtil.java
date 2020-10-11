@@ -31,10 +31,10 @@ import lombok.extern.log4j.Log4j2;
  */
 @Log4j2
 public class MailUtil implements Constants {
-	Properties mailProperties = new Properties();
 	ClassLoader loader = Thread.currentThread().getContextClassLoader();
-	InputStream stream = loader.getResourceAsStream(MAILAPP_PROPERTIES);
+	Properties mailProperties = new Properties();
 	PDFUtil pdfUtil = new PDFUtil();
+	InputStream stream = loader.getResourceAsStream(MAILAPP_PROPERTIES);
 
 	public String triggerMail(MailDTO mailDTO) {
 		String status = EMPTY_STRING;

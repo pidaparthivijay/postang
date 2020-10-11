@@ -12,18 +12,17 @@ import com.postang.model.Employee;
  */
 public interface CustomerService {
 
+	Iterable<Customer> findAll();
 
-	public Iterable<Customer> findAll();	
+	Object findById(long id);
 
-	public Object findById(long id);
-
-	public Customer getCustomerByUserName(String userName);
+	Customer getCustomerByUserName(String userName);
 	
-	public Customer getCustomerDetails(Customer customer);
+	Customer getCustomerDetails(Customer customer);
 	
-	public Employee getEmployeeByUserName(String userName);
+	Employee getEmployeeByUserName(String userName);
 
-	public Customer saveCustomer(Customer customer);
+	Customer saveCustomer(Customer customer);
 
 
 }

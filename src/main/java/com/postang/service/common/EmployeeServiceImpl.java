@@ -31,48 +31,12 @@ public class EmployeeServiceImpl implements EmployeeService, Constants {
 	@Autowired
 	EmployeeRepository employeeRepository;
 
+	MailUtil mailUtil = new MailUtil();
+
 	@Autowired
 	UserRepository userRepository;
 
-	MailUtil mailUtil = new MailUtil();
-
 	Util util = new Util();
-
-	private Employee validate(Employee employee) {
-		List<Employee> customerList = null;
-		customerList = employeeRepository.findByUserName(employee.getUserName());
-		if (!customerList.isEmpty()) {
-			Employee newEmp = new Employee();
-			newEmp.setEmpId(-1L);
-			newEmp.setActionStatus(false);
-			newEmp.setStatusMessage(USERNAME_TAKEN);
-			return newEmp;
-		}
-		return employee;
-	}
-
-	@Override
-	public Employee getEmployeeByUserName(String userName) {
-		List<Employee> empList = null;
-		log.info("getEmployeeByUserName starts with userName: " + userName);
-		try {
-			empList = employeeRepository.findByUserName(userName);
-			if (!empList.isEmpty()) {
-				return empList.get(0);
-			} else {
-				return null;
-			}
-		} catch (Exception e) {
-			log.error("Exception in getEmployeeByUserName :" + e.toString());
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	@Override
-	public Employee getEmployeeDetails(String userName) {
-		return employeeRepository.findByUserName(userName).get(0);
-	}
 
 	@Override
 	public Employee createEmployee(Employee employee) {
@@ -115,6 +79,42 @@ public class EmployeeServiceImpl implements EmployeeService, Constants {
 	@Override
 	public Iterable<Employee> getAllEmployees() {
 		return employeeRepository.findAll();
+	}
+
+	@Override
+	public Employee getEmployeeByUserName(String userName) {
+		List<Employee> empList = null;
+		log.info("getEmployeeByUserName starts with userName: " + userName);
+		try {
+			empList = employeeRepository.findByUserName(userName);
+			if (!empList.isEmpty()) {
+				return empList.get(0);
+			} else {
+				return null;
+			}
+		} catch (Exception e) {
+			log.error("Exception in getEmployeeByUserName :" + e.toString());
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@Override
+	public Employee getEmployeeDetails(String userName) {
+		return employeeRepository.findByUserName(userName).get(0);
+	}
+
+	private Employee validate(Employee employee) {
+		List<Employee> customerList = null;
+		customerList = employeeRepository.findByUserName(employee.getUserName());
+		if (!customerList.isEmpty()) {
+			Employee newEmp = new Employee();
+			newEmp.setEmpId(-1L);
+			newEmp.setActionStatus(false);
+			newEmp.setStatusMessage(USERNAME_TAKEN);
+			return newEmp;
+		}
+		return employee;
 	}
 
 }

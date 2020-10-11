@@ -1,8 +1,5 @@
 package com.postang.controller;
 
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -92,9 +89,7 @@ public class AmenityController implements RequestMappings, Constants {
 		RequestDTO requestDTO = new RequestDTO();
 		log.info("viewAllAmenities starts...");
 		try {
-			Iterable<Amenity> amenitiesList = amenityService.viewAllAmenities();
-			requestDTO.setAmenityList(
-					StreamSupport.stream(amenitiesList.spliterator(), false).collect(Collectors.toList()));
+			requestDTO.setAmenityList(amenityService.viewAllAmenities());
 			if (!StringUtils.isEmpty(status)) {
 				requestDTO.setActionStatus(status);
 			}

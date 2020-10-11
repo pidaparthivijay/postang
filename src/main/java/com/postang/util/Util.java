@@ -39,31 +39,6 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class Util implements Constants {
 
-	public String getSHA(String input) {
-
-		try {
-			// Static getInstance method is called with hashing SHA
-			MessageDigest md = MessageDigest.getInstance("SHA-256");
-			// digest() method called
-			// to calculate message digest of an input
-			// and return array of byte
-			byte[] messageDigest = md.digest(input.getBytes());
-			// Convert byte array into signum representation
-			BigInteger no = new BigInteger(1, messageDigest);
-			// Convert message digest into hex value
-			String hashtext = no.toString(16);
-			while (hashtext.length() < 32) {
-				hashtext = "0" + hashtext;
-			}
-			return hashtext;
-		}
-		// For specifying wrong message digest algorithms
-		catch (NoSuchAlgorithmException e) {
-			log.info("Exception thrown for incorrect algorithm: " + e);
-			return null;
-		}
-	}
-
 	public int calculateAge(Date custDob) {
 		log.info("calculateAge starts.. with custDob: " + custDob);
 
@@ -74,14 +49,83 @@ public class Util implements Constants {
 		return period.getYears();
 	}
 
-	public boolean validateLogin(User user, User loginUser) {
+	public Room constructRoomFromRequest(RoomRequest roomRequest) {
+		Room room = new Room();
+		room.setRoomModel(roomRequest.getRoomModel());
+		room.setRoomType(roomRequest.getRoomType());
+		room.setRoomCategory(roomRequest.getRoomCategory());
+		return room;
+	}
 
-		if (user != null && loginUser != null) {
-			if (user.getPassword().equals(loginUser.getPassword())) {
-				return true;
+	public double generateBillForRooms(List<Room> totalRoomsList) {
+		double totalBill = 0;
+		double baseFare = 0;
+		for (Room room : totalRoomsList) {
+			double roomBill = 0;
+			if (SINGLE.equals(room.getRoomCategory())) {
+				baseFare = SINGLE_BASE_FARE;
+			} else {
+				baseFare = DOUBLE_BASE_FARE;
 			}
+			if (DELUXE.equals(room.getRoomModel())) {
+				roomBill = roomBill + (baseFare * DELUXEROOMFARE);
+			} else {
+				roomBill = roomBill + (baseFare * SUITEROOMFARE);
+			}
+			if (AC.equals(room.getRoomType())) {
+				roomBill = roomBill + (baseFare * ACROOMFARE);
+			} else {
+				roomBill = roomBill + (baseFare * NONACROOMFARE);
+			}
+			totalBill = totalBill + roomBill;
 		}
-		return false;
+
+		return totalBill;
+	}
+
+	public List<Lookup> generateLookupListFromExcelFile(MultipartFile multipartFile) {
+		List<Lookup> lookupList = new ArrayList<>();
+		Workbook offices;
+		try {
+			String lowerCaseFileName = multipartFile.getOriginalFilename().toLowerCase();
+			if (lowerCaseFileName.endsWith(XLSX_EXTN)) {
+				offices = new XSSFWorkbook(multipartFile.getInputStream());
+
+			} else {
+				offices = new HSSFWorkbook(multipartFile.getInputStream());
+			}
+			Sheet lookUpSheet = offices.getSheet(LOOK_UP);
+			Iterator<Row> itr = lookUpSheet.iterator();
+
+			while (itr.hasNext()) {
+				Row row = itr.next();
+				Lookup lookup = new Lookup();
+				lookup.setLookupDefName(row.getCell(0).toString());
+				lookup.setLookupValue(row.getCell(1).toString());
+				lookup.setDisplayName(row.getCell(2).toString());
+				lookup.setDeleted(NO);
+				lookup.setCreatedDate(new Date());
+				lookupList.add(lookup);
+			}
+
+		} catch (Exception e) {
+			log.error("Exception in generateLookupListFromExcelFile.." + e);
+			e.printStackTrace();
+		}
+		return lookupList;
+	}
+
+	public String generateName(TourPackage tourPackage) {
+		String generatedName = "";
+		if (tourPackage.getDuration().equals(SHORT)) {
+			generatedName += MIN;
+		} else if (tourPackage.getDuration().equals(MEDIUM)) {
+			generatedName += MED;
+		} else if (tourPackage.getDuration().equals(LONG)) {
+			generatedName += MAX;
+		}
+		generatedName = generatedName + UNDERSCORE + tourPackage.getLocation().toUpperCase();
+		return generatedName;
 	}
 
 	public OneTimePassword generateOTP(User user) {
@@ -92,30 +136,6 @@ public class Util implements Constants {
 		oneTimePassword.setValid(true);
 		oneTimePassword.setOtpValue(String.valueOf(randNum));
 		return oneTimePassword;
-	}
-
-	public Room constructRoomFromRequest(RoomRequest roomRequest) {
-		Room room = new Room();
-		room.setRoomModel(roomRequest.getRoomModel());
-		room.setRoomType(roomRequest.getRoomType());
-		room.setRoomCategory(roomRequest.getRoomCategory());
-		return room;
-	}
-
-	public Date getOneYearFromToday() {
-		Calendar c = Calendar.getInstance();
-		c.setTime(new Date());
-		c.add(Calendar.DATE, 365);
-		return c.getTime();
-	}
-
-	public long getPointsForTrxn(String reasonCode) {
-		if (ROOM_BOOKING.equals(reasonCode))
-			return ROOM_BOOKING_REWARD;
-		else if (TOUR_BOOKING.equals(reasonCode))
-			return TOUR_BOOKING_REWARD;
-		else
-			return 50L;
 	}
 
 	public User generateUserFromCustomer(Customer customer) {
@@ -149,6 +169,57 @@ public class Util implements Constants {
 		return genUser;
 	}
 
+	public Date getOneYearFromToday() {
+		Calendar c = Calendar.getInstance();
+		c.setTime(new Date());
+		c.add(Calendar.DATE, 365);
+		return c.getTime();
+	}
+
+	public long getPointsForTrxn(String reasonCode) {
+		if (ROOM_BOOKING.equals(reasonCode))
+			return ROOM_BOOKING_REWARD;
+		else if (TOUR_BOOKING.equals(reasonCode))
+			return TOUR_BOOKING_REWARD;
+		else
+			return 50L;
+	}
+
+	public String getSHA(String input) {
+
+		try {
+			// Static getInstance method is called with hashing SHA
+			MessageDigest md = MessageDigest.getInstance("SHA-256");
+			// digest() method called
+			// to calculate message digest of an input
+			// and return array of byte
+			byte[] messageDigest = md.digest(input.getBytes());
+			// Convert byte array into signum representation
+			BigInteger no = new BigInteger(1, messageDigest);
+			// Convert message digest into hex value
+			String hashtext = no.toString(16);
+			while (hashtext.length() < 32) {
+				hashtext = "0" + hashtext;
+			}
+			return hashtext;
+		}
+		// For specifying wrong message digest algorithms
+		catch (NoSuchAlgorithmException e) {
+			log.info("Exception thrown for incorrect algorithm: " + e);
+			return null;
+		}
+	}
+
+	public boolean validateLogin(User user, User loginUser) {
+
+		if (user != null && loginUser != null) {
+			if (user.getPassword().equals(loginUser.getPassword())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	private String generatePassword() {
 		StringBuilder sb = new StringBuilder(PASSWORD_LENGTH);
 		for (int i = 0; i < PASSWORD_LENGTH; i++) {
@@ -157,78 +228,6 @@ public class Util implements Constants {
 		}
 
 		return sb.toString();
-	}
-
-	public double generateBillForRooms(List<Room> totalRoomsList) {
-		double totalBill = 0;
-		double baseFare = 0;
-		for (Room room : totalRoomsList) {
-			double roomBill = 0;
-			if (SINGLE.equals(room.getRoomCategory())) {
-				baseFare = SINGLE_BASE_FARE;
-			} else {
-				baseFare = DOUBLE_BASE_FARE;
-			}
-			if (DELUXE.equals(room.getRoomModel())) {
-				roomBill = roomBill + (baseFare * DELUXEROOMFARE);
-			} else {
-				roomBill = roomBill + (baseFare * SUITEROOMFARE);
-			}
-			if (AC.equals(room.getRoomType())) {
-				roomBill = roomBill + (baseFare * ACROOMFARE);
-			} else {
-				roomBill = roomBill + (baseFare * NONACROOMFARE);
-			}
-			totalBill = totalBill + roomBill;
-		}
-
-		return totalBill;
-	}
-
-
-	public String generateName(TourPackage tourPackage) {
-		String generatedName = "";
-		if (tourPackage.getDuration().equals(SHORT)) {
-			generatedName += MIN;
-		} else if (tourPackage.getDuration().equals(MEDIUM)) {
-			generatedName += MED;
-		} else if (tourPackage.getDuration().equals(LONG)) {
-			generatedName += MAX;
-		}
-		generatedName = generatedName + UNDERSCORE + tourPackage.getLocation().toUpperCase();
-		return generatedName;
-	}
-
-	public List<Lookup> generateLookupListFromExcelFile(MultipartFile multipartFile) {
-		List<Lookup> lookupList = new ArrayList<>();
-		Workbook offices;
-		try {
-			String lowerCaseFileName = multipartFile.getOriginalFilename().toLowerCase();
-			if (lowerCaseFileName.endsWith(XLSX_EXTN)) {
-				offices = new XSSFWorkbook(multipartFile.getInputStream());
-
-			} else {
-				offices = new HSSFWorkbook(multipartFile.getInputStream());
-			}
-			Sheet lookUpSheet = offices.getSheet(LOOK_UP);
-			Iterator<Row> itr = lookUpSheet.iterator();
-
-			while (itr.hasNext()) {
-				Row row = itr.next();
-				Lookup lookup = new Lookup();
-				lookup.setLookupDefName(row.getCell(0).toString());
-				lookup.setLookupValue(row.getCell(1).toString());
-				lookup.setDisplayName(row.getCell(2).toString());
-				lookup.setDeleted(NO);
-				lookup.setCreatedDate(new Date());
-				lookupList.add(lookup);
-			}
-
-		} catch (Exception e) {
-			log.error("Exception in generateLookupListFromExcelFile.." + e);
-			e.printStackTrace();
-		}
-		return lookupList;
 	}
 
 }

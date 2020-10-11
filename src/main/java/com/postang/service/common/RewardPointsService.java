@@ -13,8 +13,9 @@ import com.postang.model.User;
  *
  */
 public interface RewardPointsService {
-	public RewardPoints allocateRewardPoints(User user, String reasonCode);
 
-	public List<RewardPoints> getRewardPointsByUserId(long userId);
+	RewardPoints allocateRewardPoints(User user, String reasonCode);
+
+	List<RewardPoints> getRewardPointsByUserId(long userId);
 
 }

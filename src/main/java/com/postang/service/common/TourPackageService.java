@@ -13,14 +13,14 @@ import com.postang.model.TourPackageRequest;
  */
 public interface TourPackageService {
 
-	public TourPackageRequest bookTourPackage(TourPackageRequest tourPackageRequest);
+	TourPackageRequest bookTourPackage(TourPackageRequest tourPackageRequest);
 
-	public Iterable<TourPackageRequest> getAllTourPackageBookings();
+	TourPackage findTourPackageByTourPackageName(String tourPackageName);
 
-	public TourPackage findTourPackageByTourPackageName(String tourPackageName);
+	Iterable<TourPackageRequest> getAllTourPackageBookings();
 
-	public TourPackage saveTourPackage(TourPackage tourPackage);
+	TourPackage saveTourPackage(TourPackage tourPackage);
 
-	public Iterable<TourPackage> viewAllTourPackages();
+	Iterable<TourPackage> viewAllTourPackages();
 
 }

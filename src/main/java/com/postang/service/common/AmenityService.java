@@ -3,6 +3,8 @@
  */
 package com.postang.service.common;
 
+import java.util.List;
+
 import com.postang.model.Amenity;
 import com.postang.model.AmenityRequest;
 
@@ -12,11 +14,11 @@ import com.postang.model.AmenityRequest;
  */
 public interface AmenityService {
 
-	public Amenity findAmenityByAmenityName(String amenityName);
+	Amenity findAmenityByAmenityName(String amenityName);
 
-	public Amenity saveAmenity(Amenity amenity);
+	AmenityRequest requestAmenity(AmenityRequest amenityRequest);
 
-	public Iterable<Amenity> viewAllAmenities();
+	Amenity saveAmenity(Amenity amenity);
 
-	public AmenityRequest requestAmenity(AmenityRequest amenityRequest);
+	List<Amenity> viewAllAmenities();
 }

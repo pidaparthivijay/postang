@@ -12,9 +12,11 @@ import com.postang.model.Employee;
  */
 public interface EmployeeService {
 
+	Employee getEmployeeByUserName(String userName);
+
 	Employee createEmployee(Employee employee);
+
 	Iterable<Employee> getAllEmployees();
-	public Employee getEmployeeByUserName(String userName);
 
 	Employee getEmployeeDetails(String userName);
 }

@@ -26,10 +26,10 @@ import com.postang.constants.Constants;
 import com.postang.model.PendingBillRequest;
 
 public class PDFUtil implements Constants {
-	Properties mailProperties = new Properties();
-	ClassLoader loader = Thread.currentThread().getContextClassLoader();
-	InputStream stream = loader.getResourceAsStream(MAILAPP_PROPERTIES);
 	private static final Logger log = LoggerFactory.getLogger(PDFUtil.class);
+	ClassLoader loader = Thread.currentThread().getContextClassLoader();
+	Properties mailProperties = new Properties();
+	InputStream stream = loader.getResourceAsStream(MAILAPP_PROPERTIES);
 
 	public ByteArrayInputStream generatePdf(List<PendingBillRequest> billRequestList, String custName) {
 
@@ -53,7 +53,7 @@ public class PDFUtil implements Constants {
 		Document document = new Document();
 		try {
 			PdfWriter.getInstance(document, outputStream);
-			document.open();			
+			document.open();
 			mailProperties.load(stream);
 			String billPdf = mailProperties.getProperty(BILL_PDF_CONTENT);
 

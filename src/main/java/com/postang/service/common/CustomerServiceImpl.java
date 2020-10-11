@@ -17,8 +17,6 @@ import com.postang.model.Employee;
 import com.postang.model.User;
 import com.postang.repo.CustomerRepository;
 import com.postang.repo.EmployeeRepository;
-import com.postang.repo.RoomRepository;
-import com.postang.repo.RoomRequestRepository;
 import com.postang.repo.UserRepository;
 import com.postang.util.Util;
 
@@ -36,18 +34,60 @@ public class CustomerServiceImpl implements CustomerService, Constants {
 	CustomerRepository custRepo;
 
 	@Autowired
-	UserRepository userRepo;
-
-	@Autowired
 	EmployeeRepository empRepo;
 
-	@Autowired
-	RoomRequestRepository roomReqRepo;
+
 
 	@Autowired
-	RoomRepository roomRepo;
+	UserRepository userRepo;
 
 	Util util = new Util();
+
+	@Override
+	public Iterable<Customer> findAll() {
+		return custRepo.findAll();
+	}
+
+	@Override
+	public Optional<Customer> findById(long id) {
+		return custRepo.findById(id);
+	}
+
+	@Override
+	public Customer getCustomerByUserName(String userName) {
+		List<Customer> custList = null;
+		custList = custRepo.findByUserName(userName);
+		if (CollectionUtils.isNotEmpty(custList)) {
+			return custList.get(0);
+		} else {
+			return null;
+		}
+	}
+
+	@Override
+	public Customer getCustomerDetails(Customer customer) {
+		List<Customer> custList = null;
+		User user = null;
+		custList = custRepo.findByUserName(customer.getUserName());
+		user = userRepo.findByUserName(customer.getUserName());
+		if (CollectionUtils.isNotEmpty(custList)) {
+			custList.get(0).setCustPass(user.getPassword());
+			return custList.get(0);
+		} else {
+			return null;
+		}
+	}
+
+	@Override
+	public Employee getEmployeeByUserName(String userName) {
+		List<Employee> empList = null;
+		empList = empRepo.findByUserName(userName);
+		if (CollectionUtils.isNotEmpty(empList)) {
+			return empList.get(0);
+		} else {
+			return null;
+		}
+	}
 
 	@Override
 	public Customer saveCustomer(Customer customer) {
@@ -99,52 +139,6 @@ public class CustomerServiceImpl implements CustomerService, Constants {
 			}
 		}
 		return customer;
-	}
-
-	@Override
-	public Customer getCustomerByUserName(String userName) {
-		List<Customer> custList = null;
-		custList = custRepo.findByUserName(userName);
-		if (CollectionUtils.isNotEmpty(custList)) {
-			return custList.get(0);
-		} else {
-			return null;
-		}
-	}
-
-	@Override
-	public Optional<Customer> findById(long id) {
-		return custRepo.findById(id);
-	}
-
-	@Override
-	public Iterable<Customer> findAll() {
-		return custRepo.findAll();
-	}
-
-	@Override
-	public Customer getCustomerDetails(Customer customer) {
-		List<Customer> custList = null;
-		User user = null;
-		custList = custRepo.findByUserName(customer.getUserName());
-		user = userRepo.findByUserName(customer.getUserName());
-		if (CollectionUtils.isNotEmpty(custList)) {
-			custList.get(0).setCustPass(user.getPassword());
-			return custList.get(0);
-		} else {
-			return null;
-		}
-	}
-
-	@Override
-	public Employee getEmployeeByUserName(String userName) {
-		List<Employee> empList = null;
-		empList = empRepo.findByUserName(userName);
-		if (CollectionUtils.isNotEmpty(empList)) {
-			return empList.get(0);
-		} else {
-			return null;
-		}
 	}
 
 }

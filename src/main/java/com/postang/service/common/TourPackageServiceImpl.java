@@ -24,6 +24,7 @@ public class TourPackageServiceImpl implements TourPackageService, Constants {
 
 	@Autowired
 	TourPackageRepository tourPackageRepository;
+
 	@Autowired
 	TourPackageRequestRepository tourPackageRequestRepository;
 
@@ -33,12 +34,13 @@ public class TourPackageServiceImpl implements TourPackageService, Constants {
 	}
 
 	@Override
-	public Iterable<TourPackageRequest> getAllTourPackageBookings() {
-		return tourPackageRequestRepository.findAll();
-	}
-	@Override
 	public TourPackage findTourPackageByTourPackageName(String tourPackageName) {
 		return tourPackageRepository.findByTourPackageName(tourPackageName);
+	}
+
+	@Override
+	public Iterable<TourPackageRequest> getAllTourPackageBookings() {
+		return tourPackageRequestRepository.findAll();
 	}
 
 	@Override
