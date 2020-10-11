@@ -3,7 +3,6 @@ package com.postang.util;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.Date;
-import java.util.List;
 import java.util.Properties;
 
 import javax.activation.DataHandler;
@@ -21,9 +20,7 @@ import javax.mail.util.ByteArrayDataSource;
 import org.springframework.util.StringUtils;
 
 import com.postang.constants.Constants;
-import com.postang.model.Customer;
-import com.postang.model.Employee;
-import com.postang.model.PendingBillRequest;
+import com.postang.model.MailDTO;
 import com.postang.model.User;
 
 import lombok.extern.log4j.Log4j2;
@@ -39,19 +36,26 @@ public class MailUtil implements Constants {
 	InputStream stream = loader.getResourceAsStream(MAILAPP_PROPERTIES);
 	PDFUtil pdfUtil = new PDFUtil();
 
-	public String sendOTPMail(User user, String oneTimePassword) {
+	public String triggerMail(MailDTO mailDTO) {
+		String status = EMPTY_STRING;
+		User user = mailDTO.getUser();
+		String templateName = mailDTO.getTemplateName();
+		log.info(user);
+		log.info(templateName);
+		log.info(mailDTO.getPendingBillRequests());
 		try {
 			mailProperties.load(stream);
 			String mailAddress = mailProperties.getProperty(FRM_ADR);
 			String mailPass = mailProperties.getProperty(FRM_PWD);
 			// Establishing a session with required user details
 			Session session = Session.getInstance(mailProperties, new javax.mail.Authenticator() {
+				@Override
 				protected PasswordAuthentication getPasswordAuthentication() {
 					return new PasswordAuthentication(mailAddress, mailPass);
 				}
 			});
 			// Creating a Message object to set the email content
-			MimeMessage msg = new MimeMessage(session);
+			MimeMessage mimeMessage = new MimeMessage(session);
 			// Storing the comma seperated values to email addresses
 			/*
 			 * Parsing the String with defualt delimiter as a comma by marking the boolean
@@ -59,260 +63,93 @@ public class MailUtil implements Constants {
 			 * objects
 			 */
 			if (user != null) {
-					if (!StringUtils.isEmpty(user.getUserMail())) {
-						InternetAddress[] address = InternetAddress.parse(user.getUserMail(), true);
-						// Setting the recepients from the address variable
-						msg.setRecipients(Message.RecipientType.TO, address);
-					}
-			} else {
-				return INVALID_MAIL;
-			}
-			msg.setSubject("Attempt to Reset Password: " + user.getUserName());
-			msg.setSentDate(new Date());
-			String mailText = mailProperties.getProperty(OTPMAIL);
-			mailText = mailText.replace(MAIL_USERNAME, user.getUserName());
-			mailText = mailText.replace(MAIL_OTP, oneTimePassword);
-			msg.setText(mailText);
-			msg.setHeader("XPriority", "1");
-			Transport.send(msg);
-			log.info(MAIL_SUCCESS);
-		} catch (Exception mex) {
-			log.info("Exception Occurred in sendOTPMail:" + mex);
-			mex.printStackTrace();
-		}
-		return MAIL_SUCCESS;
-	}
-
-	public String sendSignUpMail(Customer customer) {
-		try {
-			mailProperties.load(stream);
-			String mailAddress = mailProperties.getProperty(FRM_ADR);
-			String mailPass = mailProperties.getProperty(FRM_PWD);
-
-			Session session = Session.getInstance(mailProperties, new javax.mail.Authenticator() {
-				protected PasswordAuthentication getPasswordAuthentication() {
-					return new PasswordAuthentication(mailAddress, mailPass);
-				}
-			});
-			MimeMessage msg = new MimeMessage(session);
-			String custMail = customer.getCustEmail();
-			if (custMail != null) {
-				InternetAddress[] address = InternetAddress.parse(custMail, true);
-				msg.setRecipients(Message.RecipientType.TO, address);
-			} else {
-				return INVALID_MAIL;
-			}
-
-			msg.setSubject("Welcome to postang " + customer.getUserName());
-			msg.setSentDate(new Date());
-			String mailText = mailProperties.getProperty(SIGNUPMAIL);
-			mailText = mailText.replace(MAIL_CUSTNAME, customer.getCustName());
-			msg.setText(mailText);
-			msg.setHeader("XPriority", "1");
-			Transport.send(msg);
-			log.info(SINGUP_MAIL_SUCCESS);
-		} catch (Exception mex) {
-			log.info("Exception Occurred in sendSignUpMail:" + mex);
-			mex.printStackTrace();
-		}
-		return SINGUP_MAIL_SUCCESS;
-	}
-
-	public String sendAllocationMail(String email) {
-		try {
-			mailProperties.load(stream);
-			String mailAddress = mailProperties.getProperty(FRM_ADR);
-			String mailPass = mailProperties.getProperty(FRM_PWD);
-
-			Session session = Session.getInstance(mailProperties, new javax.mail.Authenticator() {
-				protected PasswordAuthentication getPasswordAuthentication() {
-					return new PasswordAuthentication(mailAddress, mailPass);
-				}
-			});
-			MimeMessage msg = new MimeMessage(session);
-			if (email != null) {
-				InternetAddress[] address = InternetAddress.parse(email, true);
-				msg.setRecipients(Message.RecipientType.TO, address);
-			} else {
-				return INVALID_MAIL;
-			}
-
-			msg.setSubject(ROOM_ALLOCATED);
-			msg.setSentDate(new Date());
-			String mailText = mailProperties.getProperty(ALLOCATION_MAIL);
-			msg.setText(mailText);
-			msg.setHeader("XPriority", "1");
-			Transport.send(msg);
-			log.info(ALLOCATION_MAIL_SUCCESS);
-		} catch (Exception mex) {
-			log.info("Exception Occurred in sendAllocationMail:" + mex);
-			mex.printStackTrace();
-		}
-		return ALLOCATION_MAIL_SUCCESS;
-	}
-
-	public String sendCancellationMail(int roomRequestId, User user) {
-		try {
-			mailProperties.load(stream);
-			String mailAddress = mailProperties.getProperty(FRM_ADR);
-			String mailPass = mailProperties.getProperty(FRM_PWD);
-
-			Session session = Session.getInstance(mailProperties, new javax.mail.Authenticator() {
-				protected PasswordAuthentication getPasswordAuthentication() {
-					return new PasswordAuthentication(mailAddress, mailPass);
-				}
-			});
-			MimeMessage msg = new MimeMessage(session);
-			if (user.getUserMail() != null) {
-				InternetAddress[] address = InternetAddress.parse(user.getUserMail(), true);
-				msg.setRecipients(Message.RecipientType.TO, address);
-			} else {
-				return INVALID_MAIL;
-			}
-
-			msg.setSubject(CANCEL_SUCCESS);
-			msg.setSentDate(new Date());
-			String mailText = mailProperties.getProperty(CANCEL_SUCCESS_MAIL);
-			mailText = mailText.replace(MAIL_CUSTNAME, user.getName());
-			mailText = mailText.replace(MAIL_ROOM_REQ_ID, String.valueOf(roomRequestId));
-			msg.setText(mailText);
-			msg.setHeader("XPriority", "1");
-			Transport.send(msg);
-			log.info(CANCEL_SUCCESS_MAIL_SUCCESS);
-		} catch (Exception mex) {
-			log.info("Exception Occurred in sendCancellationMail:" + mex);
-			mex.printStackTrace();
-		}
-		return CANCEL_SUCCESS_MAIL_SUCCESS;
-	}
-
-	public String sendCancellationFailMail(int roomRequestId, User user) {
-		try {
-			mailProperties.load(stream);
-			String mailAddress = mailProperties.getProperty(FRM_ADR);
-			String mailPass = mailProperties.getProperty(FRM_PWD);
-
-			Session session = Session.getInstance(mailProperties, new javax.mail.Authenticator() {
-				protected PasswordAuthentication getPasswordAuthentication() {
-					return new PasswordAuthentication(mailAddress, mailPass);
-				}
-			});
-			MimeMessage msg = new MimeMessage(session);
-			if (user.getUserMail() != null) {
-				InternetAddress[] address = InternetAddress.parse(user.getUserMail(), true);
-				msg.setRecipients(Message.RecipientType.TO, address);
-			} else {
-				return INVALID_MAIL;
-			}
-
-			msg.setSubject(CANCEL_FAILED);
-			msg.setSentDate(new Date());
-			String mailText = mailProperties.getProperty(CANCEL_FAIL_MAIL);
-			mailText = mailText.replace(MAIL_CUSTNAME, user.getName());
-			mailText = mailText.replace(MAIL_ROOM_REQ_ID, String.valueOf(roomRequestId));
-			msg.setText(mailText);
-			msg.setHeader("XPriority", "1");
-			Transport.send(msg);
-			log.info(CANCEL_FAILURE_MAIL_SUCCESS);
-		} catch (Exception mex) {
-			log.info("Exception Occurred in sendCancellationFailMail:" + mex);
-			mex.printStackTrace();
-		}
-		return CANCEL_FAILURE_MAIL_SUCCESS;
-	}
-
-	public String sendSignUpMailForEmployee(Employee emp) {
-		try {
-			mailProperties.load(stream);
-			String mailAddress = mailProperties.getProperty(FRM_ADR);
-			String mailPass = mailProperties.getProperty(FRM_PWD);
-
-			Session session = Session.getInstance(mailProperties, new javax.mail.Authenticator() {
-				protected PasswordAuthentication getPasswordAuthentication() {
-					return new PasswordAuthentication(mailAddress, mailPass);
-				}
-			});
-			MimeMessage msg = new MimeMessage(session);
-			String empMail = emp.getEmail();
-			if (empMail != null) {
-				InternetAddress[] address = InternetAddress.parse(empMail, true);
-				msg.setRecipients(Message.RecipientType.TO, address);
-			} else {
-				return INVALID_MAIL;
-			}
-
-			msg.setSubject("Welcome to postang " + emp.getUserName());
-			msg.setSentDate(new Date());
-			String mailText = mailProperties.getProperty(EMP_SIGNUP_MAIL);
-			mailText = mailText.replace(MAIL_EMPNAME, emp.getEmpName());
-			mailText = mailText.replace(MAIL_PASSWORD, emp.getEmpPass());
-			msg.setText(mailText);
-			msg.setHeader("XPriority", "1");
-			Transport.send(msg);
-			log.info(SINGUP_MAIL_SUCCESS);
-		} catch (Exception mex) {
-			log.info("Exception Occurred in sendSignUpMailForEmployee:" + mex);
-			mex.printStackTrace();
-		}
-		return SINGUP_MAIL_SUCCESS;
-	}
-
-	public String sendBillMail(User user, List<PendingBillRequest> pendingBillRequests) {
-		try {
-			mailProperties.load(stream);
-			String mailAddress = mailProperties.getProperty(FRM_ADR);
-			String mailPass = mailProperties.getProperty(FRM_PWD);
-			Session session = Session.getInstance(mailProperties, new javax.mail.Authenticator() {
-				protected PasswordAuthentication getPasswordAuthentication() {
-					return new PasswordAuthentication(mailAddress, mailPass);
-				}
-			});
-
-			MimeMessage mimeMessage = new MimeMessage(session);
-			if (user != null) {
-
 				if (!StringUtils.isEmpty(user.getUserMail())) {
 					InternetAddress[] address = InternetAddress.parse(user.getUserMail(), true);
+					// Setting the recepients from the address variable
 					mimeMessage.setRecipients(Message.RecipientType.TO, address);
 				}
-
 			} else {
 				return INVALID_MAIL;
 			}
-			mimeMessage.setSubject("Bill Generated: " + user.getUserName());
+
 			mimeMessage.setSentDate(new Date());
-			ByteArrayOutputStream outputStream = null;
+			String mailText = EMPTY_STRING;
+			if (TEMPLATE_OTP_MAIL.equalsIgnoreCase(templateName)) {
+				mimeMessage.setSubject("Attempt to Reset Password: " + user.getUserName());
+				mailText = mailProperties.getProperty(OTPMAIL);
+				mailText = mailText.replace(MAIL_USERNAME, user.getUserName());
+				mailText = mailText.replace(MAIL_OTP, mailDTO.getOneTimePassword());
 
-			// construct the text body part
-			MimeBodyPart textBodyPart = new MimeBodyPart();
-			String mailText = mailProperties.getProperty(BILL_MAIL);
-			mailText = mailText.replace(MAIL_USERNAME, user.getUserName());
-			textBodyPart.setText(mailText);
+			} else if (TEMPLATE_CUST_SIGN_UP_MAIL.equalsIgnoreCase(templateName)
+					|| TEMPLATE_EMP_SIGN_UP_MAIL.equalsIgnoreCase(templateName)) {
 
-			outputStream = new ByteArrayOutputStream();
-			pdfUtil.writePdf(outputStream, pendingBillRequests, user.getName());
-			byte[] bytes = outputStream.toByteArray();
+				if (TEMPLATE_CUST_SIGN_UP_MAIL.equalsIgnoreCase(templateName)) {
+					mimeMessage.setSubject("Welcome to postang " + mailDTO.getCustomer().getUserName());
+					mailText = mailProperties.getProperty(SIGNUPMAIL);
+					mailText = mailText.replace(MAIL_CUSTNAME, mailDTO.getCustomer().getCustName());
+				} else if (TEMPLATE_EMP_SIGN_UP_MAIL.equalsIgnoreCase(templateName)) {
+					mimeMessage.setSubject("Welcome to postang " + mailDTO.getCustomer().getUserName());
+					mailText = mailProperties.getProperty(EMP_SIGNUP_MAIL);
+					mailText = mailText.replace(MAIL_EMPNAME, mailDTO.getEmployee().getEmpName());
+					mailText = mailText.replace(MAIL_PASSWORD, mailDTO.getEmployee().getEmpPass());
+				}
+			} else if (TEMPLATE_ALLOCATION_MAIL.equalsIgnoreCase(templateName)) {
+				mimeMessage.setSubject(ROOM_ALLOCATED);
+				mailText = mailProperties.getProperty(ALLOCATION_MAIL);
+			} else if (TEMPLATE_CANCEL_FAIL_MAIL.equalsIgnoreCase(templateName)
+					|| (TEMPLATE_CANCEL_MAIL.equalsIgnoreCase(templateName))) {
+				if (TEMPLATE_CANCEL_FAIL_MAIL.equalsIgnoreCase(templateName)) {
+					mimeMessage.setSubject(CANCEL_FAILED);
+					mailText = mailProperties.getProperty(CANCEL_FAIL_MAIL);
 
-			// construct the pdf body part
-			DataSource dataSource = new ByteArrayDataSource(bytes, "application/pdf");
-			MimeBodyPart pdfBodyPart = new MimeBodyPart();
-			pdfBodyPart.setDataHandler(new DataHandler(dataSource));
-			pdfBodyPart.setFileName(user.getUserName() + UNDERSCORE + new Date().toString() + PDF_EXTENSION);
+				} else {
+					mimeMessage.setSubject(CANCEL_SUCCESS);
+					mailText = mailProperties.getProperty(CANCEL_SUCCESS_MAIL);
 
-			// construct the mime multi part
-			MimeMultipart mimeMultipart = new MimeMultipart();
-			mimeMultipart.addBodyPart(textBodyPart);
-			mimeMultipart.addBodyPart(pdfBodyPart);
-			// construct the mime message
-			mimeMessage.setContent(mimeMultipart);
-			mimeMessage.setHeader("XPriority", "1");
+				}
+				mailText = mailText.replace(MAIL_CUSTNAME, user.getName());
+				mailText = mailText.replace(MAIL_ROOM_REQ_ID, String.valueOf(mailDTO.getRoomRequestId()));
+
+			} else if (TEMPLATE_BILL_MAIL_CUST.equalsIgnoreCase(templateName)) {
+				mimeMessage.setSubject("Bill Generated: " + user.getUserName());
+				ByteArrayOutputStream outputStream = null;
+
+				// construct the text body part
+				MimeBodyPart textBodyPart = new MimeBodyPart();
+				mailText = mailProperties.getProperty(BILL_MAIL);
+				mailText = mailText.replace(MAIL_USERNAME, user.getUserName());
+				textBodyPart.setText(mailText);
+
+				outputStream = new ByteArrayOutputStream();
+				pdfUtil.writePdf(outputStream, mailDTO.getPendingBillRequests(), user.getName());
+				byte[] bytes = outputStream.toByteArray();
+
+				// construct the pdf body part
+				DataSource dataSource = new ByteArrayDataSource(bytes, APPLICATION_PDF);
+				MimeBodyPart pdfBodyPart = new MimeBodyPart();
+				pdfBodyPart.setDataHandler(new DataHandler(dataSource));
+				pdfBodyPart.setFileName(user.getUserName() + UNDERSCORE + new Date().toString() + PDF_EXTENSION);
+
+				// construct the mime multi part
+				MimeMultipart mimeMultipart = new MimeMultipart();
+				mimeMultipart.addBodyPart(textBodyPart);
+				mimeMultipart.addBodyPart(pdfBodyPart);
+				// construct the mime message
+				mimeMessage.setContent(mimeMultipart);
+			}
+
+			mimeMessage.setText(mailText);
+			mimeMessage.setHeader(MAIL_X_PRIORITY, "1");
 			Transport.send(mimeMessage);
-			log.info(MAIL_SUCCESS);
+			status = templateName + MAIL_SUCCESS;
+			log.info(status);
 		} catch (Exception mex) {
-			log.info("Exception Occurred in sendBillMail:" + mex);
+			status = templateName + MAIL_FALIURE;
+			log.info("Exception Occurred in triggerMail:" + mex);
 			mex.printStackTrace();
 		}
-		return MAIL_SUCCESS;
+
+		return status;
 	}
 
 }

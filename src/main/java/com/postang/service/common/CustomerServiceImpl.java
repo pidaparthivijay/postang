@@ -19,6 +19,7 @@ import com.postang.constants.Constants;
 import com.postang.model.AmenityRequest;
 import com.postang.model.Customer;
 import com.postang.model.Employee;
+import com.postang.model.MailDTO;
 import com.postang.model.PendingBillRequest;
 import com.postang.model.Room;
 import com.postang.model.RoomRequest;
@@ -194,11 +195,12 @@ public class CustomerServiceImpl implements CustomerService,Constants {
 		RoomRequest roomReq=roomReqRepo.save(roomRequest);
 		int userId=roomReq.getUserId();
 		User user=userRepo.findByUserId(userId);
-		if(roomReq.getRequestId()==roomRequestId && roomReq.getRoomRequestStatus().equals(CANCEL)) {
-			cancellationStatus=mailUtil.sendCancellationMail(roomRequestId,user);
-		}else if(roomReq.getRequestId()==roomRequestId || roomReq.getRoomRequestStatus().equals(CANCEL)) {
-			cancellationStatus=mailUtil.sendCancellationFailMail(roomRequestId,user);
-		}
+		MailDTO mailDTO = new MailDTO();
+		mailDTO.setUser(user);
+		mailDTO.setRoomRequestId(roomRequestId);
+		mailDTO.setTemplateName(
+				roomReq.getRoomRequestStatus().equals(CANCEL) ? TEMPLATE_CANCEL_MAIL : TEMPLATE_CANCEL_FAIL_MAIL);
+		cancellationStatus = mailUtil.triggerMail(mailDTO);
 		return cancellationStatus;
 	}
 
@@ -287,6 +289,10 @@ public class CustomerServiceImpl implements CustomerService,Constants {
 	@Override
 	public String triggerMailBill(String custEmail) {
 		User user = userRepo.findByUserMail(custEmail);
-		return mailUtil.sendBillMail(user, this.getPendingBillRequests(custEmail));
+		MailDTO mailDTO = new MailDTO();
+		mailDTO.setPendingBillRequests(this.getPendingBillRequests(custEmail));
+		mailDTO.setUser(user);
+		mailDTO.setTemplateName(TEMPLATE_BILL_MAIL_CUST);
+		return mailUtil.triggerMail(mailDTO);
 	}
 }

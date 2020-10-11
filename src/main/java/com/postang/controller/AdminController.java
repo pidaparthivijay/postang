@@ -1,13 +1,11 @@
 package com.postang.controller;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -76,14 +74,7 @@ public class AdminController implements RequestMappings,Constants {
 		log.info("createMultipleRooms starts with count of rooms: " + countOfRooms);
 		Room room = requestDTO.getRoom();
 		try {
-			List<Room> roomList = new ArrayList<>();
-			for (int i = 0; i < countOfRooms; i++) {
-				Room roomi = new Room();
-				BeanUtils.copyProperties(room, roomi);
-				roomList.add(roomi);
-			}
-			Iterable<Room> roomSave = adminService.saveMultipleRooms(roomList);
-			requestDTO.setRoomsList(StreamSupport.stream(roomSave.spliterator(), false).collect(Collectors.toList()));
+			adminService.saveMultipleRooms(room, countOfRooms);
 			requestDTO.setActionStatus(RM_CRT_SXS);
 		} catch (Exception ex) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);

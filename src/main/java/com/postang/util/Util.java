@@ -231,48 +231,4 @@ public class Util implements Constants {
 		return lookupList;
 	}
 
-//	private List<Room> roomCreation(int count, Room room){
-//		//A floor can have only 10 rooms
-//		int floorNumber=1;
-//		List<Room> roomsInFloor=adminService.getRoomsByFloor();
-//		if(roomsInFloor<10){
-//			//find single rooms
-//			switch type:
-//			case single:
-//			if(single_rooms<6){
-//			switch model:
-//			case STE:
-//			if(ste_rooms<3){
-//		//create a new room and save
-//			}else{
-//		increase the floor number and perform same
-//			}
-//			case DLX:
-//			if(dlx_rooms<3){
-//		//create a new room and save
-//			}else{
-//			increase the floor number and perform same
-//			}
-//			case double:
-//			if(double_rooms<6){
-//			switch model:
-//			case STE:
-//			if(ste_rooms<3){
-//		//create a new room and save
-//			}else{
-//				increase the floor number and perform same
-//			}
-//			case DLX:
-//			if(dlx_rooms<3){
-//		//create a new room and save
-//			}else{
-//			increase the floor number and perform same
-//			}
-//			}else{
-//			increase the floor number and perform same
-//			}
-//		} else{
-//			increase the floor number and perform same
-//		}
-//	}
 }

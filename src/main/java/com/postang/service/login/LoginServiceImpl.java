@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import com.postang.constants.Constants;
+import com.postang.model.MailDTO;
 import com.postang.model.OneTimePassword;
 import com.postang.model.User;
 import com.postang.repo.OneTimePassRepo;
@@ -59,8 +60,12 @@ public class LoginServiceImpl implements Constants,LoginService {
 
 	@Override
 	public String requestOTPMail(User user) {
-		OneTimePassword oneTimePassword= util.generateOTP(user);		
-		String mailStatus=mailUtil.sendOTPMail(user, oneTimePassword.getOtpValue());
+		OneTimePassword oneTimePassword = util.generateOTP(user);
+		MailDTO mailDTO = new MailDTO();
+		mailDTO.setUser(user);
+		mailDTO.setOneTimePassword(oneTimePassword.getOtpValue());
+		mailDTO.setTemplateName(TEMPLATE_OTP_MAIL);
+		String mailStatus = mailUtil.triggerMail(mailDTO);
 		oneTimePassRepo.save(oneTimePassword);
 		return mailStatus;
 	}

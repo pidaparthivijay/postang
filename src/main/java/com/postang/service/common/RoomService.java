@@ -12,14 +12,14 @@ import com.postang.model.User;
  *
  */
 public interface RoomService {
-	RoomRequest getRoomRequestByRequestId(int requestId);
-
 	Room getRoomByRoomNumber(int roomNumber);
 
-	RoomRequest saveRoomRequest(RoomRequest roomReq);
+	RoomRequest getRoomRequestByRequestId(int requestId);
+
+	User getUserById(int userId);
 
 	Room saveRoom(Room room);
 
-	User getUserById(int userId);
+	RoomRequest saveRoomRequest(RoomRequest roomReq);
 	
 }

@@ -35,8 +35,10 @@ public interface AdminService {
 
 	Iterable<Room> getAllRooms();
 
-	Iterable<Lookup> getLookupList();
+	Employee getEmployeeDetails(String userName);
 	
+	Iterable<Lookup> getLookupList();
+
 	Iterable<Lookup> getLookupListByDefinition(String lookupDefinitionName);
 
 	RoomRequest getRoomRequestById(int roomRequestId);
@@ -48,9 +50,9 @@ public interface AdminService {
 	Iterable<Room> getRoomsByModel(String roomModel);
 
 	Iterable<Room> getRoomsByStatus(String roomStatus);
-
-	Iterable<Room> getRoomsByType(String roomType);
 	
+	Iterable<Room> getRoomsByType(String roomType);
+
 	Iterable<RoomRequest> getUnallocatedRoomRequests();
 
 	Amenity saveAmenity(Amenity amenity);
@@ -59,7 +61,7 @@ public interface AdminService {
 
 	Iterable<Lookup> saveLookups(List<Lookup> lookupList);
 
-	Iterable<Room> saveMultipleRooms(List<Room> roomsList);
+	void saveMultipleRooms(Room room, int count);
 
 	Room saveRoom(Room room);
 
@@ -68,7 +70,5 @@ public interface AdminService {
 	Iterable<Amenity> viewAllAmenities();
 
 	Iterable<TourPackage> viewAllTourPackages();
-
-	Employee getEmployeeDetails(String userName);
 
 }

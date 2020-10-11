@@ -27,6 +27,7 @@ import com.postang.constants.Constants;
 import com.postang.constants.RequestMappings;
 import com.postang.model.AmenityRequest;
 import com.postang.model.Customer;
+import com.postang.model.MailDTO;
 import com.postang.model.PendingBillRequest;
 import com.postang.model.RequestDTO;
 import com.postang.model.RewardPoints;
@@ -73,7 +74,10 @@ public class CustomerController implements RequestMappings, Constants {
 			if (customer.getCustId() > 0) {
 				customer.setActionStatus(true);
 				customer.setStatusMessage("");
-				String mailStatus = mailUtil.sendSignUpMail(customer);
+				MailDTO mailDTO = new MailDTO();
+				mailDTO.setCustomer(customer);
+				mailDTO.setTemplateName(TEMPLATE_SIGN_UP_MAIL);
+				String mailStatus = mailUtil.triggerMail(mailDTO);
 				log.info(mailStatus);
 
 			} else {

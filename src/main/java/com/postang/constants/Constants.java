@@ -12,6 +12,7 @@ public interface Constants {
 	public static final String ADM_LOG_SUCCESS = "Admin Login Success";
 	public static final String ADM_SXS = "Admin Login Success";// Duplicate
 	public static final String ADMIN = "Admin";
+	public static final String APPLICATION_PDF = "application/pdf";
 	public static final String AGE_INSUFF = "Age is not sufficient";
 	public static final String ALLOCATED = "A";
 	public static final String ALLOCATION_MAIL = "allocationMail";
@@ -84,6 +85,7 @@ public interface Constants {
 	public static final String MAIL_PASSWORD = "#password#";
 	public static final String MAIL_ROOM_REQ_ID = "#roomReqId#";
 	public static final String MAIL_SUCCESS = "Mail sent successfully";
+	public static final String MAIL_FALIURE = "mail is not sent";
 	public static final String MAIL_USERNAME = "#userName#";
 	public static final String MAILAPP_PROPERTIES = "mailApp.properties";
     public static final String MAX="MAX";
@@ -137,6 +139,14 @@ public interface Constants {
 	public static final String SUCCESS = "Success";
 	public static final String SUITE="STE";
 	public static final double SUITEROOMFARE = 0.25;
+	public static final String TEMPLATE_OTP_MAIL = "OTP_MAIL";
+	public static final String TEMPLATE_SIGN_UP_MAIL = "SIGN_UP_MAIL";
+	public static final String TEMPLATE_CUST_SIGN_UP_MAIL = "CUST_SIGN_UP_MAIL";
+	public static final String TEMPLATE_EMP_SIGN_UP_MAIL = "EMP_SIGN_UP_MAIL";
+	public static final String TEMPLATE_ALLOCATION_MAIL = "ALLOCATION_MAIL";
+	public static final String TEMPLATE_CANCEL_MAIL = "CANCELLATION_MAIL";
+	public static final String TEMPLATE_CANCEL_FAIL_MAIL = "CANCEL_FAIL_MAIL";
+	public static final String TEMPLATE_BILL_MAIL_CUST = "BILL_MAIL_TO_CUST";
 	public static final String TOTAL_BILL_AMOUNT = "Total Bill Amount";
 	public static final String TOTAL_POINTS = "Total Points";
 	public static final String TOUR_BOOK_SXS = "Tour Package Booking Success";
@@ -161,6 +171,16 @@ public interface Constants {
 	public static final String VALID_OTP = "OTP is valid";
 	public static final String XL_UPLOAD_FAILED = "Excel Upload Failed";
 	public static final String XLSX_EXTN=".xlsx";
+	public static final String MAIL_X_PRIORITY = "X-Priority";
 	public static final String YES = "Y";
+	public static final int FC_TOTAL = 15;
+	public static final int FC_SNG_STE_AC = 2;
+	public static final int FC_SNG_STE_NAC = 2;
+	public static final int FC_SNG_DLX_AC = 2;
+	public static final int FC_SNG_DLX_NAC = 2;
+	public static final int FC_DBL_STE_AC = 2;
+	public static final int FC_DBL_STE_NAC = 2;
+	public static final int FC_DBL_DLX_AC = 2;
+	public static final int FC_DBL_DLX_NAC = 1;
 
 }

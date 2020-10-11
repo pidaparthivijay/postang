@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.postang.constants.Constants;
 import com.postang.constants.RequestMappings;
+import com.postang.model.MailDTO;
 import com.postang.model.RequestDTO;
 import com.postang.model.Room;
 import com.postang.model.RoomRequest;
@@ -106,7 +107,10 @@ public class RoomAllocationController implements RequestMappings, Constants {
 			roomService.saveRoom(room);
 			User user = roomService.getUserById(roomReq.getUserId());
 			commonService.allocateRewardPoints(user, ROOM_BOOKING);
-			String mailStatus = mailUtil.sendAllocationMail(user.getUserMail());
+			MailDTO mailDTO = new MailDTO();
+			mailDTO.setEmailAddress(user.getUserMail());
+			mailDTO.setTemplateName(TEMPLATE_ALLOCATION_MAIL);
+			String mailStatus = mailUtil.triggerMail(mailDTO);
 			requestDTO.setActionStatus(mailStatus);
 			log.info("assignRoomToRequest ends...");
 		} catch (Exception ex) {

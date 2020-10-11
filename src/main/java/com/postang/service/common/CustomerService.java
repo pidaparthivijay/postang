@@ -19,35 +19,35 @@ import com.postang.model.TourPackageRequest;
  */
 public interface CustomerService {
 
-	public Customer saveCustomer(Customer customer);
+	public TourPackageRequest bookTourPackage(TourPackageRequest tourPackageRequest);
 
-	public Object findById(long id);
+	public String cancelRoomRequest(int roomRequestId);
 
 	public Iterable<Customer> findAll();	
 
-	public Customer getCustomerByUserName(String userName);
-
-	public Customer getCustomerDetails(Customer customer);
-
-	public Employee getEmployeeByUserName(String userName);
-
-	public RoomRequest requestRoom(RoomRequest roomRequest);
-
-	public List<RoomRequest> getMyRequestsList(Customer customer);
-	
-	public AmenityRequest requestAmenity(AmenityRequest amenityRequest);
-	
-	public String cancelRoomRequest(int roomRequestId);
+	public Object findById(long id);
 
 	public double generateBill(String custEmail);
 
-	public List<PendingBillRequest> getPendingBillRequests(String custEmail);
-
-	public TourPackageRequest bookTourPackage(TourPackageRequest tourPackageRequest);
+	public ByteArrayInputStream generatedBillPdf(String custEmail);
 
 	public Iterable<TourPackageRequest> getAllTourPackageBookings();
 
-	public ByteArrayInputStream generatedBillPdf(String custEmail);
+	public Customer getCustomerByUserName(String userName);
+	
+	public Customer getCustomerDetails(Customer customer);
+	
+	public Employee getEmployeeByUserName(String userName);
+
+	public List<RoomRequest> getMyRequestsList(Customer customer);
+
+	public List<PendingBillRequest> getPendingBillRequests(String custEmail);
+
+	public AmenityRequest requestAmenity(AmenityRequest amenityRequest);
+
+	public RoomRequest requestRoom(RoomRequest roomRequest);
+
+	public Customer saveCustomer(Customer customer);
 
 	public String triggerMailBill(String custEmail);
 
