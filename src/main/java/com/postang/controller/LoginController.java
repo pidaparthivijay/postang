@@ -15,7 +15,7 @@ import com.postang.model.Employee;
 import com.postang.model.OneTimePassword;
 import com.postang.model.RequestDTO;
 import com.postang.model.User;
-import com.postang.service.common.AdminService;
+import com.postang.service.common.EmployeeService;
 import com.postang.service.common.CustomerService;
 import com.postang.service.login.LoginService;
 import com.postang.util.Util;
@@ -38,7 +38,7 @@ public class LoginController implements RequestMappings, Constants {
 	LoginService loginService;
 
 	@Autowired
-	AdminService adminService;
+	EmployeeService employeeService;
 
 	@Autowired
 	CustomerService customerService;
@@ -108,7 +108,7 @@ public class LoginController implements RequestMappings, Constants {
 					customer.setStatusMessage(VALID_OTP);
 					return new ObjectMapper().writeValueAsString(customer);
 				} else if (EMPLOYEE.equals(user.getUserType())) {
-					Employee employee = adminService.getEmployeeDetails(user.getUserName());
+					Employee employee = employeeService.getEmployeeDetails(user.getUserName());
 					employee.setActionStatus(true);
 					employee.setStatusMessage(VALID_OTP);
 					return new ObjectMapper().writeValueAsString(employee);
@@ -127,7 +127,7 @@ public class LoginController implements RequestMappings, Constants {
 		Employee employee = requestDTO.getEmployee();
 		log.info("viewEmployeeDetails starts...");
 		try {
-			Employee emp = adminService.getEmployeeDetails(employee.getUserName());
+			Employee emp = employeeService.getEmployeeDetails(employee.getUserName());
 			requestDTO.setEmployee(emp);
 		} catch (Exception ex) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
@@ -142,7 +142,7 @@ public class LoginController implements RequestMappings, Constants {
 		Employee employee = requestDTO.getEmployee();
 		log.info("udpateEmployee starts...");
 		try {
-			Employee emp = adminService.createEmployee(employee);
+			Employee emp = employeeService.createEmployee(employee);
 			requestDTO.setEmployee(emp);
 			requestDTO.setActionStatus((emp != null && emp.getEmpId() > 0) ? EMP_UPDATE_SXS : EMP_UPDATE_FAIL);
 		} catch (Exception ex) {

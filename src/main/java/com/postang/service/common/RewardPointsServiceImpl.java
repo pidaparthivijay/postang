@@ -10,11 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.postang.model.Customer;
-import com.postang.model.Employee;
 import com.postang.model.RewardPoints;
 import com.postang.model.User;
 import com.postang.repo.CustomerRepository;
-import com.postang.repo.EmployeeRepository;
 import com.postang.repo.RewardPointsRepository;
 import com.postang.util.Util;
 
@@ -26,13 +24,10 @@ import lombok.extern.log4j.Log4j2;
  */
 @Log4j2
 @Service
-public class CommonServiceImpl implements CommonService {
+public class RewardPointsServiceImpl implements RewardPointsService {
 
 	@Autowired
 	CustomerRepository customerRepo;
-
-	@Autowired
-	EmployeeRepository empRepo;
 
 	@Autowired
 	RewardPointsRepository rewardPointsRepo;
@@ -53,23 +48,6 @@ public class CommonServiceImpl implements CommonService {
 		return rewardPointsRepo.save(rewardPoints);
 	}
 
-	@Override
-	public Employee getEmployeeByUserName(String userName) {
-		List<Employee> empList = null;
-		log.info("getEmployeeByUserName starts with userName: " + userName);
-		try {
-			empList = empRepo.findByUserName(userName);
-			if (!empList.isEmpty()) {
-				return empList.get(0);
-			} else {
-				return null;
-			}
-		} catch (Exception e) {
-			log.error("Exception in getEmployeeByUserName :" + e.toString());
-			e.printStackTrace();
-		}
-		return null;
-	}
 
 	@Override
 	public List<RewardPoints> getRewardPointsByUserId(long userId) {
