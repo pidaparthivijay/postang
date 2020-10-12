@@ -5,7 +5,7 @@ package com.postang.repo;
 
 import org.springframework.data.repository.CrudRepository;
 
-import com.postang.model.Amenity;
+import com.postang.domain.Amenity;
 
 
 /**

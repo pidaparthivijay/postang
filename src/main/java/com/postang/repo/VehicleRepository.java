@@ -2,7 +2,7 @@ package com.postang.repo;
 
 import org.springframework.data.repository.CrudRepository;
 
-import com.postang.model.Vehicle;
+import com.postang.domain.Vehicle;
 
 /**
  * @author Subrahmanya Vijay

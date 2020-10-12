@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.postang.constants.Constants;
 import com.postang.constants.RequestMappings;
+import com.postang.domain.Room;
 import com.postang.model.RequestDTO;
-import com.postang.model.Room;
-import com.postang.service.common.RoomService;
+import com.postang.service.RoomService;
 
 import lombok.extern.log4j.Log4j2;
 

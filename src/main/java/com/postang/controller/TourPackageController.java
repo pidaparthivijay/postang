@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.postang.constants.Constants;
 import com.postang.constants.RequestMappings;
+import com.postang.domain.TourPackage;
+import com.postang.domain.TourPackageRequest;
 import com.postang.model.RequestDTO;
-import com.postang.model.TourPackage;
-import com.postang.model.TourPackageRequest;
-import com.postang.service.common.TourPackageService;
+import com.postang.service.TourPackageService;
 import com.postang.util.MailUtil;
 import com.postang.util.Util;
 

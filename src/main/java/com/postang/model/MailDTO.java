@@ -4,6 +4,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.postang.domain.Customer;
+import com.postang.domain.Employee;
+import com.postang.domain.PendingBillRequest;
+import com.postang.domain.User;
+
 import lombok.Data;
 
 /**

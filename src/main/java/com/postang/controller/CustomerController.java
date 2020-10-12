@@ -18,12 +18,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.postang.constants.Constants;
 import com.postang.constants.RequestMappings;
-import com.postang.model.Customer;
+import com.postang.domain.Customer;
+import com.postang.domain.RewardPoints;
 import com.postang.model.MailDTO;
 import com.postang.model.RequestDTO;
-import com.postang.model.RewardPoints;
-import com.postang.service.common.CustomerService;
-import com.postang.service.common.RewardPointsService;
+import com.postang.service.CustomerService;
+import com.postang.service.RewardPointsService;
 import com.postang.util.MailUtil;
 
 import lombok.extern.log4j.Log4j2;

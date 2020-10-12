@@ -20,8 +20,8 @@ import javax.mail.util.ByteArrayDataSource;
 import org.springframework.util.StringUtils;
 
 import com.postang.constants.Constants;
+import com.postang.domain.User;
 import com.postang.model.MailDTO;
-import com.postang.model.User;
 
 import lombok.extern.log4j.Log4j2;
 

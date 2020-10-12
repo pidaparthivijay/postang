@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.springframework.data.repository.CrudRepository;
 
-import com.postang.model.Employee;
+import com.postang.domain.Employee;
 
 /**
  * @author Subrahmanya Vijay

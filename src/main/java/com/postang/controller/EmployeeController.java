@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.postang.constants.Constants;
 import com.postang.constants.RequestMappings;
-import com.postang.model.Employee;
+import com.postang.domain.Employee;
 import com.postang.model.RequestDTO;
-import com.postang.service.common.EmployeeService;
+import com.postang.service.EmployeeService;
 
 import lombok.extern.log4j.Log4j2;
 

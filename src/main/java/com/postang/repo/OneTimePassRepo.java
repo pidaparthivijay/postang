@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.data.repository.CrudRepository;
 
-import com.postang.model.OneTimePassword;
+import com.postang.domain.OneTimePassword;
 
 /**
  * @author Subrahmanya Vijay

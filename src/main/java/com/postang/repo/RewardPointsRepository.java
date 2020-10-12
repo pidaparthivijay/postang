@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.data.repository.CrudRepository;
 
-import com.postang.model.RewardPoints;
+import com.postang.domain.RewardPoints;
 
 /**
  * @author Subrahmanya Vijay

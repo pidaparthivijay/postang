@@ -18,9 +18,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.postang.constants.Constants;
 import com.postang.constants.RequestMappings;
-import com.postang.model.Lookup;
+import com.postang.domain.Lookup;
 import com.postang.model.RequestDTO;
-import com.postang.service.common.LookupService;
+import com.postang.service.LookupService;
 import com.postang.util.Util;
 
 import lombok.extern.log4j.Log4j2;

@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.postang.constants.Constants;
 import com.postang.constants.RequestMappings;
-import com.postang.model.Amenity;
-import com.postang.model.AmenityRequest;
+import com.postang.domain.Amenity;
+import com.postang.domain.AmenityRequest;
 import com.postang.model.RequestDTO;
-import com.postang.service.common.AmenityService;
+import com.postang.service.AmenityService;
 
 import lombok.extern.log4j.Log4j2;
 

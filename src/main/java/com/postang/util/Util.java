@@ -21,14 +21,14 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.postang.constants.Constants;
-import com.postang.model.Customer;
-import com.postang.model.Employee;
-import com.postang.model.Lookup;
-import com.postang.model.OneTimePassword;
-import com.postang.model.Room;
-import com.postang.model.RoomRequest;
-import com.postang.model.TourPackage;
-import com.postang.model.User;
+import com.postang.domain.Customer;
+import com.postang.domain.Employee;
+import com.postang.domain.Lookup;
+import com.postang.domain.OneTimePassword;
+import com.postang.domain.Room;
+import com.postang.domain.RoomRequest;
+import com.postang.domain.TourPackage;
+import com.postang.domain.User;
 
 import lombok.extern.log4j.Log4j2;
 

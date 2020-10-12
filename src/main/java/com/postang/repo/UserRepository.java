@@ -2,7 +2,7 @@ package com.postang.repo;
 
 import org.springframework.data.repository.CrudRepository;
 
-import com.postang.model.User;
+import com.postang.domain.User;
 
 /**
  * @author Subrahmanya Vijay

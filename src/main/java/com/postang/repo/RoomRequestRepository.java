@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.springframework.data.repository.CrudRepository;
 
-import com.postang.model.RoomRequest;
+import com.postang.domain.RoomRequest;
 
 /**
  * @author Subrahmanya Vijay

@@ -6,6 +6,19 @@ import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import com.postang.domain.Amenity;
+import com.postang.domain.AmenityRequest;
+import com.postang.domain.Customer;
+import com.postang.domain.Employee;
+import com.postang.domain.Lookup;
+import com.postang.domain.PendingBillRequest;
+import com.postang.domain.RewardPoints;
+import com.postang.domain.Room;
+import com.postang.domain.RoomRequest;
+import com.postang.domain.TourPackage;
+import com.postang.domain.TourPackageRequest;
+import com.postang.domain.User;
+
 import lombok.Data;
 
 /**
