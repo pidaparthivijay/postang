@@ -6,7 +6,7 @@ package com.postang.service;
 import java.io.ByteArrayInputStream;
 import java.util.List;
 
-import com.postang.domain.PendingBillRequest;
+import com.postang.model.PendingBillRequest;
 
 /**
  * @author Subrahmanya Vijay

@@ -5,7 +5,7 @@ package com.postang.repo;
 
 import java.util.List;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.postang.domain.RoomRequest;
 
@@ -13,14 +13,14 @@ import com.postang.domain.RoomRequest;
  * @author Subrahmanya Vijay
  *
  */
-public interface RoomRequestRepository extends CrudRepository<RoomRequest, Long> {
+public interface RoomRequestRepository extends JpaRepository<RoomRequest, Long> {
 
 
 	RoomRequest findByRequestId(int roomRequestId);
 
 	List<RoomRequest> findByUserId(int userId);
 
-	Iterable<RoomRequest> findByRoomRequestStatus(String roomRequestStatus);
+	List<RoomRequest> findByRoomRequestStatus(String roomRequestStatus);
 
 	
 

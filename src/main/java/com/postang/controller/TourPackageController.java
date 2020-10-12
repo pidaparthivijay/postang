@@ -1,8 +1,6 @@
 package com.postang.controller;
 
 import java.util.Date;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
@@ -83,9 +81,7 @@ public class TourPackageController implements RequestMappings, Constants {
 		RequestDTO requestDTO = new RequestDTO();
 		log.info("viewAllTourPackages starts...");
 		try {
-			Iterable<TourPackage> tourPackagesList = tourPackageService.viewAllTourPackages();
-			requestDTO.setTourPackageList(
-					StreamSupport.stream(tourPackagesList.spliterator(), false).collect(Collectors.toList()));
+			requestDTO.setTourPackageList(tourPackageService.viewAllTourPackages());
 			if (!StringUtils.isEmpty(status)) {
 				requestDTO.setActionStatus(status);
 			}

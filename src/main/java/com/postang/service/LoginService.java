@@ -9,14 +9,14 @@ import com.postang.domain.User;
  */
 public interface LoginService {
 
-	public User getUserDetailsByUserName(String userName);
+	User getUserDetailsByUserName(String userName);
 
-	public String requestOTPMail(User user);
+	String requestOTPMail(User user);
 
-	public String resetPwd(User user);
+	String resetPwd(User user);
 
-	public String validateOtp(OneTimePassword oneTimePassword);
+	String validateOtp(OneTimePassword oneTimePassword);
 
-	public User validateUserDetails(User user);
+	User validateUserDetails(User user);
 
 }

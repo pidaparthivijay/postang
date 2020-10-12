@@ -2,8 +2,6 @@ package com.postang.controller;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -60,9 +58,7 @@ public class EmployeeController implements RequestMappings, Constants {
 		RequestDTO requestDTO = new RequestDTO();
 		log.info("getAllEmployees starts...");
 		try {
-			Iterable<Employee> empIterable = employeeService.getAllEmployees();
-			List<Employee> empList = StreamSupport.stream(empIterable.spliterator(), false)
-					.collect(Collectors.toList());
+			List<Employee> empList = employeeService.getAllEmployees();
 			empList.sort(Comparator.comparing(Employee::getEmpId));
 			requestDTO.setEmployeesList(empList);
 		} catch (Exception ex) {

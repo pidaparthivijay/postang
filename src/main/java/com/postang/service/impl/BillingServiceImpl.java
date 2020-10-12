@@ -14,11 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.postang.constants.Constants;
-import com.postang.domain.PendingBillRequest;
 import com.postang.domain.Room;
 import com.postang.domain.RoomRequest;
 import com.postang.domain.User;
 import com.postang.model.MailDTO;
+import com.postang.model.PendingBillRequest;
 import com.postang.repo.RoomRepository;
 import com.postang.repo.RoomRequestRepository;
 import com.postang.repo.UserRepository;

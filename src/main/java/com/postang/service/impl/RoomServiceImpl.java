@@ -39,14 +39,14 @@ public class RoomServiceImpl implements RoomService, Constants {
 	UserRepository userRepo;
 
 	@Override
-	public Iterable<Room> findSimilarRooms(Room room) {
+	public List<Room> findSimilarRooms(Room room) {
 		log.info(room);
 		return roomRepo.findByRoomModelAndRoomTypeAndRoomCategoryAndRoomStatus(room.getRoomModel(), room.getRoomType(),
 				room.getRoomCategory(), VACANT);
 	}
 
 	@Override
-	public Iterable<Room> getAllRooms() {
+	public List<Room> getAllRooms() {
 		return roomRepo.findAll();
 	}
 
@@ -56,27 +56,27 @@ public class RoomServiceImpl implements RoomService, Constants {
 	}
 
 	@Override
-	public Iterable<Room> getRoomsByCategory(String roomCategory) {
+	public List<Room> getRoomsByCategory(String roomCategory) {
 		return roomRepo.findByRoomCategory(roomCategory);
 	}
 
 	@Override
-	public Iterable<Room> getRoomsByFloor(int floorNumber) {
+	public List<Room> getRoomsByFloor(int floorNumber) {
 		return roomRepo.findByFloorNumber(floorNumber);
 	}
 
 	@Override
-	public Iterable<Room> getRoomsByModel(String roomModel) {
+	public List<Room> getRoomsByModel(String roomModel) {
 		return roomRepo.findByRoomModel(roomModel);
 	}
 
 	@Override
-	public Iterable<Room> getRoomsByStatus(String roomStatus) {
+	public List<Room> getRoomsByStatus(String roomStatus) {
 		return roomRepo.findByRoomStatus(roomStatus);
 	}
 
 	@Override
-	public Iterable<Room> getRoomsByType(String roomType) {
+	public List<Room> getRoomsByType(String roomType) {
 		return roomRepo.findByRoomType(roomType);
 	}
 
@@ -96,8 +96,7 @@ public class RoomServiceImpl implements RoomService, Constants {
 	}
 
 	private Map<Integer, Integer> getUnfilledFloors() {
-		Iterable<Room> roomsIterable = roomRepo.findAll();
-		List<Room> roomsList = StreamSupport.stream(roomsIterable.spliterator(), false).collect(Collectors.toList());
+		List<Room> roomsList = roomRepo.findAll();
 		List<Integer> floorsList = roomsList.stream().distinct().map(Room::getFloorNumber).collect(Collectors.toList());
 		List<Integer> unfilledFloors = new ArrayList<>();
 		Map<Integer, Integer> unfilledMap = new HashMap<>();

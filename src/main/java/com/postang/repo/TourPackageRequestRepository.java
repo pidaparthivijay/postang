@@ -3,7 +3,9 @@
  */
 package com.postang.repo;
 
-import org.springframework.data.repository.CrudRepository;
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.postang.domain.TourPackageRequest;
 
@@ -12,10 +14,11 @@ import com.postang.domain.TourPackageRequest;
  * @author Subrahmanya Vijay
  *
  */
-public interface TourPackageRequestRepository extends CrudRepository<TourPackageRequest, Long> {
+public interface TourPackageRequestRepository extends JpaRepository<TourPackageRequest, Long> {
 
 	TourPackageRequest findByTourPackageName(String tourPackageName);
-	Iterable<TourPackageRequest> findByUserId(int userId);
+
+	List<TourPackageRequest> findByUserId(int userId);
 
 }
 

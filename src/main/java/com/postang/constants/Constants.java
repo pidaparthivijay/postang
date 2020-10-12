@@ -78,6 +78,7 @@ public interface Constants {
 	public static final String LONG = "6D7N";
 	public static final String LOOK_UP ="Lookup";
 	public static final String LOOKUP_EXCEL_SXS = "Lookups Upload Success";
+	public static final String LOOKUP_EXCEL_FAIL = "Lookups Upload Failed";
 	public static final String LOOKUP_SAVE_SXS="Lookups Save Success";
 	public static final String MAIL_CUSTNAME = "#custName#";
 	public static final String MAIL_EMPNAME = "#empName#";

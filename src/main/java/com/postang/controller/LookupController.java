@@ -3,7 +3,6 @@ package com.postang.controller;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
@@ -49,12 +48,9 @@ public class LookupController implements RequestMappings, Constants {
 		RequestDTO requestDTO = new RequestDTO();
 		log.info("uploadLookupExcel starts..." + multipartFile);
 		try {
-			List<Lookup> lookupList = util.generateLookupListFromExcelFile(multipartFile);
-			Iterable<Lookup> lookupIterables = lookupService.saveLookups(lookupList);
-			requestDTO.setLookupList(
-					StreamSupport.stream(lookupIterables.spliterator(), false).collect(Collectors.toList()));
-			requestDTO.setActionStatus(LOOKUP_EXCEL_SXS);
-			return viewLookupList(LOOKUP_EXCEL_SXS);
+			String status = lookupService.uploadLookupExcel(multipartFile);
+			requestDTO.setActionStatus(status);
+			return viewLookupList(status);
 		} catch (Exception e) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
 			log.error("Exception in uploadLookupExcel" + e);
@@ -120,9 +116,8 @@ public class LookupController implements RequestMappings, Constants {
 		RequestDTO requestDTO = new RequestDTO();
 		log.info("getLookupDefs starts...");
 		try {
-			Iterable<Lookup> lookupIterables = lookupService.getLookupList();
-			List<String> lookupDefsList = StreamSupport.stream(lookupIterables.spliterator(), false)
-					.collect(Collectors.toList()).stream().distinct().map(Lookup::getLookupDefName)
+			List<Lookup> lookupList = lookupService.getLookupList();
+			List<String> lookupDefsList = lookupList.stream().distinct().map(Lookup::getLookupDefName)
 					.collect(Collectors.toList());
 			requestDTO.setLookupDefsList(lookupDefsList.stream().distinct().collect(Collectors.toList()));
 		} catch (Exception e) {
@@ -138,9 +133,7 @@ public class LookupController implements RequestMappings, Constants {
 		String lookupDefinitionName = requestDTO.getLookupDefinitionName();
 		log.info("getLookupListByDefinition starts..." + lookupDefinitionName);
 		try {
-			Iterable<Lookup> lookupList = lookupService.getLookupListByDefinition(lookupDefinitionName);
-			requestDTO
-					.setLookupList(StreamSupport.stream(lookupList.spliterator(), false).collect(Collectors.toList()));
+			requestDTO.setLookupList(lookupService.getLookupListByDefinition(lookupDefinitionName));
 		} catch (Exception e) {
 			log.error("Exception in getLookupListByDefinition..." + e);
 			e.printStackTrace();
@@ -153,9 +146,7 @@ public class LookupController implements RequestMappings, Constants {
 		RequestDTO requestDTO = new RequestDTO();
 		log.info("viewLookupList starts...");
 		try {
-			Iterable<Lookup> lookupIterables = lookupService.getLookupList();
-			requestDTO.setLookupList(
-					StreamSupport.stream(lookupIterables.spliterator(), false).collect(Collectors.toList()));
+			requestDTO.setLookupList(lookupService.getLookupList());
 			if (!StringUtils.isEmpty(status)) {
 				requestDTO.setActionStatus(status);
 			}

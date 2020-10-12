@@ -1,6 +1,8 @@
 package com.postang.repo;
 
-import org.springframework.data.repository.CrudRepository;
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.postang.domain.Lookup;
 
@@ -8,10 +10,10 @@ import com.postang.domain.Lookup;
  * @author Subrahmanya Vijay
  *
  */
-public interface LookupRepository extends CrudRepository<Lookup, Long> {
+public interface LookupRepository extends JpaRepository<Lookup, Long> {
 
 	Lookup findByLookupId(long lookupId);
 
-	Iterable<Lookup> findByLookupDefName(String lookupDefName);
+	List<Lookup> findByLookupDefName(String lookupDefName);
 
 }

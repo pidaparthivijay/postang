@@ -3,6 +3,8 @@
  */
 package com.postang.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -40,7 +42,7 @@ public class TourPackageServiceImpl implements TourPackageService, Constants {
 	}
 
 	@Override
-	public Iterable<TourPackageRequest> getAllTourPackageBookings() {
+	public List<TourPackageRequest> getAllTourPackageBookings() {
 		return tourPackageRequestRepository.findAll();
 	}
 
@@ -50,7 +52,7 @@ public class TourPackageServiceImpl implements TourPackageService, Constants {
 	}
 
 	@Override
-	public Iterable<TourPackage> viewAllTourPackages() {
+	public List<TourPackage> viewAllTourPackages() {
 		return tourPackageRepository.findAll();
 	}
 

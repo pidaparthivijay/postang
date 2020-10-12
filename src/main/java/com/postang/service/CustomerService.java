@@ -3,6 +3,8 @@
  */
 package com.postang.service;
 
+import java.util.List;
+
 import com.postang.domain.Customer;
 import com.postang.domain.Employee;
 
@@ -12,7 +14,7 @@ import com.postang.domain.Employee;
  */
 public interface CustomerService {
 
-	Iterable<Customer> findAll();
+	List<Customer> findAll();
 
 	Object findById(long id);
 

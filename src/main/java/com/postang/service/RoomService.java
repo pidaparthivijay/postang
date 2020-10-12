@@ -3,6 +3,8 @@
  */
 package com.postang.service;
 
+import java.util.List;
+
 import com.postang.domain.Room;
 import com.postang.domain.User;
 
@@ -12,21 +14,21 @@ import com.postang.domain.User;
  */
 public interface RoomService {
 
-	Iterable<Room> findSimilarRooms(Room room);
+	List<Room> findSimilarRooms(Room room);
 
-	Iterable<Room> getAllRooms();
+	List<Room> getAllRooms();
 
 	Room getRoomByRoomNumber(int roomNumber);
 
-	Iterable<Room> getRoomsByCategory(String roomCategory);
+	List<Room> getRoomsByCategory(String roomCategory);
 
-	Iterable<Room> getRoomsByFloor(int floorNumber);
+	List<Room> getRoomsByFloor(int floorNumber);
 
-	Iterable<Room> getRoomsByModel(String roomModel);
+	List<Room> getRoomsByModel(String roomModel);
 
-	Iterable<Room> getRoomsByStatus(String roomStatus);
+	List<Room> getRoomsByStatus(String roomStatus);
 
-	Iterable<Room> getRoomsByType(String roomType);
+	List<Room> getRoomsByType(String roomType);
 
 	User getUserById(int userId);
 

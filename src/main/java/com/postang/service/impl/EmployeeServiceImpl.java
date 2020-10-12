@@ -78,7 +78,7 @@ public class EmployeeServiceImpl implements EmployeeService, Constants {
 	}
 
 	@Override
-	public Iterable<Employee> getAllEmployees() {
+	public List<Employee> getAllEmployees() {
 		return employeeRepository.findAll();
 	}
 

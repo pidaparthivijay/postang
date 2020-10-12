@@ -7,11 +7,13 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.postang.constants.Constants;
 import com.postang.domain.Lookup;
 import com.postang.repo.LookupRepository;
 import com.postang.service.LookupService;
+import com.postang.util.Util;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -26,6 +28,7 @@ public class LookupServiceImpl implements LookupService, Constants {
 	@Autowired
 	LookupRepository lookupRepository;
 
+	Util util = new Util();
 
 	@Override
 	public Lookup findLookupByLookupId(long lookupId) {
@@ -33,12 +36,12 @@ public class LookupServiceImpl implements LookupService, Constants {
 	}
 
 	@Override
-	public Iterable<Lookup> getLookupList() {
+	public List<Lookup> getLookupList() {
 		return lookupRepository.findAll();
 	}
 
 	@Override
-	public Iterable<Lookup> getLookupListByDefinition(String lookupDefinitionName) {
+	public List<Lookup> getLookupListByDefinition(String lookupDefinitionName) {
 		return lookupRepository.findByLookupDefName(lookupDefinitionName);
 	}
 
@@ -48,8 +51,19 @@ public class LookupServiceImpl implements LookupService, Constants {
 	}
 
 	@Override
-	public Iterable<Lookup> saveLookups(List<Lookup> lookupList) {
+	public List<Lookup> saveLookups(List<Lookup> lookupList) {
 		return lookupRepository.saveAll(lookupList);
+	}
+
+	@Override
+	public String uploadLookupExcel(MultipartFile multipartFile) {
+
+		int existingSize = lookupRepository.findAll().size();
+		List<Lookup> lookupFromExcel = util.generateLookupListFromExcelFile(multipartFile);
+		List<Lookup> lookupIterables = this.saveLookups(lookupFromExcel);
+		int newSize = lookupRepository.findAll().size();
+
+		return (newSize == lookupIterables.size() + existingSize) ? LOOKUP_EXCEL_SXS : LOOKUP_EXCEL_FAIL;
 	}
 
 }

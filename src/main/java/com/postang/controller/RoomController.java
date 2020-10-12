@@ -2,8 +2,6 @@ package com.postang.controller;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -73,8 +71,7 @@ public class RoomController implements RequestMappings, Constants {
 		String roomStatus = requestDTO.getRoomStatus();
 		log.info("getRoomsByStatus starts..." + roomStatus);
 		try {
-			Iterable<Room> roomList = roomService.getRoomsByStatus(roomStatus);
-			requestDTO.setRoomsList(StreamSupport.stream(roomList.spliterator(), false).collect(Collectors.toList()));
+			requestDTO.setRoomsList(roomService.getRoomsByStatus(roomStatus));
 		} catch (Exception ex) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
 			log.error("Exception in getRoomsByStatus : " + ex.getMessage());
@@ -101,8 +98,7 @@ public class RoomController implements RequestMappings, Constants {
 		RequestDTO requestDTO = new RequestDTO();
 		log.info("getAllRooms starts...");
 		try {
-			Iterable<Room> roomIterables = roomService.getAllRooms();
-			List<Room> roomList = StreamSupport.stream(roomIterables.spliterator(), false).collect(Collectors.toList());
+			List<Room> roomList = roomService.getAllRooms();
 			roomList.sort(Comparator.comparing(Room::getRoomNumber));
 			requestDTO.setRoomsList(roomList);
 		} catch (Exception ex) {

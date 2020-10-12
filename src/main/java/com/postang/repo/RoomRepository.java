@@ -5,7 +5,7 @@ package com.postang.repo;
 
 import java.util.List;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.postang.domain.Room;
 
@@ -14,19 +14,20 @@ import com.postang.domain.Room;
  * @author Subrahmanya Vijay
  *
  */
-public interface RoomRepository extends CrudRepository<Room, Long> {
+public interface RoomRepository extends JpaRepository<Room, Long> {
 
-	Iterable<Room> findByRoomStatus(String roomStatus);
+	List<Room> findByRoomStatus(String roomStatus);
 
-	Iterable<Room> findByRoomType(String roomType);
+	List<Room> findByRoomType(String roomType);
 
-	Iterable<Room> findByFloorNumber(int floorNumber);
+	List<Room> findByFloorNumber(int floorNumber);
 
-	Iterable<Room> findByRoomModel(String roomModel);
+	List<Room> findByRoomModel(String roomModel);
 
-	Iterable<Room> findByRoomCategory(String roomCategory);
+	List<Room> findByRoomCategory(String roomCategory);
 	
-	Iterable<Room> findByRoomModelAndRoomTypeAndRoomCategoryAndRoomStatus(String roomModel, String roomType,String roomCategory,
+	List<Room> findByRoomModelAndRoomTypeAndRoomCategoryAndRoomStatus(String roomModel, String roomType,
+			String roomCategory,
 			String roomStatus);
 
 	Room findByRoomNumber(int roomNumber);

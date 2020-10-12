@@ -60,7 +60,7 @@ public class RoomRequestServiceImpl implements RoomRequestService, Constants {
 
 
 	@Override
-	public Iterable<RoomRequest> getAllRoomRequests() {
+	public List<RoomRequest> getAllRoomRequests() {
 		return roomReqRepo.findAll();
 	}
 
@@ -81,7 +81,7 @@ public class RoomRequestServiceImpl implements RoomRequestService, Constants {
 	}
 
 	@Override
-	public Iterable<RoomRequest> getUnallocatedRoomRequests() {
+	public List<RoomRequest> getUnallocatedRoomRequests() {
 		return roomReqRepo.findByRoomRequestStatus(PENDING);
 	}
 

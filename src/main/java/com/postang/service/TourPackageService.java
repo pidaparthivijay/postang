@@ -3,9 +3,10 @@
  */
 package com.postang.service;
 
+import java.util.List;
+
 import com.postang.domain.TourPackage;
 import com.postang.domain.TourPackageRequest;
-
 
 /**
  * @author Subrahmanya Vijay
@@ -17,10 +18,10 @@ public interface TourPackageService {
 
 	TourPackage findTourPackageByTourPackageName(String tourPackageName);
 
-	Iterable<TourPackageRequest> getAllTourPackageBookings();
+	List<TourPackageRequest> getAllTourPackageBookings();
 
 	TourPackage saveTourPackage(TourPackage tourPackage);
 
-	Iterable<TourPackage> viewAllTourPackages();
+	List<TourPackage> viewAllTourPackages();
 
 }

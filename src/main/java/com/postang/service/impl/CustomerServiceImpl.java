@@ -45,7 +45,7 @@ public class CustomerServiceImpl implements CustomerService, Constants {
 	Util util = new Util();
 
 	@Override
-	public Iterable<Customer> findAll() {
+	public List<Customer> findAll() {
 		return custRepo.findAll();
 	}
 

@@ -1,6 +1,6 @@
 package com.postang.repo;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.postang.domain.Driver;
 
@@ -8,6 +8,6 @@ import com.postang.domain.Driver;
  * @author Subrahmanya Vijay
  *
  */
-public interface DriverRepository extends CrudRepository<Driver, Long> {
+public interface DriverRepository extends JpaRepository<Driver, Long> {
 
 }

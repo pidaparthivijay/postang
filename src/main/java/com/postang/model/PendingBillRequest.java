@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.postang.domain;
+package com.postang.model;
 
 import java.io.Serializable;
 import java.util.Date;

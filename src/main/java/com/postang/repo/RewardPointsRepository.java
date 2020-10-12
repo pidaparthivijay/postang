@@ -2,7 +2,7 @@ package com.postang.repo;
 
 import java.util.List;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.postang.domain.RewardPoints;
 
@@ -10,7 +10,7 @@ import com.postang.domain.RewardPoints;
  * @author Subrahmanya Vijay
  *
  */
-public interface RewardPointsRepository extends CrudRepository<RewardPoints, Long> {
+public interface RewardPointsRepository extends JpaRepository<RewardPoints, Long> {
 
 	List<RewardPoints> findByUserId(long userId);
 }

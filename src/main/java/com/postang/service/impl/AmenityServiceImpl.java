@@ -4,8 +4,6 @@
 package com.postang.service.impl;
 
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,8 +43,7 @@ public class AmenityServiceImpl implements AmenityService, Constants {
 
 	@Override
 	public List<Amenity> viewAllAmenities() {
-		Iterable<Amenity> amenitiesIterable = amenityRepository.findAll();
-		return StreamSupport.stream(amenitiesIterable.spliterator(), false).collect(Collectors.toList());
+		return amenityRepository.findAll();
 	}
 
 	@Override

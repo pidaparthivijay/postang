@@ -11,7 +11,6 @@ import com.postang.domain.AmenityRequest;
 import com.postang.domain.Customer;
 import com.postang.domain.Employee;
 import com.postang.domain.Lookup;
-import com.postang.domain.PendingBillRequest;
 import com.postang.domain.RewardPoints;
 import com.postang.domain.Room;
 import com.postang.domain.RoomRequest;

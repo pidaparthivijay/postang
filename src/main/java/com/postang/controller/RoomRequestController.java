@@ -5,8 +5,6 @@ package com.postang.controller;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -111,9 +109,7 @@ public class RoomRequestController implements RequestMappings, Constants {
 		RequestDTO requestDTO = new RequestDTO();
 		log.info("getAllRoomRequests starts...");
 		try {
-			Iterable<RoomRequest> roomReqList = roomRequestService.getUnallocatedRoomRequests();
-			requestDTO.setRoomRequestList(
-					StreamSupport.stream(roomReqList.spliterator(), false).collect(Collectors.toList()));
+			requestDTO.setRoomRequestList(roomRequestService.getUnallocatedRoomRequests());
 		} catch (Exception ex) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
 			log.error("Exception in getAllRoomRequests : " + ex.getMessage());
@@ -128,8 +124,7 @@ public class RoomRequestController implements RequestMappings, Constants {
 		try {
 			RoomRequest roomRequest = roomRequestService.getRoomRequestById(roomRequestId);
 			Room room = util.constructRoomFromRequest(roomRequest);
-			Iterable<Room> roomIterables = roomService.findSimilarRooms(room);
-			List<Room> roomList = StreamSupport.stream(roomIterables.spliterator(), false).collect(Collectors.toList());
+			List<Room> roomList = roomService.findSimilarRooms(room);
 			roomList.sort(Comparator.comparing(Room::getRoomNumber));
 			requestDTO.setRoomsList(roomList);
 		} catch (Exception ex) {

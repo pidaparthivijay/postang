@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.postang.constants.Constants;
 import com.postang.constants.RequestMappings;
-import com.postang.domain.PendingBillRequest;
+import com.postang.model.PendingBillRequest;
 import com.postang.model.RequestDTO;
 import com.postang.service.BillingService;
 import com.postang.service.RewardPointsService;
