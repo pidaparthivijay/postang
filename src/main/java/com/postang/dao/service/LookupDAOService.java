@@ -1,11 +1,9 @@
 /**
  * 
  */
-package com.postang.service;
+package com.postang.dao.service;
 
 import java.util.List;
-
-import org.springframework.web.multipart.MultipartFile;
 
 import com.postang.domain.Lookup;
 
@@ -14,7 +12,9 @@ import com.postang.domain.Lookup;
  * @author Subrahmanya Vijay
  *
  */
-public interface LookupService {
+public interface LookupDAOService {
+
+	Lookup findLookupByLookupId(long lookupId);
 
 	List<Lookup> getLookupList();
 
@@ -22,10 +22,6 @@ public interface LookupService {
 
 	Lookup saveLookup(Lookup lookup);
 
-	String uploadLookupExcel(MultipartFile multipartFile);
-
-	List<String> getLookupDefinitions();
-
-	String toggleDelete(Lookup lookup);
+	List<Lookup> saveLookups(List<Lookup> lookupList);
 
 }

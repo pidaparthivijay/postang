@@ -37,8 +37,6 @@ public class CustomerServiceImpl implements CustomerService, Constants {
 	@Autowired
 	EmployeeRepository empRepo;
 
-
-
 	@Autowired
 	UserRepository userRepo;
 

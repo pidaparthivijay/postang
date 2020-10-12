@@ -97,7 +97,7 @@ public class TourPackageController implements RequestMappings, Constants {
 		String tourPackageName = requestDTO.getTourPackage().getTourPackageName();
 		log.info("toggleDeleteTourPackage starts..." + tourPackageName);
 		try {
-			TourPackage tourPackage = tourPackageService.findTourPackageByTourPackageName(tourPackageName);
+			TourPackage tourPackage = tourPackageService.findByName(tourPackageName);
 			tourPackage.setDeleted(YES.equals(tourPackage.getDeleted()) ? NO : YES);
 			TourPackage savedTourPackage = tourPackageService.saveTourPackage(tourPackage);
 			requestDTO.setTourPackage(savedTourPackage);

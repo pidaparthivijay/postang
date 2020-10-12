@@ -1,8 +1,6 @@
 package com.postang.controller;
 
 import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
@@ -97,12 +95,8 @@ public class LookupController implements RequestMappings, Constants {
 		long lookupId = requestDTO.getLookup().getLookupId();
 		log.info("toggleDelete starts..." + lookupId);
 		try {
-			Lookup lookup = lookupService.findLookupByLookupId(lookupId);
-			lookup.setDeleted(YES.equals(lookup.getDeleted()) ? NO : YES);
-			lookup.setUpdateDate(new Date());
-			Lookup savedLookup = lookupService.saveLookup(lookup);
-			requestDTO.setLookup(savedLookup);
-			return viewLookupList(YES.equals(savedLookup.getDeleted()) ? DEL_SXS : UN_DEL_SXS);
+			String toggleStatus = lookupService.toggleDelete(requestDTO.getLookup());
+			return viewLookupList(toggleStatus);
 		} catch (Exception e) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
 			log.error("Exception in toggleDelete" + e);
@@ -116,10 +110,7 @@ public class LookupController implements RequestMappings, Constants {
 		RequestDTO requestDTO = new RequestDTO();
 		log.info("getLookupDefs starts...");
 		try {
-			List<Lookup> lookupList = lookupService.getLookupList();
-			List<String> lookupDefsList = lookupList.stream().distinct().map(Lookup::getLookupDefName)
-					.collect(Collectors.toList());
-			requestDTO.setLookupDefsList(lookupDefsList.stream().distinct().collect(Collectors.toList()));
+			requestDTO.setLookupDefsList(lookupService.getLookupDefinitions());
 		} catch (Exception e) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
 			log.error("Exception in getLookupDefs" + e);

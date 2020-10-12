@@ -3,15 +3,17 @@
  */
 package com.postang.service.impl;
 
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.postang.constants.Constants;
+import com.postang.dao.service.LookupDAOService;
 import com.postang.domain.Lookup;
-import com.postang.repo.LookupRepository;
 import com.postang.service.LookupService;
 import com.postang.util.Util;
 
@@ -26,44 +28,53 @@ import lombok.extern.log4j.Log4j2;
 public class LookupServiceImpl implements LookupService, Constants {
 
 	@Autowired
-	LookupRepository lookupRepository;
-
+	LookupDAOService lookupDaoService;
 	Util util = new Util();
 
-	@Override
-	public Lookup findLookupByLookupId(long lookupId) {
-		return lookupRepository.findByLookupId(lookupId);
-	}
 
 	@Override
 	public List<Lookup> getLookupList() {
-		return lookupRepository.findAll();
+		return lookupDaoService.getLookupList();
 	}
 
 	@Override
 	public List<Lookup> getLookupListByDefinition(String lookupDefinitionName) {
-		return lookupRepository.findByLookupDefName(lookupDefinitionName);
+		return lookupDaoService.getLookupListByDefinition(lookupDefinitionName);
 	}
 
 	@Override
 	public Lookup saveLookup(Lookup lookup) {
-		return lookupRepository.save(lookup);
-	}
-
-	@Override
-	public List<Lookup> saveLookups(List<Lookup> lookupList) {
-		return lookupRepository.saveAll(lookupList);
+		return lookupDaoService.saveLookup(lookup);
 	}
 
 	@Override
 	public String uploadLookupExcel(MultipartFile multipartFile) {
 
-		int existingSize = lookupRepository.findAll().size();
+		int existingSize = lookupDaoService.getLookupList().size();
+		log.info("existingSize starts with:" + existingSize);
 		List<Lookup> lookupFromExcel = util.generateLookupListFromExcelFile(multipartFile);
-		List<Lookup> lookupIterables = this.saveLookups(lookupFromExcel);
-		int newSize = lookupRepository.findAll().size();
-
+		log.info("lookupFromExcel size:" + lookupFromExcel.size());
+		List<Lookup> lookupIterables = lookupDaoService.saveLookups(lookupFromExcel);
+		int newSize = lookupDaoService.getLookupList().size();
+		log.info("newSize :" + newSize);
 		return (newSize == lookupIterables.size() + existingSize) ? LOOKUP_EXCEL_SXS : LOOKUP_EXCEL_FAIL;
+	}
+
+	@Override
+	public List<String> getLookupDefinitions() {
+		List<Lookup> lookupList = lookupDaoService.getLookupList();
+		List<String> lookupDefsList = lookupList.stream().distinct().map(Lookup::getLookupDefName)
+				.collect(Collectors.toList());
+		return lookupDefsList.stream().distinct().collect(Collectors.toList());
+	}
+
+	@Override
+	public String toggleDelete(Lookup lookup) {
+		Lookup existingLookup = lookupDaoService.findLookupByLookupId(lookup.getLookupId());
+		lookup.setDeleted(YES.equals(existingLookup.getDeleted()) ? NO : YES);
+		lookup.setUpdateDate(new Date());
+		Lookup savedLookup = lookupDaoService.saveLookup(lookup);
+		return YES.equals(savedLookup.getDeleted()) ? DEL_SXS : UN_DEL_SXS;
 	}
 
 }

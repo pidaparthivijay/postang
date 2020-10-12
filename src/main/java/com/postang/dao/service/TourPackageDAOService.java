@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.postang.service;
+package com.postang.dao.service;
 
 import java.util.List;
 
@@ -12,16 +12,16 @@ import com.postang.domain.TourPackageRequest;
  * @author Subrahmanya Vijay
  *
  */
-public interface TourPackageService {
+public interface TourPackageDAOService {
 
-	TourPackageRequest bookTourPackage(TourPackageRequest tourPackageRequest);
+	TourPackageRequest saveTourPackageRequest(TourPackageRequest tourPackageRequest);
 
-	TourPackage findByName(String tourPackageName);
+	TourPackage findTourPackageByTourPackageName(String tourPackageName);
 
 	List<TourPackageRequest> getAllTourPackageBookings();
 
 	TourPackage saveTourPackage(TourPackage tourPackage);
 
-	List<TourPackage> viewAllTourPackages();
+	List<TourPackage> getAllTourPackages();
 
 }
