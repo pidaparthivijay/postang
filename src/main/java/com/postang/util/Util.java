@@ -25,6 +25,7 @@ import com.postang.domain.Customer;
 import com.postang.domain.Employee;
 import com.postang.domain.Lookup;
 import com.postang.domain.OneTimePassword;
+import com.postang.domain.RewardPoints;
 import com.postang.domain.Room;
 import com.postang.domain.RoomRequest;
 import com.postang.domain.TourPackage;
@@ -228,6 +229,17 @@ public class Util implements Constants {
 		}
 
 		return sb.toString();
+	}
+
+	public RewardPoints allocateRewardPoints(User user, String reasonCode) {
+		RewardPoints rewardPoints = new RewardPoints();
+		rewardPoints.setPointsTransactionName(reasonCode);
+		rewardPoints.setPointsEarned(this.getPointsForTrxn(reasonCode));
+		rewardPoints.setPointsEarnedDate(new Date());
+		rewardPoints.setPointsExpiryDate(this.getOneYearFromToday());
+		rewardPoints.setUserId(user.getUserId());
+		rewardPoints.setUserName(user.getUserName());
+		return rewardPoints;
 	}
 
 }

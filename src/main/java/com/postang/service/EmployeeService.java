@@ -14,8 +14,6 @@ import com.postang.domain.Employee;
  */
 public interface EmployeeService {
 
-	Employee getEmployeeByUserName(String userName);
-
 	Employee createEmployee(Employee employee);
 
 	List<Employee> getAllEmployees();

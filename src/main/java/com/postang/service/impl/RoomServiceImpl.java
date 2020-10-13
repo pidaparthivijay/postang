@@ -15,10 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.postang.constants.Constants;
+import com.postang.dao.service.RoomDAOService;
 import com.postang.domain.Room;
-import com.postang.domain.User;
-import com.postang.repo.RoomRepository;
-import com.postang.repo.UserRepository;
 import com.postang.service.RoomService;
 
 import lombok.extern.log4j.Log4j2;
@@ -33,57 +31,49 @@ import lombok.extern.log4j.Log4j2;
 public class RoomServiceImpl implements RoomService, Constants {
 
 	@Autowired
-	RoomRepository roomRepo;
-
-	@Autowired
-	UserRepository userRepo;
+	RoomDAOService roomDAOService;
 
 	@Override
 	public List<Room> findSimilarRooms(Room room) {
 		log.info(room);
-		return roomRepo.findByRoomModelAndRoomTypeAndRoomCategoryAndRoomStatus(room.getRoomModel(), room.getRoomType(),
-				room.getRoomCategory(), VACANT);
+		return roomDAOService.findSimilarRooms(room);
 	}
 
 	@Override
 	public List<Room> getAllRooms() {
-		return roomRepo.findAll();
+		return roomDAOService.getAllRooms();
 	}
 
 	@Override
 	public Room getRoomByRoomNumber(int roomNumber) {
-		return roomRepo.findByRoomNumber(roomNumber);
+		return roomDAOService.getRoomByRoomNumber(roomNumber);
 	}
 
 	@Override
 	public List<Room> getRoomsByCategory(String roomCategory) {
-		return roomRepo.findByRoomCategory(roomCategory);
+		return roomDAOService.getRoomsByCategory(roomCategory);
 	}
 
 	@Override
 	public List<Room> getRoomsByFloor(int floorNumber) {
-		return roomRepo.findByFloorNumber(floorNumber);
+		return roomDAOService.getRoomsByFloor(floorNumber);
 	}
 
 	@Override
 	public List<Room> getRoomsByModel(String roomModel) {
-		return roomRepo.findByRoomModel(roomModel);
+		return roomDAOService.getRoomsByModel(roomModel);
 	}
 
 	@Override
 	public List<Room> getRoomsByStatus(String roomStatus) {
-		return roomRepo.findByRoomStatus(roomStatus);
+		return roomDAOService.getRoomsByStatus(roomStatus);
 	}
 
 	@Override
 	public List<Room> getRoomsByType(String roomType) {
-		return roomRepo.findByRoomType(roomType);
+		return roomDAOService.getRoomsByType(roomType);
 	}
 
-	@Override
-	public User getUserById(int userId) {
-		return userRepo.findByUserId(userId);
-	}
 
 	@Override
 	public void saveMultipleRooms(Room room, int count) {
@@ -92,11 +82,11 @@ public class RoomServiceImpl implements RoomService, Constants {
 
 	@Override
 	public Room saveRoom(Room room) {
-		return roomRepo.save(room);
+		return roomDAOService.saveRoom(room);
 	}
 
 	private Map<Integer, Integer> getUnfilledFloors() {
-		List<Room> roomsList = roomRepo.findAll();
+		List<Room> roomsList = roomDAOService.getAllRooms();
 		List<Integer> floorsList = roomsList.stream().distinct().map(Room::getFloorNumber).collect(Collectors.toList());
 		List<Integer> unfilledFloors = new ArrayList<>();
 		Map<Integer, Integer> unfilledMap = new HashMap<>();
@@ -174,7 +164,7 @@ public class RoomServiceImpl implements RoomService, Constants {
 					Room targetObject = new Room();
 					BeanUtils.copyProperties(roomObject, targetObject);
 					targetObject.setFloorNumber(floorNumber);
-					roomRepo.save(targetObject);
+					roomDAOService.saveRoom(targetObject);
 					this.roomCreation(count - 1, roomObject, floorNumber);
 				} else {
 					this.roomCreation(count, roomObject, floorNumber + 1);
@@ -186,7 +176,7 @@ public class RoomServiceImpl implements RoomService, Constants {
 					Room targetObject = new Room();
 					BeanUtils.copyProperties(roomObject, targetObject);
 					targetObject.setFloorNumber(floorNumber);
-					roomRepo.save(targetObject);
+					roomDAOService.saveRoom(targetObject);
 					this.roomCreation(count - 1, roomObject, floorNumber);
 				} else {
 					this.roomCreation(count, roomObject, floorNumber + 1);
@@ -198,7 +188,7 @@ public class RoomServiceImpl implements RoomService, Constants {
 					Room targetObject = new Room();
 					BeanUtils.copyProperties(roomObject, targetObject);
 					targetObject.setFloorNumber(floorNumber);
-					roomRepo.save(targetObject);
+					roomDAOService.saveRoom(targetObject);
 					this.roomCreation(count - 1, roomObject, floorNumber);
 				} else {
 					this.roomCreation(count, roomObject, floorNumber + 1);
@@ -210,7 +200,7 @@ public class RoomServiceImpl implements RoomService, Constants {
 					Room targetObject = new Room();
 					BeanUtils.copyProperties(roomObject, targetObject);
 					targetObject.setFloorNumber(floorNumber);
-					roomRepo.save(targetObject);
+					roomDAOService.saveRoom(targetObject);
 					this.roomCreation(count - 1, roomObject, floorNumber);
 				} else {
 					this.roomCreation(count, roomObject, floorNumber + 1);
@@ -222,7 +212,7 @@ public class RoomServiceImpl implements RoomService, Constants {
 					Room targetObject = new Room();
 					BeanUtils.copyProperties(roomObject, targetObject);
 					targetObject.setFloorNumber(floorNumber);
-					roomRepo.save(targetObject);
+					roomDAOService.saveRoom(targetObject);
 					this.roomCreation(count - 1, roomObject, floorNumber);
 				} else {
 					this.roomCreation(count, roomObject, floorNumber + 1);
@@ -234,7 +224,7 @@ public class RoomServiceImpl implements RoomService, Constants {
 					Room targetObject = new Room();
 					BeanUtils.copyProperties(roomObject, targetObject);
 					targetObject.setFloorNumber(floorNumber);
-					roomRepo.save(targetObject);
+					roomDAOService.saveRoom(targetObject);
 					this.roomCreation(count - 1, roomObject, floorNumber);
 				} else {
 					this.roomCreation(count, roomObject, floorNumber + 1);
@@ -246,7 +236,7 @@ public class RoomServiceImpl implements RoomService, Constants {
 					Room targetObject = new Room();
 					BeanUtils.copyProperties(roomObject, targetObject);
 					targetObject.setFloorNumber(floorNumber);
-					roomRepo.save(targetObject);
+					roomDAOService.saveRoom(targetObject);
 					this.roomCreation(count - 1, roomObject, floorNumber);
 				} else {
 					this.roomCreation(count, roomObject, floorNumber + 1);
@@ -258,7 +248,7 @@ public class RoomServiceImpl implements RoomService, Constants {
 					Room targetObject = new Room();
 					BeanUtils.copyProperties(roomObject, targetObject);
 					targetObject.setFloorNumber(floorNumber);
-					roomRepo.save(targetObject);
+					roomDAOService.saveRoom(targetObject);
 					this.roomCreation(count - 1, roomObject, floorNumber);
 				} else {
 					this.roomCreation(count, roomObject, floorNumber + 1);

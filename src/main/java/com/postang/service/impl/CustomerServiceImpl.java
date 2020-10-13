@@ -4,20 +4,15 @@
 package com.postang.service.impl;
 
 import java.util.List;
-import java.util.Optional;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.postang.constants.Constants;
+import com.postang.dao.service.CommonDAOService;
 import com.postang.domain.Customer;
-import com.postang.domain.Employee;
 import com.postang.domain.User;
-import com.postang.repo.CustomerRepository;
-import com.postang.repo.EmployeeRepository;
-import com.postang.repo.UserRepository;
 import com.postang.service.CustomerService;
 import com.postang.util.Util;
 
@@ -32,57 +27,28 @@ import lombok.extern.log4j.Log4j2;
 public class CustomerServiceImpl implements CustomerService, Constants {
 
 	@Autowired
-	CustomerRepository custRepo;
-
-	@Autowired
-	EmployeeRepository empRepo;
-
-	@Autowired
-	UserRepository userRepo;
+	CommonDAOService commonDAOService;
 
 	Util util = new Util();
 
 	@Override
 	public List<Customer> findAll() {
-		return custRepo.findAll();
-	}
-
-	@Override
-	public Optional<Customer> findById(long id) {
-		return custRepo.findById(id);
+		return commonDAOService.findAll();
 	}
 
 	@Override
 	public Customer getCustomerByUserName(String userName) {
-		List<Customer> custList = null;
-		custList = custRepo.findByUserName(userName);
-		if (CollectionUtils.isNotEmpty(custList)) {
-			return custList.get(0);
-		} else {
-			return null;
-		}
+		return commonDAOService.getCustomerByUserName(userName);
 	}
 
 	@Override
 	public Customer getCustomerDetails(Customer customer) {
-		List<Customer> custList = null;
-		User user = null;
-		custList = custRepo.findByUserName(customer.getUserName());
-		user = userRepo.findByUserName(customer.getUserName());
-		if (CollectionUtils.isNotEmpty(custList)) {
-			custList.get(0).setCustPass(user.getPassword());
-			return custList.get(0);
-		} else {
-			return null;
-		}
-	}
 
-	@Override
-	public Employee getEmployeeByUserName(String userName) {
-		List<Employee> empList = null;
-		empList = empRepo.findByUserName(userName);
-		if (CollectionUtils.isNotEmpty(empList)) {
-			return empList.get(0);
+		Customer existingCustomer = commonDAOService.getCustomerByUserName(customer.getUserName());
+		User existingUser = commonDAOService.findUserByUserName(customer.getUserName());
+		if (existingCustomer != null && existingUser != null) {
+			existingCustomer.setCustPass(existingUser.getPassword());
+			return existingCustomer;
 		} else {
 			return null;
 		}
@@ -98,7 +64,7 @@ public class CustomerServiceImpl implements CustomerService, Constants {
 				return validatedCustomer;
 			}
 			user = util.generateUserFromCustomer(customer);
-			User newUser = userRepo.save(user);
+			User newUser = commonDAOService.saveUser(user);
 			if (newUser == null) {
 				Customer newCus = new Customer();
 				newCus.setCustId(-1L);
@@ -106,7 +72,7 @@ public class CustomerServiceImpl implements CustomerService, Constants {
 				newCus.setStatusMessage(USER_INVALID);
 				return newCus;
 			}
-			return custRepo.save(customer);
+			return commonDAOService.saveCustomer(customer);
 		} catch (Exception ex) {
 			log.info("Exception in saveCustomer: " + ex);
 			ex.printStackTrace();
@@ -116,9 +82,8 @@ public class CustomerServiceImpl implements CustomerService, Constants {
 	}
 
 	private Customer validate(Customer customer) {
-		List<Customer> customerList = null;
-		customerList = custRepo.findByUserName(customer.getUserName());
-		if (CollectionUtils.isNotEmpty(customerList)) {
+		Customer existingCustomer = commonDAOService.getCustomerByUserName(customer.getUserName());
+		if (existingCustomer != null) {
 			Customer newCus = new Customer();
 			newCus.setCustId(-1L);
 			newCus.setActionStatus(false);

@@ -56,7 +56,7 @@ public class LoginController implements RequestMappings, Constants {
 					customer.setStatusMessage(CUST_LOG_SUCCESS);
 					return new ObjectMapper().writeValueAsString(customer);
 				} else {
-					Employee employee = customerService.getEmployeeByUserName(user.getUserName());
+					Employee employee = employeeService.getEmployeeDetails(user.getUserName());
 					employee.setUserId(loginUser.getUserId());
 					if (EMPLOYEE.equalsIgnoreCase(loginUser.getUserType())) {
 						employee.setStatusMessage(EMP_LOG_SUCCESS); 

@@ -9,15 +9,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.postang.constants.Constants;
+import com.postang.dao.service.RewardPointsDAOService;
+import com.postang.dao.service.RoomDAOService;
 import com.postang.domain.Customer;
+import com.postang.domain.Room;
 import com.postang.domain.RoomRequest;
 import com.postang.domain.User;
 import com.postang.model.MailDTO;
-import com.postang.repo.RoomRepository;
 import com.postang.repo.RoomRequestRepository;
 import com.postang.repo.UserRepository;
 import com.postang.service.RoomRequestService;
 import com.postang.util.MailUtil;
+import com.postang.util.Util;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -32,14 +35,19 @@ public class RoomRequestServiceImpl implements RoomRequestService, Constants {
 
 	MailUtil mailUtil = new MailUtil();
 
+	Util util = new Util();
+
 	@Autowired
-	RoomRepository roomRepo;
+	RoomDAOService roomDAOService;
 
 	@Autowired
 	RoomRequestRepository roomReqRepo;
 
 	@Autowired
 	UserRepository userRepo;
+
+	@Autowired
+	RewardPointsDAOService rewardPointsDAOService;
 
 	@Override
 	public String cancelRoomRequest(int roomRequestId) {
@@ -99,8 +107,27 @@ public class RoomRequestServiceImpl implements RoomRequestService, Constants {
 	@Override
 	public RoomRequest saveRoomRequest(RoomRequest roomReq) {
 		return roomReqRepo.save(roomReq);
-
 	}
 
+
+	@Override
+	public String assignRoom(RoomRequest roomRequest) {
+		RoomRequest roomReq = this.getRoomRequestByRequestId(roomRequest.getRequestId());
+		roomReq.setRoomNumber(roomRequest.getRoomNumber());
+		roomReq.setRoomRequestStatus(ALLOCATED);
+		roomReq = this.saveRoomRequest(roomReq);
+		Room room = roomDAOService.getRoomByRoomNumber(roomRequest.getRoomNumber());
+		room.setRoomRequestId(roomReq.getRequestId());
+		room.setRoomStatus(OCCUPIED);
+		room.setCheckInDate(roomRequest.getCheckInDate());
+		room.setCheckOutDate(roomRequest.getCheckOutDate());
+		roomDAOService.saveRoom(room);
+		User user = this.getUserById(roomReq.getUserId());
+		rewardPointsDAOService.saveRewardPoints(util.allocateRewardPoints(user, ROOM_BOOKING));
+		MailDTO mailDTO = new MailDTO();
+		mailDTO.setEmailAddress(user.getUserMail());
+		mailDTO.setTemplateName(TEMPLATE_ALLOCATION_MAIL);
+		return mailUtil.triggerMail(mailDTO);
+	}
 
 }

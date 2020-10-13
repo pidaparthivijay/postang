@@ -3,8 +3,6 @@
  */
 package com.postang.repo;
 
-import java.util.List;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.postang.domain.Employee;
@@ -15,6 +13,6 @@ import com.postang.domain.Employee;
  */
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
-	List<Employee> findByUserName(String userName);
+	Employee findByUserName(String userName);
 
 }

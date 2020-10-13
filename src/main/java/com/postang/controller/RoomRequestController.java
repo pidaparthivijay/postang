@@ -20,8 +20,6 @@ import com.postang.constants.RequestMappings;
 import com.postang.domain.Customer;
 import com.postang.domain.Room;
 import com.postang.domain.RoomRequest;
-import com.postang.domain.User;
-import com.postang.model.MailDTO;
 import com.postang.model.RequestDTO;
 import com.postang.service.RewardPointsService;
 import com.postang.service.RoomRequestService;
@@ -140,23 +138,10 @@ public class RoomRequestController implements RequestMappings, Constants {
 		RoomRequest roomRequest = requestDTO.getRoomRequest();
 		log.info("assignRoomToRequest starts..." + roomRequest);
 		try {
-			RoomRequest roomReq = roomRequestService.getRoomRequestByRequestId(roomRequest.getRequestId());
-			roomReq.setRoomNumber(roomRequest.getRoomNumber());
-			roomReq.setRoomRequestStatus(ALLOCATED);
-			roomReq = roomRequestService.saveRoomRequest(roomReq);
-			Room room = roomService.getRoomByRoomNumber(roomRequest.getRoomNumber());
-			room.setRoomRequestId(roomReq.getRequestId());
-			room.setRoomStatus(OCCUPIED);
-			room.setCheckInDate(roomRequest.getCheckInDate());
-			room.setCheckOutDate(roomRequest.getCheckOutDate());
-			roomService.saveRoom(room);
-			User user = roomService.getUserById(roomReq.getUserId());
-			rewardPointsService.allocateRewardPoints(user, ROOM_BOOKING);
-			MailDTO mailDTO = new MailDTO();
-			mailDTO.setEmailAddress(user.getUserMail());
-			mailDTO.setTemplateName(TEMPLATE_ALLOCATION_MAIL);
-			String mailStatus = mailUtil.triggerMail(mailDTO);
-			requestDTO.setActionStatus(mailStatus);
+
+			String assignStatus = roomRequestService.assignRoom(roomRequest);
+
+			requestDTO.setActionStatus(assignStatus);
 			log.info("assignRoomToRequest ends...");
 		} catch (Exception ex) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);

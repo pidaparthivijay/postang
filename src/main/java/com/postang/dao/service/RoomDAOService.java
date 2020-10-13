@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.postang.service;
+package com.postang.dao.service;
 
 import java.util.List;
 
@@ -11,7 +11,7 @@ import com.postang.domain.Room;
  * @author Subrahmanya Vijay
  *
  */
-public interface RoomService {
+public interface RoomDAOService {
 
 	List<Room> findSimilarRooms(Room room);
 
@@ -30,7 +30,5 @@ public interface RoomService {
 	List<Room> getRoomsByType(String roomType);
 
 	Room saveRoom(Room room);
-
-	void saveMultipleRooms(Room room, int count);
 
 }

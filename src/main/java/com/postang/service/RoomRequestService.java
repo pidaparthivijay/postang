@@ -33,4 +33,6 @@ public interface RoomRequestService {
 
 	RoomRequest saveRoomRequest(RoomRequest roomReq);
 
+	String assignRoom(RoomRequest roomRequest);
+
 }

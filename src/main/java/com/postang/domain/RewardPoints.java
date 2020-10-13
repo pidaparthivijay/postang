@@ -28,7 +28,7 @@ public class RewardPoints implements Serializable{
 	@SequenceGenerator(name = "rewardPoint_seq", sequenceName = "rewardPoint_seq", allocationSize = 1)
 	private int id;
 	private long userId;
-	private long custId;
+	private String userName;
 	private long pointsEarned;	
 	private Date pointsEarnedDate;
 	private Date pointsExpiryDate;
