@@ -120,7 +120,7 @@ public class RoomRequestController implements RequestMappings, Constants {
 		int roomRequestId = requestDTO.getRoomRequest().getRequestId();
 		log.info("viewFeasibleRooms starts...");
 		try {
-			RoomRequest roomRequest = roomRequestService.getRoomRequestById(roomRequestId);
+			RoomRequest roomRequest = roomRequestService.getRoomRequestByRequestId(roomRequestId);
 			Room room = util.constructRoomFromRequest(roomRequest);
 			List<Room> roomList = roomService.findSimilarRooms(room);
 			roomList.sort(Comparator.comparing(Room::getRoomNumber));

@@ -31,4 +31,6 @@ public interface RoomDAOService {
 
 	Room saveRoom(Room room);
 
+	List<Room> findByRoomRequestId(int requestId);
+
 }

@@ -21,8 +21,6 @@ public interface RoomRequestService {
 
 	List<RoomRequest> getMyRequestsList(Customer customer);
 
-	RoomRequest getRoomRequestById(int roomRequestId);
-
 	RoomRequest getRoomRequestByRequestId(int requestId);
 
 	List<RoomRequest> getUnallocatedRoomRequests();

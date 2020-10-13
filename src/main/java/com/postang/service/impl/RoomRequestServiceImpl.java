@@ -9,15 +9,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.postang.constants.Constants;
+import com.postang.dao.service.CommonDAOService;
 import com.postang.dao.service.RewardPointsDAOService;
 import com.postang.dao.service.RoomDAOService;
+import com.postang.dao.service.RoomRequestDAOService;
 import com.postang.domain.Customer;
 import com.postang.domain.Room;
 import com.postang.domain.RoomRequest;
 import com.postang.domain.User;
 import com.postang.model.MailDTO;
-import com.postang.repo.RoomRequestRepository;
-import com.postang.repo.UserRepository;
 import com.postang.service.RoomRequestService;
 import com.postang.util.MailUtil;
 import com.postang.util.Util;
@@ -41,10 +41,10 @@ public class RoomRequestServiceImpl implements RoomRequestService, Constants {
 	RoomDAOService roomDAOService;
 
 	@Autowired
-	RoomRequestRepository roomReqRepo;
+	RoomRequestDAOService roomReqDAOService;
 
 	@Autowired
-	UserRepository userRepo;
+	CommonDAOService commonDAOService;
 
 	@Autowired
 	RewardPointsDAOService rewardPointsDAOService;
@@ -52,11 +52,11 @@ public class RoomRequestServiceImpl implements RoomRequestService, Constants {
 	@Override
 	public String cancelRoomRequest(int roomRequestId) {
 		String cancellationStatus = "";
-		RoomRequest roomRequest = roomReqRepo.findByRequestId(roomRequestId);
+		RoomRequest roomRequest = roomReqDAOService.getRoomRequestByRequestId(roomRequestId);
 		roomRequest.setRoomRequestStatus(CANCEL);
-		RoomRequest roomReq = roomReqRepo.save(roomRequest);
+		RoomRequest roomReq = roomReqDAOService.saveRoomRequest(roomRequest);
 		int userId = roomReq.getUserId();
-		User user = userRepo.findByUserId(userId);
+		User user = commonDAOService.findUserByUserId(userId);
 		MailDTO mailDTO = new MailDTO();
 		mailDTO.setUser(user);
 		mailDTO.setRoomRequestId(roomRequestId);
@@ -69,49 +69,45 @@ public class RoomRequestServiceImpl implements RoomRequestService, Constants {
 
 	@Override
 	public List<RoomRequest> getAllRoomRequests() {
-		return roomReqRepo.findAll();
+		return roomReqDAOService.getAllRoomRequests();
 	}
 
 
 	@Override
 	public List<RoomRequest> getMyRequestsList(Customer customer) {
-		return roomReqRepo.findByUserId((int) customer.getUserId());
-	}
-
-	@Override
-	public RoomRequest getRoomRequestById(int roomRequestId) {
-		return roomReqRepo.findByRequestId(roomRequestId);
+		return roomReqDAOService.getRequestListByUserId((int) customer.getUserId());
 	}
 
 	@Override
 	public RoomRequest getRoomRequestByRequestId(int requestId) {
-		return roomReqRepo.findByRequestId(requestId);
+		return roomReqDAOService.getRoomRequestByRequestId(requestId);
 	}
 
 	@Override
 	public List<RoomRequest> getUnallocatedRoomRequests() {
-		return roomReqRepo.findByRoomRequestStatus(PENDING);
+		return roomReqDAOService.getRoomRequestByStatus(PENDING);
 	}
 
 	@Override
 	public User getUserById(int userId) {
-		return userRepo.findByUserId(userId);
+		return commonDAOService.findUserByUserId(userId);
 	}
 
 	@Override
 	public RoomRequest requestRoom(RoomRequest roomRequest) {
 		roomRequest.setRoomRequestStatus(PENDING);
-		return roomReqRepo.save(roomRequest);
+		return roomReqDAOService.saveRoomRequest(roomRequest);
 	}
 
 	@Override
 	public RoomRequest saveRoomRequest(RoomRequest roomReq) {
-		return roomReqRepo.save(roomReq);
+		return roomReqDAOService.saveRoomRequest(roomReq);
 	}
 
 
 	@Override
 	public String assignRoom(RoomRequest roomRequest) {
+		log.info("assignRoom starts with: " + roomRequest);
 		RoomRequest roomReq = this.getRoomRequestByRequestId(roomRequest.getRequestId());
 		roomReq.setRoomNumber(roomRequest.getRoomNumber());
 		roomReq.setRoomRequestStatus(ALLOCATED);

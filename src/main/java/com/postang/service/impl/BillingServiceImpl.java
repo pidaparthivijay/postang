@@ -14,14 +14,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.postang.constants.Constants;
+import com.postang.dao.service.CommonDAOService;
+import com.postang.dao.service.RoomDAOService;
+import com.postang.dao.service.RoomRequestDAOService;
 import com.postang.domain.Room;
 import com.postang.domain.RoomRequest;
 import com.postang.domain.User;
 import com.postang.model.MailDTO;
 import com.postang.model.PendingBillRequest;
-import com.postang.repo.RoomRepository;
-import com.postang.repo.RoomRequestRepository;
-import com.postang.repo.UserRepository;
 import com.postang.service.BillingService;
 import com.postang.util.MailUtil;
 import com.postang.util.PDFUtil;
@@ -43,13 +43,13 @@ public class BillingServiceImpl implements BillingService, Constants {
 	PDFUtil pdfUtil = new PDFUtil();
 
 	@Autowired
-	RoomRepository roomRepo;
+	RoomDAOService roomDAOService;
 
 	@Autowired
-	RoomRequestRepository roomReqRepo;
+	RoomRequestDAOService roomReqDAOService;
 
 	@Autowired
-	UserRepository userRepo;
+	CommonDAOService commonDAOService;
 
 	Util util = new Util();
 
@@ -61,7 +61,7 @@ public class BillingServiceImpl implements BillingService, Constants {
 				pendingBillRequest.setBillCode(roomRequest.getGuestName() + UNDERSCORE + roomRequest.getRoomModel()
 						+ UNDERSCORE + roomRequest.getRoomCategory() + UNDERSCORE + roomRequest.getRoomType());
 				pendingBillRequest.setRequestId(roomRequest.getRequestId());
-				List<Room> roomsList = roomRepo.findByRoomRequestId(roomRequest.getRequestId());
+				List<Room> roomsList = roomDAOService.findByRoomRequestId(roomRequest.getRequestId());
 				pendingBillRequest.setBillAmount(util.generateBillForRooms(roomsList));
 				pendingBillRequest.setTypeOfRequest(ROOM_REQUEST);
 				pendingBillRequest.setRequestDate(roomRequest.getRequestDate());
@@ -77,13 +77,14 @@ public class BillingServiceImpl implements BillingService, Constants {
 
 	@Override
 	public double generateBill(String custEmail) {
-		User user = userRepo.findByUserMail(custEmail);
-		List<RoomRequest> roomRequestList = roomReqRepo.findByUserId((int) user.getUserId());
+		log.info("generateBill starts with" + custEmail);
+		User user = commonDAOService.findUserByUserMail(custEmail);
+		List<RoomRequest> roomRequestList = roomReqDAOService.getRequestListByUserId((int) user.getUserId());
 		List<RoomRequest> billPendingList = roomRequestList.stream().filter(p -> BILL_PENDING.equals(p.getBillStatus()))
 				.collect(Collectors.toList());
 		List<Room> totalRoomsList = new ArrayList<>();
 		for (RoomRequest roomRequest : billPendingList) {
-			List<Room> roomsList = roomRepo.findByRoomRequestId(roomRequest.getRequestId());
+			List<Room> roomsList = roomDAOService.findByRoomRequestId(roomRequest.getRequestId());
 			totalRoomsList.addAll(roomsList);
 		}
 		return util.generateBillForRooms(totalRoomsList);
@@ -92,10 +93,10 @@ public class BillingServiceImpl implements BillingService, Constants {
 
 	@Override
 	public ByteArrayInputStream generatedBillPdf(String custEmail) {
-		User user = userRepo.findByUserMail(custEmail);
+		User user = commonDAOService.findUserByUserMail(custEmail);
 		if (user != null) {
 			return pdfUtil.generatePdf(this.getPendingBillRequests(custEmail),
-					userRepo.findByUserMail(custEmail).getName());
+					commonDAOService.findUserByUserMail(custEmail).getName());
 		} else {
 			return null;
 		}
@@ -104,9 +105,9 @@ public class BillingServiceImpl implements BillingService, Constants {
 	@Override
 	public List<PendingBillRequest> getPendingBillRequests(String custEmail) {
 		List<PendingBillRequest> pendingBillRequests = new ArrayList<>();
-		User user = userRepo.findByUserMail(custEmail);
+		User user = commonDAOService.findUserByUserMail(custEmail);
 		if (user != null) {
-			List<RoomRequest> roomRequestList = roomReqRepo.findByUserId((int) user.getUserId());
+			List<RoomRequest> roomRequestList = roomReqDAOService.getRequestListByUserId((int) user.getUserId());
 			List<RoomRequest> billPendingList = roomRequestList.stream()
 					.filter(p -> BILL_PENDING.equals(p.getBillStatus())).collect(Collectors.toList());
 			PendingBillRequest totalBillPendingRequest = new PendingBillRequest();
@@ -128,7 +129,7 @@ public class BillingServiceImpl implements BillingService, Constants {
 
 	@Override
 	public String triggerMailBill(String custEmail) {
-		User user = userRepo.findByUserMail(custEmail);
+		User user = commonDAOService.findUserByUserMail(custEmail);
 		MailDTO mailDTO = new MailDTO();
 		mailDTO.setPendingBillRequests(this.getPendingBillRequests(custEmail));
 		mailDTO.setUser(user);

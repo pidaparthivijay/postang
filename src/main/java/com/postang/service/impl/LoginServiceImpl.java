@@ -7,12 +7,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import com.postang.constants.Constants;
+import com.postang.dao.service.CommonDAOService;
 import com.postang.domain.OneTimePassword;
 import com.postang.domain.User;
 import com.postang.model.MailDTO;
-import com.postang.repo.OneTimePassRepo;
-import com.postang.repo.UserRepository;
-import com.postang.service.CustomerService;
 import com.postang.service.LoginService;
 import com.postang.util.MailUtil;
 import com.postang.util.Util;
@@ -25,16 +23,13 @@ import lombok.extern.log4j.Log4j2;
  */
 @Service
 @Log4j2
-public class LoginServiceImpl implements Constants,LoginService {
+public class LoginServiceImpl implements Constants, LoginService {
+
+	MailUtil mailUtil = new MailUtil();
+
 	@Autowired
-	CustomerService customerService;
- 	MailUtil mailUtil = new MailUtil();
-	@Autowired
-	OneTimePassRepo oneTimePassRepo;
-	
-	@Autowired
-	UserRepository userRepository;
-	
+	CommonDAOService commonDAOService;
+
 	Util util = new Util();
 
 	@Override
@@ -42,9 +37,9 @@ public class LoginServiceImpl implements Constants,LoginService {
 		User loginUser = null;
 		log.info("getUserDetailsByUserName starts: ");
 		try {
-			loginUser = userRepository.findByUserName(userName);
-		}catch(Exception e) {
-			log.info("Exception in getUserDetails: "+e);
+			loginUser = commonDAOService.findUserByUserName(userName);
+		} catch (Exception e) {
+			log.info("Exception in getUserDetails: " + e);
 			log.error(e);
 		}
 		return loginUser;
@@ -58,7 +53,7 @@ public class LoginServiceImpl implements Constants,LoginService {
 		mailDTO.setOneTimePassword(oneTimePassword.getOtpValue());
 		mailDTO.setTemplateName(TEMPLATE_OTP_MAIL);
 		String mailStatus = mailUtil.triggerMail(mailDTO);
-		oneTimePassRepo.save(oneTimePassword);
+		commonDAOService.saveOTP(oneTimePassword);
 		return mailStatus;
 	}
 
@@ -69,14 +64,14 @@ public class LoginServiceImpl implements Constants,LoginService {
 			User existingDetails = this.getUserDetailsByUserName(user.getUserName());
 			if (existingDetails != null) {
 				existingDetails.setPassword(user.getPassword());
-				User newDetails = userRepository.save(existingDetails);
+				User newDetails = commonDAOService.saveUser(existingDetails);
 				return newPwd.equalsIgnoreCase(newDetails.getPassword()) ? PWD_RESET_SUCCESS : PWD_RESET_FAILURE;
 			} else {
-				log.info("There is no user with given userName: "+user.getUserName());
+				log.info("There is no user with given userName: " + user.getUserName());
 				return NO_USER_WITH_GIVEN_NAME;
 			}
 		} catch (Exception e) {
-			log.info("Exception occured in resetPwd: "+e);
+			log.info("Exception occured in resetPwd: " + e);
 			e.printStackTrace();
 		}
 		return null;
@@ -85,7 +80,7 @@ public class LoginServiceImpl implements Constants,LoginService {
 	@Override
 	public String validateOtp(OneTimePassword oneTimePassword) {
 		log.info("validateOtp starts with: " + oneTimePassword);
-		List<OneTimePassword> savedOTPList = oneTimePassRepo.findByUserName(oneTimePassword.getUserName());
+		List<OneTimePassword> savedOTPList = commonDAOService.findOTPByUserName(oneTimePassword.getUserName());
 		if (!CollectionUtils.isEmpty(savedOTPList)) {
 			for (OneTimePassword otp : savedOTPList) {
 				if (otp.isValid()) {
@@ -110,7 +105,7 @@ public class LoginServiceImpl implements Constants,LoginService {
 	public User validateUserDetails(User user) {
 		log.info("validateUserDetails starts: ");
 		try {
-			User loginUser = userRepository.findByUserName(user.getUserName());
+			User loginUser = commonDAOService.findUserByUserName(user.getUserName());
 			if (loginUser == null) {
 				return null;
 			} else {

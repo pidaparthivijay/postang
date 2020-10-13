@@ -74,4 +74,9 @@ public class RoomDAOServiceImpl implements RoomDAOService, Constants {
 		return roomRepo.save(room);
 	}
 
+	@Override
+	public List<Room> findByRoomRequestId(int requestId) {
+		return roomRepo.findByRoomRequestId(requestId);
+	}
+
 }

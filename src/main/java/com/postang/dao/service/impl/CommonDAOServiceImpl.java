@@ -12,9 +12,11 @@ import com.postang.constants.Constants;
 import com.postang.dao.service.CommonDAOService;
 import com.postang.domain.Customer;
 import com.postang.domain.Employee;
+import com.postang.domain.OneTimePassword;
 import com.postang.domain.User;
 import com.postang.repo.CustomerRepository;
 import com.postang.repo.EmployeeRepository;
+import com.postang.repo.OneTimePassRepo;
 import com.postang.repo.UserRepository;
 
 import lombok.extern.log4j.Log4j2;
@@ -35,6 +37,9 @@ public class CommonDAOServiceImpl implements CommonDAOService, Constants {
 
 	@Autowired
 	UserRepository userRepo;
+
+	@Autowired
+	OneTimePassRepo oneTimePassRepo;
 
 	@Override
 	public List<Customer> findAll() {
@@ -75,6 +80,27 @@ public class CommonDAOServiceImpl implements CommonDAOService, Constants {
 	@Override
 	public User findUserByUserName(String userName) {
 		return userRepo.findByUserName(userName);
+	}
+
+	@Override
+	public User findUserByUserId(int userId) {
+		return userRepo.findByUserId(userId);
+	}
+
+	@Override
+	public User findUserByUserMail(String userMail) {
+		return userRepo.findByUserMail(userMail);
+	}
+
+	@Override
+	public void saveOTP(OneTimePassword oneTimePassword) {
+		oneTimePassRepo.save(oneTimePassword);
+		
+	}
+
+	@Override
+	public List<OneTimePassword> findOTPByUserName(String userName) {
+		return oneTimePassRepo.findByUserName(userName);
 	}
 
 }
