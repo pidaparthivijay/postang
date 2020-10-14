@@ -35,7 +35,6 @@ public class RoomServiceImpl implements RoomService, Constants {
 
 	@Override
 	public List<Room> findSimilarRooms(Room room) {
-		log.info(room);
 		return roomDAOService.findSimilarRooms(room);
 	}
 

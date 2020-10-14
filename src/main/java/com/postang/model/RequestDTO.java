@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.postang.domain.Amenity;
 import com.postang.domain.AmenityRequest;
 import com.postang.domain.Customer;
+import com.postang.domain.Driver;
 import com.postang.domain.Employee;
 import com.postang.domain.Lookup;
 import com.postang.domain.RewardPoints;
@@ -17,6 +18,8 @@ import com.postang.domain.RoomRequest;
 import com.postang.domain.TourPackage;
 import com.postang.domain.TourPackageRequest;
 import com.postang.domain.User;
+import com.postang.domain.Vehicle;
+import com.postang.domain.VehicleDriverMapping;
 
 import lombok.Data;
 
@@ -64,4 +67,10 @@ public class RequestDTO implements Serializable{
 	private List<TourPackageRequest> tourPackageRequestList= new ArrayList<>();
 	private User user;
 	private int userId;
+	private Vehicle vehicle;
+	private Driver driver;
+	private List<Vehicle> vehiclesList = new ArrayList<>();
+	private List<Driver> driversList = new ArrayList<>();
+	private VehicleDriverMapping vehicleDriverMapping;
+	private List<VehicleDriverMapping> vehicleDriverMappings = new ArrayList<>();
 }

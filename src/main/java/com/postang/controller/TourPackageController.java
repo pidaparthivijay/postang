@@ -60,7 +60,7 @@ public class TourPackageController implements RequestMappings, Constants {
 		return requestDTO;
 	}
 
-	@PostMapping(value = "/brw/updateTourPackage")
+	@PostMapping(value = TOUR_PKG_UPDATE)
 	public RequestDTO updateTourPackage(@RequestBody RequestDTO requestDTO) {
 		TourPackage tourPackage = requestDTO.getTourPackage();
 		log.info("updatePriceTourPackage starts..." + tourPackage);

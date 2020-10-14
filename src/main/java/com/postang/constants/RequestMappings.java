@@ -26,7 +26,7 @@ public interface RequestMappings {
 	public static final String EMPLOYEE_VIEW_DETAILS = "/viewEmployeeDetails";
 	public static final String LOGIN = "/login";
 	public static final String LOOKUP_CREATE = "/createLookup";
-	public static final String LOOKUP_DELETE_TOGGLE = "/toggleDelete";
+	public static final String LOOKUP_DELETE_TOGGLE = "/toggleDeleteLookup";
 	public static final String LOOKUP_EXCEL_UPLOAD = "/uploadLookupExcel";
 	public static final String LOOKUP_UPDATE = "/updateLookup";
 	public static final String LOOKUP_VIEW_ALL = "/viewLookupList";
@@ -51,5 +51,12 @@ public interface RequestMappings {
 	public static final String TOUR_PKG_DELETE_TOGGLE = "/toggleDeleteTourPackage";
 	public static final String TOUR_PKG_UPDATE = "/updateTourPackage";
 	public static final String TOUR_PKG_VIEW_ALL = "/viewAllTourPackages";
-
+	public static final String VEHICLE_CREATE = "/createVehicle";
+	public static final String VEHICLE_UPDATE = "/updateVehicle";
+	public static final String VEHICLE_DELETE_TOGGLE = "/toggleDeleteVehicle";
+	public static final String VEHICLE_VIEW_ALL = "/viewAllVehicles";
+	public static final String DRIVER_CREATE = "/createDriver";
+	public static final String DRIVER_UPDATE = "/updateDriver";
+	public static final String DRIVER_DELETE_TOGGLE = "/toggleDeleteDriver";
+	public static final String DRIVER_VIEW_ALL = "/viewAllDrivers";
 }

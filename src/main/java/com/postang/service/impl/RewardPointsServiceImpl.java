@@ -10,9 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.postang.dao.service.RewardPointsDAOService;
 import com.postang.domain.RewardPoints;
-import com.postang.repo.RewardPointsRepository;
 import com.postang.service.RewardPointsService;
-import com.postang.util.Util;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -27,11 +25,6 @@ public class RewardPointsServiceImpl implements RewardPointsService {
 
 	@Autowired
 	RewardPointsDAOService rewardPointsDAOService;
-
-	@Autowired
-	RewardPointsRepository rewardPointsRepo;
-
-	Util util = new Util();
 
 	@Override
 	public List<RewardPoints> getRewardPointsByUserId(long userId) {

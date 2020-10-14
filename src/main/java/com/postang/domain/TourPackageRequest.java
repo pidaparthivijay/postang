@@ -9,7 +9,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import lombok.Data;
@@ -34,8 +33,9 @@ public class TourPackageRequest implements Serializable{
 	@Column(name="requestDate", columnDefinition="DATE DEFAULT CURRENT_DATE")
 	private Date requestDate;
 	private Date startDate;
-	private String vehicleName;
 	private int userId;
+	@Column(columnDefinition = "int default 0")
+	private int vehicleDriverMappingId;
 	/**
 	 * PEND => PENDING
 	 * GEND => GENERATED
@@ -43,7 +43,5 @@ public class TourPackageRequest implements Serializable{
 	 */
 	@Column(columnDefinition="varchar(4) default 'PEND'")
 	private String billStatus;
-	@Transient
-	private boolean actionStatus;
 	
-	}
+}
