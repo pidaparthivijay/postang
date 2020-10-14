@@ -56,4 +56,14 @@ public class TourPackageDAOServiceImpl implements TourPackageDAOService, Constan
 		return tourPackageRepository.findAll();
 	}
 
+	@Override
+	public TourPackageRequest getTourPackageRequestById(long tourPackageRequestId) {
+		return tourPackageRequestRepository.findByTourPackageRequestId(tourPackageRequestId);
+	}
+
+	@Override
+	public List<TourPackageRequest> getRequestListByUserName(String userName) {
+		return tourPackageRequestRepository.findByUserName(userName);
+	}
+
 }

@@ -15,4 +15,6 @@ public interface RewardPointsService {
 
 	List<RewardPoints> getRewardPointsByUserId(long userId);
 
+	List<RewardPoints> getRewardPointsByUserName(String userName);
+
 }

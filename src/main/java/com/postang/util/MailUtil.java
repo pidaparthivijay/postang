@@ -96,6 +96,12 @@ public class MailUtil implements Constants {
 			} else if (TEMPLATE_ALLOCATION_MAIL.equalsIgnoreCase(templateName)) {
 				mimeMessage.setSubject(ROOM_ALLOCATED);
 				mailText = mailProperties.getProperty(ALLOCATION_MAIL);
+				mailText = mailText.replace(MAIL_VEHNAME, mailDTO.getVehicle().getVehicleName());
+				mailText = mailText.replace(MAIL_DRINAME, mailDTO.getDriver().getDriverName());
+				mailText = mailText.replace(MAIL_VEHNUM, mailDTO.getVehicle().getRegNum());
+			} else if (TEMPLATE_TOUR_DETAILS.equalsIgnoreCase(templateName)) {
+				mimeMessage.setSubject(VEHICLE_DRIVER_DETAILS);
+				mailText = mailProperties.getProperty(VEHICLE_DRIVER_DETAILS);
 			} else if (TEMPLATE_CANCEL_FAIL_MAIL.equalsIgnoreCase(templateName)
 					|| (TEMPLATE_CANCEL_MAIL.equalsIgnoreCase(templateName))) {
 				if (TEMPLATE_CANCEL_FAIL_MAIL.equalsIgnoreCase(templateName)) {

@@ -67,6 +67,7 @@ public class RequestDTO implements Serializable{
 	private List<TourPackageRequest> tourPackageRequestList= new ArrayList<>();
 	private User user;
 	private int userId;
+	private String userName;
 	private Vehicle vehicle;
 	private Driver driver;
 	private List<Vehicle> vehiclesList = new ArrayList<>();

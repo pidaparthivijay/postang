@@ -9,7 +9,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
-import javax.persistence.Transient;
 
 import lombok.Data;
 
@@ -43,6 +42,4 @@ public class AmenityRequest implements Serializable{
 	 */
 	@Column(columnDefinition="varchar(4) default 'PEND'")
 	private String billStatus;
-	@Transient
-	private boolean actionStatus;
 	}

@@ -20,5 +20,9 @@ public interface TourPackageRequestRepository extends JpaRepository<TourPackageR
 
 	List<TourPackageRequest> findByUserId(int userId);
 
+	TourPackageRequest findByTourPackageRequestId(long tourPackageRequestId);
+
+	List<TourPackageRequest> findByUserName(String userName);
+
 }
 

@@ -58,4 +58,9 @@ public class RoomRequestDAOServiceImpl implements RoomRequestDAOService, Constan
 		return roomReqRepo.save(roomReq);
 	}
 
+	@Override
+	public List<RoomRequest> getRequestListByUserName(String userName) {
+		return roomReqRepo.findByUserName(userName);
+	}
+
 }

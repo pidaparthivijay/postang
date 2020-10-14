@@ -31,4 +31,9 @@ public class RewardPointsServiceImpl implements RewardPointsService {
 		return rewardPointsDAOService.getRewardPointsByUserId(userId);
 	}
 
+	@Override
+	public List<RewardPoints> getRewardPointsByUserName(String userName) {
+		return rewardPointsDAOService.getRewardPointsByUserName(userName);
+	}
+
 }

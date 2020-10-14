@@ -3,6 +3,7 @@
  */
 package com.postang.dao.service;
 
+import java.util.Date;
 import java.util.List;
 
 import com.postang.domain.Vehicle;
@@ -20,4 +21,6 @@ public interface VehicleDAOService {
 	List<Vehicle> getVehiclesByLocation(String location);
 
 	Vehicle getVehicleByRegNum(String regNum);
+
+	List<Vehicle> findSimilar(Vehicle dummyVehicle, Date startDate, Date endDate);
 }

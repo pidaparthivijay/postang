@@ -27,7 +27,7 @@ public class VehicleDriverMapping implements Serializable {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "vdm_seq")
 	@SequenceGenerator(name = "vdm_seq", sequenceName = "vdm_seq", allocationSize = 1)
 	private long vdmId;
-	private String vehcileRegNum;
+	private String vehicleRegNum;
 	private Date assignedDate;
 	private long tourPackageRequestId;
 	private String driverLicense;

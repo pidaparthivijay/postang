@@ -13,4 +13,6 @@ import com.postang.domain.RewardPoints;
 public interface RewardPointsRepository extends JpaRepository<RewardPoints, Long> {
 
 	List<RewardPoints> findByUserId(long userId);
+
+	List<RewardPoints> findByUserName(String userName);
 }

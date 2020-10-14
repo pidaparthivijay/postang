@@ -25,4 +25,6 @@ public interface RoomRequestDAOService {
 
 	List<RoomRequest> getRequestListByUserId(int userId);
 
+	List<RoomRequest> getRequestListByUserName(String userName);
+
 }

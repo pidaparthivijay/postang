@@ -118,12 +118,16 @@ public class RoomRequestServiceImpl implements RoomRequestService, Constants {
 		room.setCheckInDate(roomRequest.getCheckInDate());
 		room.setCheckOutDate(roomRequest.getCheckOutDate());
 		roomDAOService.saveRoom(room);
-		User user = this.getUserById(roomReq.getUserId());
+		User user = this.getUserByUserName(roomReq.getUserName());
 		rewardPointsDAOService.saveRewardPoints(util.allocateRewardPoints(user, ROOM_BOOKING));
 		MailDTO mailDTO = new MailDTO();
 		mailDTO.setEmailAddress(user.getUserMail());
 		mailDTO.setTemplateName(TEMPLATE_ALLOCATION_MAIL);
 		return mailUtil.triggerMail(mailDTO);
+	}
+
+	private User getUserByUserName(String userName) {
+		return commonDAOService.findUserByUserName(userName);
 	}
 
 }

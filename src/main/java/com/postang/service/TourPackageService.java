@@ -7,6 +7,8 @@ import java.util.List;
 
 import com.postang.domain.TourPackage;
 import com.postang.domain.TourPackageRequest;
+import com.postang.domain.VehicleDriverMapping;
+import com.postang.model.RequestDTO;
 
 /**
  * @author Subrahmanya Vijay
@@ -23,5 +25,9 @@ public interface TourPackageService {
 	TourPackage saveTourPackage(TourPackage tourPackage);
 
 	List<TourPackage> viewAllTourPackages();
+
+	RequestDTO viewFeasibleVehiclesDrivers(TourPackageRequest tourPackageRequest);
+
+	String assignVehDriTour(VehicleDriverMapping vehicleDriverMapping);
 
 }

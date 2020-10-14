@@ -21,6 +21,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.postang.constants.Constants;
+import com.postang.domain.Amenity;
 import com.postang.domain.Customer;
 import com.postang.domain.Employee;
 import com.postang.domain.Lookup;
@@ -170,11 +171,20 @@ public class Util implements Constants {
 		return genUser;
 	}
 
-	public Date getOneYearFromToday() {
-		Calendar c = Calendar.getInstance();
-		c.setTime(new Date());
-		c.add(Calendar.DATE, 365);
-		return c.getTime();
+	public Date calculateEndDate(Date startDate, String duration) {
+		Calendar endDate = Calendar.getInstance();
+		endDate.setTime(startDate);
+		endDate.add(Calendar.DATE, 365);
+		if (SHORT.equals(duration)) {
+			endDate.add(Calendar.DATE, 2);
+		} else if (MEDIUM.equals(duration)) {
+			endDate.add(Calendar.DATE, 4);
+		} else if (LONG.equals(duration)) {
+			endDate.add(Calendar.DATE, 6);
+		} else if (YEAR.equals(duration)) {
+			endDate.add(Calendar.DATE, 365);
+		}
+		return endDate.getTime();
 	}
 
 	public long getPointsForTrxn(String reasonCode) {
@@ -236,10 +246,18 @@ public class Util implements Constants {
 		rewardPoints.setPointsTransactionName(reasonCode);
 		rewardPoints.setPointsEarned(this.getPointsForTrxn(reasonCode));
 		rewardPoints.setPointsEarnedDate(new Date());
-		rewardPoints.setPointsExpiryDate(this.getOneYearFromToday());
-		rewardPoints.setUserId(user.getUserId());
+		rewardPoints.setPointsExpiryDate(this.calculateEndDate(new Date(), YEAR));
+		// rewardPoints.setUserId(user.getUserId());
 		rewardPoints.setUserName(user.getUserName());
 		return rewardPoints;
+	}
+
+	public double generateBillForAmenities(Amenity amenity, int noOfDays) {
+		return amenity.getPrice() * noOfDays;
+	}
+
+	public double generateBillForTours(TourPackage tourPackage, long guestCount) {
+		return tourPackage.getPricePerHead() * guestCount;
 	}
 
 }

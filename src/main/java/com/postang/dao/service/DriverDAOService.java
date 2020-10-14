@@ -3,6 +3,7 @@
  */
 package com.postang.dao.service;
 
+import java.util.Date;
 import java.util.List;
 
 import com.postang.domain.Driver;
@@ -20,4 +21,6 @@ public interface DriverDAOService {
 	List<Driver> getDriversByLocation(String location);
 
 	Driver getDriverByLicense(String license);
+
+	List<Driver> findSimilar(String location, Date startDate, Date endDate);
 }

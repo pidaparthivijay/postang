@@ -16,4 +16,6 @@ public interface AmenityRepository extends JpaRepository<Amenity, Long> {
 
 	Amenity findByAmenityName(String amenityName);
 
+	Amenity findByAmenityId(long amenityId);
+
 }

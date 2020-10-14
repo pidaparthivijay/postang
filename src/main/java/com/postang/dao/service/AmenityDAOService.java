@@ -21,4 +21,8 @@ public interface AmenityDAOService {
 	Amenity saveAmenity(Amenity amenity);
 
 	List<Amenity> getAllAmenities();
+
+	List<AmenityRequest> getRequestListByUserName(String userName);
+
+	Amenity findByAmenityId(long amenityId);
 }

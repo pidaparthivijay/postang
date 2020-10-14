@@ -147,16 +147,19 @@ public interface Constants {
 	public static final String TEMPLATE_ALLOCATION_MAIL = "ALLOCATION_MAIL";
 	public static final String TEMPLATE_CANCEL_MAIL = "CANCELLATION_MAIL";
 	public static final String TEMPLATE_CANCEL_FAIL_MAIL = "CANCEL_FAIL_MAIL";
+	public static final String TEMPLATE_TOUR_DETAILS = "TEMPLATE_TOUR_DETAILS";
 	public static final String TEMPLATE_BILL_MAIL_CUST = "BILL_MAIL_TO_CUST";
 	public static final String TOTAL_BILL_AMOUNT = "Total Bill Amount";
 	public static final String TOTAL_POINTS = "Total Points";
 	public static final String TOUR_BOOK_SXS = "Tour Package Booking Success";
 	public static final String TOUR_BOOKING = "TourBooking";
+	public static final String VEHICLE_DRIVER_DETAILS = "VEHICLE_DRIVER_DETAILS";
 	public static final long TOUR_BOOKING_REWARD = 500;
 	public static final String TOUR_DURATION = "TOUR_DURATION";
 	public static final String TOUR_PKG_BOOK_FAIL="Tour Package Booking Failed";
 	public static final String TOUR_PKG_BOOK_SXS="Tour Package Booking Success";
 	public static final String TOUR_PKG_CRT_FAIL="Tour Package Create Failure";
+	public static final String TOUR_REQUEST = "Tour Request";
 	public static final String TOUR_PKG_CRT_SXS="Tour Package Create Success";
 	public static final String TRUE = "true";
 	public static final String TUR_PACK_SXS = "Tour Package Creation Success";// Duplicate
@@ -183,5 +186,13 @@ public interface Constants {
 	public static final int FC_DBL_STE_NAC = 2;
 	public static final int FC_DBL_DLX_AC = 2;
 	public static final int FC_DBL_DLX_NAC = 1;
+	public static final String SMALL_SIZE = "Small";
+	public static final String MEDIUM_SIZE = "Medium";
+	public static final String LARGE_SIZE = "Large";
+	public static final String YEAR = "YEAR";
+	public static final String MAIL_VEHNAME = "#vehName#";
+	public static final String MAIL_DRINAME = "#driverName#";
+	public static final String MAIL_VEHNUM = "#vehRegNum#";
+	public static final String GST_OTHERS = "GST + Others";
 
 }

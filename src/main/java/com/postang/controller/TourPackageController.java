@@ -1,6 +1,7 @@
 package com.postang.controller;
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
@@ -127,4 +128,41 @@ public class TourPackageController implements RequestMappings, Constants {
 		return requestDTO;
 	}
 
+	@GetMapping(value = TOUR_BKNG_VIEW_ALL)
+	public RequestDTO viewAllTourBookings() {
+		RequestDTO requestDTO = new RequestDTO();
+		log.info("viewAllTourBookings starts...");
+		try {
+			List<TourPackageRequest> tourPackageRequestList = tourPackageService.getAllTourPackageBookings();
+			requestDTO.setTourPackageRequestList(tourPackageRequestList);
+		} catch (Exception ex) {
+			requestDTO.setActionStatus(EXCEPTION_OCCURED);
+			log.error("Exception occured in viewAllTourBookings: " + ex);
+		}
+		return requestDTO;
+	}
+
+	@PostMapping(value = FEASIBLE_VEHICLES_DRIVERS)
+	public RequestDTO viewFeasibleVehiclesDrivers(@RequestBody RequestDTO requestDTO) {
+		log.info("viewFeasibleVehiclesDrivers starts..." + requestDTO.getTourPackageRequest());
+		try {
+			requestDTO = tourPackageService.viewFeasibleVehiclesDrivers(requestDTO.getTourPackageRequest());
+		} catch (Exception ex) {
+			requestDTO.setActionStatus(EXCEPTION_OCCURED);
+			log.error("Exception occured in viewFeasibleVehiclesDrivers: " + ex);
+		}
+		return requestDTO;
+	}
+
+	@PostMapping(value = TOUR_BKNG_ASSIGN)
+	public RequestDTO assignVehDriTour(@RequestBody RequestDTO requestDTO) {
+		log.info("assignVehDriTour starts..." + requestDTO.getVehicleDriverMapping());
+		try {
+			requestDTO.setActionStatus(tourPackageService.assignVehDriTour(requestDTO.getVehicleDriverMapping()));
+		} catch (Exception ex) {
+			requestDTO.setActionStatus(EXCEPTION_OCCURED);
+			log.error("Exception occured in assignVehDriTour: " + ex);
+		}
+		return requestDTO;
+	}
 }

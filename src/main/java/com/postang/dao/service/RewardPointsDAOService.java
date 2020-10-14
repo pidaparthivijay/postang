@@ -17,4 +17,6 @@ public interface RewardPointsDAOService {
 
 	RewardPoints saveRewardPoints(RewardPoints rewardPoints);
 
+	List<RewardPoints> getRewardPointsByUserName(String userName);
+
 }

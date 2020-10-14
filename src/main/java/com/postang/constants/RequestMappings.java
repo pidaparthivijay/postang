@@ -59,4 +59,8 @@ public interface RequestMappings {
 	public static final String DRIVER_UPDATE = "/updateDriver";
 	public static final String DRIVER_DELETE_TOGGLE = "/toggleDeleteDriver";
 	public static final String DRIVER_VIEW_ALL = "/viewAllDrivers";
+	public static final String TOUR_BKNG_VIEW_ALL = "/viewAllTourBookings";
+	public static final String TOUR_BKNG_ASSIGN = "/assignVehDriTour";
+	public static final String FEASIBLE_VEHICLES_DRIVERS = "/viewFeasibleVehiclesDrivers";
+
 }

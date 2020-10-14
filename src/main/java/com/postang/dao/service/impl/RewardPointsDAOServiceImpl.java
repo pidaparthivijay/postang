@@ -6,7 +6,7 @@ package com.postang.dao.service.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
 import com.postang.dao.service.RewardPointsDAOService;
 import com.postang.domain.RewardPoints;
@@ -21,7 +21,7 @@ import lombok.extern.log4j.Log4j2;
  *
  */
 @Log4j2
-@Service
+@Repository
 public class RewardPointsDAOServiceImpl implements RewardPointsDAOService {
 
 	@Autowired
@@ -40,6 +40,11 @@ public class RewardPointsDAOServiceImpl implements RewardPointsDAOService {
 	@Override
 	public List<RewardPoints> getRewardPointsByUserId(long userId) {
 		return rewardPointsRepo.findByUserId(userId);
+	}
+
+	@Override
+	public List<RewardPoints> getRewardPointsByUserName(String userName) {
+		return rewardPointsRepo.findByUserName(userName);
 	}
 
 }

@@ -67,8 +67,7 @@ public class DriverController implements RequestMappings, Constants {
 
 	@PostMapping(value = DRIVER_DELETE_TOGGLE)
 	public RequestDTO toggleDelete(@RequestBody RequestDTO requestDTO) {
-		long driverId = requestDTO.getDriver().getDriverId();
-		log.info("toggleDelete starts..." + driverId);
+		log.info("toggleDelete starts..." + requestDTO.getDriver());
 		try {
 			String toggleStatus = driverService.toggleDeleteDriver(requestDTO.getDriver());
 			return viewDriverList(toggleStatus);

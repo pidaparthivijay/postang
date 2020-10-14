@@ -3,6 +3,7 @@
  */
 package com.postang.dao.service.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,12 @@ public class VehicleDAOServiceImpl implements VehicleDAOService {
 	@Override
 	public Vehicle getVehicleByRegNum(String regNum) {
 		return vehicleRepository.findByRegNum(regNum);
+	}
+
+	@Override
+	public List<Vehicle> findSimilar(Vehicle dummyVehicle, Date startDate, Date endDate) {
+		return vehicleRepository.findSimilar(dummyVehicle.getVehicleType(), dummyVehicle.getLocation(), startDate,
+				endDate);
 	}
 
 }

@@ -51,4 +51,14 @@ public class AmenityDAOServiceImpl implements AmenityDAOService, Constants {
 		return amenityRequestRepository.save(amenityRequest);
 	}
 
+	@Override
+	public List<AmenityRequest> getRequestListByUserName(String userName) {
+		return amenityRequestRepository.findByUserName(userName);
+	}
+
+	@Override
+	public Amenity findByAmenityId(long amenityId) {
+		return amenityRepository.findByAmenityId(amenityId);
+	}
+
 }

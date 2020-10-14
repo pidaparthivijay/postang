@@ -22,6 +22,7 @@ public interface RoomRequestRepository extends JpaRepository<RoomRequest, Long> 
 
 	List<RoomRequest> findByRoomRequestStatus(String roomRequestStatus);
 
+	List<RoomRequest> findByUserName(String userName);
 	
 
 }

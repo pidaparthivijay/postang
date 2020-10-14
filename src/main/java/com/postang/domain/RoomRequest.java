@@ -33,7 +33,9 @@ public class RoomRequest implements Serializable{
 	@SequenceGenerator(name = "roomReq_seq", sequenceName = "roomReq_seq", allocationSize = 1)
 	private int requestId;
 	private int userId;
-	private String custName, guestName;
+	private String userName;
+	private String custName;
+	private String guestName;
 	private Date checkInDate;
 	@Column(name="requestDate", columnDefinition="DATE DEFAULT CURRENT_DATE")
 	private Date requestDate;

@@ -5,8 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.postang.domain.Customer;
+import com.postang.domain.Driver;
 import com.postang.domain.Employee;
 import com.postang.domain.User;
+import com.postang.domain.Vehicle;
+import com.postang.domain.VehicleDriverMapping;
 
 import lombok.Data;
 
@@ -29,4 +32,7 @@ public class MailDTO implements Serializable{
 	private String emailAddress;
 	private int roomRequestId;
 	private List<PendingBillRequest> pendingBillRequests = new ArrayList<>();
+	private VehicleDriverMapping vehicleDriverMapping;
+	private Vehicle vehicle;
+	private Driver driver;
 }

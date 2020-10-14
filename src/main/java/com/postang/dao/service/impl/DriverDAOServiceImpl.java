@@ -3,6 +3,7 @@
  */
 package com.postang.dao.service.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,11 @@ public class DriverDAOServiceImpl implements DriverDAOService {
 	@Override
 	public Driver getDriverByLicense(String license) {
 		return driverRepository.findByDriverLicense(license);
+	}
+
+	@Override
+	public List<Driver> findSimilar(String location, Date startDate, Date endDate) {
+		return driverRepository.findSimilar(location, startDate, endDate);
 	}
 
 }

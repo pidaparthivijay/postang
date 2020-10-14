@@ -34,6 +34,7 @@ public class TourPackageRequest implements Serializable{
 	private Date requestDate;
 	private Date startDate;
 	private int userId;
+	private String userName;
 	@Column(columnDefinition = "int default 0")
 	private int vehicleDriverMappingId;
 	/**
