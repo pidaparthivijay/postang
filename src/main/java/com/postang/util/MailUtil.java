@@ -40,9 +40,6 @@ public class MailUtil implements Constants {
 		String status = EMPTY_STRING;
 		User user = mailDTO.getUser();
 		String templateName = mailDTO.getTemplateName();
-		log.info(user);
-		log.info(templateName);
-		log.info(mailDTO.getPendingBillRequests());
 		try {
 			mailProperties.load(stream);
 			String mailAddress = mailProperties.getProperty(FRM_ADR);
@@ -151,7 +148,6 @@ public class MailUtil implements Constants {
 			log.info(status);
 		} catch (Exception mex) {
 			status = templateName + MAIL_FALIURE;
-			log.info("Exception Occurred in triggerMail:" + mex);
 			mex.printStackTrace();
 		}
 

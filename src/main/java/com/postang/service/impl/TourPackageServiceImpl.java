@@ -28,16 +28,12 @@ import com.postang.service.TourPackageService;
 import com.postang.util.MailUtil;
 import com.postang.util.Util;
 
-import lombok.extern.log4j.Log4j2;
-
 /**
  * @author Subrahmanya Vijay
  *
  */
-@Log4j2
 @Service
 public class TourPackageServiceImpl implements TourPackageService, Constants {
-
 
 	@Autowired
 	TourPackageDAOService tourPackageDAOService;
@@ -89,7 +85,7 @@ public class TourPackageServiceImpl implements TourPackageService, Constants {
 		RequestDTO requestDTO = new RequestDTO();
 		TourPackage tourPackage = tourPackageDAOService
 				.findTourPackageByTourPackageName(tourPackageRequest.getTourPackageName());
-		Vehicle dummyVehicle= new Vehicle();
+		Vehicle dummyVehicle = new Vehicle();
 		dummyVehicle.setLocation(tourPackage.getLocation());
 		dummyVehicle.setVehicleType(this.findVehicleType(tourPackageRequest.getGuestCount()));
 		Date startDate = tourPackageRequest.getStartDate();
@@ -100,8 +96,6 @@ public class TourPackageServiceImpl implements TourPackageService, Constants {
 		requestDTO.setDriversList(driversList);
 		return requestDTO;
 	}
-
-
 
 	private String findVehicleType(long guestCount) {
 		String vehicleType;
@@ -118,7 +112,6 @@ public class TourPackageServiceImpl implements TourPackageService, Constants {
 	@Override
 	public String assignVehDriTour(VehicleDriverMapping vehicleDriverMapping) {
 		String status = EMPTY_STRING;
-		log.info(vehicleDriverMapping);
 		vehicleDriverMapping = vehDriMapDAOService.saveMapping(vehicleDriverMapping);
 		if (vehicleDriverMapping.getVdmId() > 0) {
 			TourPackageRequest tPR = tourPackageDAOService

@@ -13,13 +13,10 @@ import com.postang.dao.service.VehicleDAOService;
 import com.postang.domain.Vehicle;
 import com.postang.repo.VehicleRepository;
 
-import lombok.extern.log4j.Log4j2;
-
 /**
  * @author Subrahmanya Vijay
  *
  */
-@Log4j2
 @Repository
 public class VehicleDAOServiceImpl implements VehicleDAOService {
 

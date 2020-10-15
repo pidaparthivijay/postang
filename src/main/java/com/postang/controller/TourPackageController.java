@@ -21,13 +21,10 @@ import com.postang.service.TourPackageService;
 import com.postang.util.MailUtil;
 import com.postang.util.Util;
 
-import lombok.extern.log4j.Log4j2;
-
 /**
  * @author Subrahmanya Vijay
  *
  */
-@Log4j2
 @RestController
 @CrossOrigin
 @RequestMapping(RequestMappings.BRW)
@@ -47,7 +44,6 @@ public class TourPackageController implements RequestMappings, Constants {
 	@PostMapping(value = TOUR_PKG_CREATE)
 	public RequestDTO createTourPackage(@RequestBody RequestDTO requestDTO) {
 		TourPackage tourPackage = requestDTO.getTourPackage();
-		log.info("createTourPackage starts..." + tourPackage);
 		try {
 			tourPackage.setDeleted(NO);
 			tourPackage.setTourPackageName(util.generateName(tourPackage));
@@ -56,7 +52,6 @@ public class TourPackageController implements RequestMappings, Constants {
 			requestDTO.setTourPackage(tourPackage);
 		} catch (Exception ex) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
-			log.error("Exception in createTourPackage : " + ex.getMessage());
 		}
 		return requestDTO;
 	}
@@ -64,7 +59,6 @@ public class TourPackageController implements RequestMappings, Constants {
 	@PostMapping(value = TOUR_PKG_UPDATE)
 	public RequestDTO updateTourPackage(@RequestBody RequestDTO requestDTO) {
 		TourPackage tourPackage = requestDTO.getTourPackage();
-		log.info("updatePriceTourPackage starts..." + tourPackage);
 		try {
 			tourPackage = tourPackageService.saveTourPackage(tourPackage);
 			tourPackage.setActionStatus(true);
@@ -72,7 +66,6 @@ public class TourPackageController implements RequestMappings, Constants {
 			return viewAllTourPackages(SUCCESS);
 		} catch (Exception ex) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
-			log.error("Exception in updatePriceTourPackage : " + ex.getMessage());
 		}
 		return requestDTO;
 	}
@@ -80,7 +73,6 @@ public class TourPackageController implements RequestMappings, Constants {
 	@GetMapping(value = TOUR_PKG_VIEW_ALL)
 	public RequestDTO viewAllTourPackages(String status) {
 		RequestDTO requestDTO = new RequestDTO();
-		log.info("viewAllTourPackages starts...");
 		try {
 			requestDTO.setTourPackageList(tourPackageService.viewAllTourPackages());
 			if (!StringUtils.isEmpty(status)) {
@@ -88,7 +80,6 @@ public class TourPackageController implements RequestMappings, Constants {
 			}
 		} catch (Exception ex) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
-			log.error("Exception in viewAllTourPackages : " + ex.getMessage());
 		}
 		return requestDTO;
 	}
@@ -96,7 +87,6 @@ public class TourPackageController implements RequestMappings, Constants {
 	@PostMapping(value = TOUR_PKG_DELETE_TOGGLE)
 	public RequestDTO toggleDeleteTourPackage(@RequestBody RequestDTO requestDTO) {
 		String tourPackageName = requestDTO.getTourPackage().getTourPackageName();
-		log.info("toggleDeleteTourPackage starts..." + tourPackageName);
 		try {
 			TourPackage tourPackage = tourPackageService.findByName(tourPackageName);
 			tourPackage.setDeleted(YES.equals(tourPackage.getDeleted()) ? NO : YES);
@@ -105,7 +95,6 @@ public class TourPackageController implements RequestMappings, Constants {
 			return viewAllTourPackages(YES.equals(savedTourPackage.getDeleted()) ? DEL_SXS : UN_DEL_SXS);
 		} catch (Exception ex) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
-			log.error("Exception in toggleDeleteTourPackage : " + ex.getMessage());
 		}
 		return requestDTO;
 	}
@@ -113,7 +102,6 @@ public class TourPackageController implements RequestMappings, Constants {
 	@PostMapping(value = TOUR_PKG_BOOK)
 	public RequestDTO bookTourPackage(@RequestBody RequestDTO requestDTO) {
 		TourPackageRequest tourPackageRequest = requestDTO.getTourPackageRequest();
-		log.info("bookTourPackage starts..." + tourPackageRequest);
 		try {
 			tourPackageRequest.setRequestDate(new Date());
 			tourPackageRequest.setBillStatus(BILL_PENDING);
@@ -123,7 +111,6 @@ public class TourPackageController implements RequestMappings, Constants {
 			requestDTO.setTourPackageRequest(tourPackageRequest);
 		} catch (Exception ex) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
-			log.error("Exception occured in bookTourPackage: " + ex);
 		}
 		return requestDTO;
 	}
@@ -131,76 +118,64 @@ public class TourPackageController implements RequestMappings, Constants {
 	@GetMapping(value = TOUR_BKNG_VIEW_ALL)
 	public RequestDTO viewAllTourBookings() {
 		RequestDTO requestDTO = new RequestDTO();
-		log.info("viewAllTourBookings starts...");
 		try {
 			List<TourPackageRequest> tourPackageRequestList = tourPackageService.getAllTourPackageBookings();
 			requestDTO.setTourPackageRequestList(tourPackageRequestList);
 		} catch (Exception ex) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
-			log.error("Exception occured in viewAllTourBookings: " + ex);
 		}
 		return requestDTO;
 	}
 
 	@PostMapping(value = FEASIBLE_VEHICLES_DRIVERS)
 	public RequestDTO viewFeasibleVehiclesDrivers(@RequestBody RequestDTO requestDTO) {
-		log.info("viewFeasibleVehiclesDrivers starts..." + requestDTO.getTourPackageRequest());
 		try {
 			requestDTO = tourPackageService.viewFeasibleVehiclesDrivers(requestDTO.getTourPackageRequest());
 		} catch (Exception ex) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
-			log.error("Exception occured in viewFeasibleVehiclesDrivers: " + ex);
 		}
 		return requestDTO;
 	}
 
 	@PostMapping(value = TOUR_BKNG_ASSIGN)
 	public RequestDTO assignVehDriTour(@RequestBody RequestDTO requestDTO) {
-		log.info("assignVehDriTour starts..." + requestDTO.getVehicleDriverMapping());
 		try {
 			requestDTO.setActionStatus(tourPackageService.assignVehDriTour(requestDTO.getVehicleDriverMapping()));
 		} catch (Exception ex) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
-			log.error("Exception occured in assignVehDriTour: " + ex);
 		}
 		return requestDTO;
 	}
 
 	@PostMapping(value = CUSTOMER_GET_TOUR_BKNGS)
 	public RequestDTO getMyTourBkngs(@RequestBody RequestDTO requestDTO) {
-		log.info("getMyTourBkngs starts..." + requestDTO.getCustomer());
 		try {
 			requestDTO.setTourPackageRequestList(tourPackageService.getCustomerTours(requestDTO.getCustomer()));
 
 		} catch (Exception ex) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
-			log.error("Exception occured in getMyTourBkngs: " + ex);
 		}
 		return requestDTO;
 	}
 
 	@PostMapping(value = CANCEL_TOUR_BKNG)
 	public RequestDTO cancelTourBkng(@RequestBody RequestDTO requestDTO) {
-		log.info("cancelTourBkng starts..." + requestDTO.getTourPackageRequest());
 		try {
 			requestDTO.setActionStatus(tourPackageService.cancelTourRequest(requestDTO.getTourPackageRequest()));
 
 		} catch (Exception ex) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
-			log.error("Exception occured in cancelTourBkng: " + ex);
 		}
 		return requestDTO;
 	}
 
 	@PostMapping(value = VIEW_VD_MAPPING)
 	public RequestDTO viewVDMDetails(@RequestBody RequestDTO requestDTO) {
-		log.info("viewVDMDetails starts..." + requestDTO.getTourPackageRequest());
 		try {
 			requestDTO.setVehicleDriverMapping(tourPackageService.viewVDMDetails(requestDTO.getTourPackageRequest()));
 
 		} catch (Exception ex) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
-			log.error("Exception occured in viewVDMDetails: " + ex);
 			ex.printStackTrace();
 		}
 		return requestDTO;

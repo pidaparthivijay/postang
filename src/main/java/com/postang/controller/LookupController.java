@@ -20,13 +20,10 @@ import com.postang.model.RequestDTO;
 import com.postang.service.LookupService;
 import com.postang.util.Util;
 
-import lombok.extern.log4j.Log4j2;
-
 /**
  * @author Subrahmanya Vijay
  *
  */
-@Log4j2
 @RestController
 @CrossOrigin
 @RequestMapping(RequestMappings.BRW)
@@ -44,14 +41,12 @@ public class LookupController implements RequestMappings, Constants {
 	@PostMapping(value = LOOKUP_EXCEL_UPLOAD)
 	public RequestDTO uploadLookupExcel(@RequestParam("lookupExcel") MultipartFile multipartFile) {
 		RequestDTO requestDTO = new RequestDTO();
-		log.info("uploadLookupExcel starts..." + multipartFile);
 		try {
 			String status = lookupService.uploadLookupExcel(multipartFile);
 			requestDTO.setActionStatus(status);
 			return viewLookupList(status);
 		} catch (Exception e) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
-			log.error("Exception in uploadLookupExcel" + e);
 			e.printStackTrace();
 		}
 		return requestDTO;
@@ -60,7 +55,6 @@ public class LookupController implements RequestMappings, Constants {
 	@PostMapping(value = LOOKUP_CREATE)
 	public RequestDTO createLookup(@RequestBody RequestDTO requestDTO) {
 		Lookup lookup = requestDTO.getLookup();
-		log.info("createLookup starts..." + lookup);
 		try {
 			lookup.setDeleted(NO);
 			lookup.setCreatedDate(new Date());
@@ -68,7 +62,6 @@ public class LookupController implements RequestMappings, Constants {
 			requestDTO.setLookup(savedLookup);
 			requestDTO.setActionStatus(savedLookup.getLookupId() > 0 ? SUCCESS : FAILURE);
 		} catch (Exception e) {
-			log.error("Exception in createLookup" + e);
 			e.printStackTrace();
 		}
 		return requestDTO;
@@ -77,7 +70,6 @@ public class LookupController implements RequestMappings, Constants {
 	@PostMapping(value = LOOKUP_UPDATE)
 	public RequestDTO updateLookup(@RequestBody RequestDTO requestDTO) {
 		Lookup lookup = requestDTO.getLookup();
-		log.info("updateLookup starts..." + lookup);
 		try {
 			lookup.setUpdateDate(new Date());
 			Lookup savedLookup = lookupService.saveLookup(lookup);
@@ -85,21 +77,17 @@ public class LookupController implements RequestMappings, Constants {
 			requestDTO.setActionStatus(UPDATE_SXS);
 		} catch (Exception e) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
-			log.error("Exception in updateLookup" + e);
 		}
 		return requestDTO;
 	}
 
 	@PostMapping(value = LOOKUP_DELETE_TOGGLE)
 	public RequestDTO toggleDelete(@RequestBody RequestDTO requestDTO) {
-		long lookupId = requestDTO.getLookup().getLookupId();
-		log.info("toggleDelete starts..." + lookupId);
 		try {
 			String toggleStatus = lookupService.toggleDelete(requestDTO.getLookup());
 			return viewLookupList(toggleStatus);
 		} catch (Exception e) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
-			log.error("Exception in toggleDelete" + e);
 			e.printStackTrace();
 		}
 		return requestDTO;
@@ -108,12 +96,10 @@ public class LookupController implements RequestMappings, Constants {
 	@GetMapping(value = LOOKUP_VIEW_DEF)
 	public RequestDTO getLookupDefs() {
 		RequestDTO requestDTO = new RequestDTO();
-		log.info("getLookupDefs starts...");
 		try {
 			requestDTO.setLookupDefsList(lookupService.getLookupDefinitions());
 		} catch (Exception e) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
-			log.error("Exception in getLookupDefs" + e);
 			e.printStackTrace();
 		}
 		return requestDTO;
@@ -122,11 +108,9 @@ public class LookupController implements RequestMappings, Constants {
 	@PostMapping(value = LOOKUP_VIEW_BY_DEF)
 	public RequestDTO getLookupListByDefinition(@RequestBody RequestDTO requestDTO) {
 		String lookupDefinitionName = requestDTO.getLookupDefinitionName();
-		log.info("getLookupListByDefinition starts..." + lookupDefinitionName);
 		try {
 			requestDTO.setLookupList(lookupService.getLookupListByDefinition(lookupDefinitionName));
 		} catch (Exception e) {
-			log.error("Exception in getLookupListByDefinition..." + e);
 			e.printStackTrace();
 		}
 		return requestDTO;
@@ -135,7 +119,6 @@ public class LookupController implements RequestMappings, Constants {
 	@GetMapping(value = LOOKUP_VIEW_ALL)
 	public RequestDTO viewLookupList(String status) {
 		RequestDTO requestDTO = new RequestDTO();
-		log.info("viewLookupList starts...");
 		try {
 			requestDTO.setLookupList(lookupService.getLookupList());
 			if (!StringUtils.isEmpty(status)) {
@@ -143,7 +126,6 @@ public class LookupController implements RequestMappings, Constants {
 			}
 		} catch (Exception e) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
-			log.error("Exception in viewLookupList" + e);
 			e.printStackTrace();
 		}
 		return requestDTO;

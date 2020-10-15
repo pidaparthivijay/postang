@@ -68,7 +68,6 @@ public class EmployeeServiceImpl implements EmployeeService, Constants {
 			}
 			return emp;
 		} catch (Exception ex) {
-			log.info("Exception in createEmployee: " + ex);
 			ex.printStackTrace();
 		}
 		return null;

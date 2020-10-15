@@ -53,7 +53,6 @@ public class CustomerController implements RequestMappings, Constants {
 	@PostMapping(value = CUSTOMER_REGISTER)
 	public RequestDTO registerCustomer(@RequestBody RequestDTO requestDTO) {
 		Customer customer = requestDTO.getCustomer();
-		log.info("registerCustomer starts..." + customer);
 		try {
 			customer = customerService.saveCustomer(customer);
 
@@ -72,10 +71,8 @@ public class CustomerController implements RequestMappings, Constants {
 			requestDTO.setActionStatus(customer.getCustId() > 0 ? CUST_REG_SXS : CUST_REG_FAIL);
 			requestDTO.setCustomer(customer);
 
-			log.info("registerCustomer ends..." + customer.getCustId());
 		} catch (Exception ex) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
-			log.info("Exception occurred in registerCustomer: " + ex);
 		}
 		return requestDTO;
 	}
@@ -83,14 +80,11 @@ public class CustomerController implements RequestMappings, Constants {
 	@PostMapping(value = CUSTOMER_DETAILS)
 	public RequestDTO getCustomerDetails(@RequestBody RequestDTO requestDTO) {
 		Customer customer = requestDTO.getCustomer();
-		log.info("getCustomerDetails starts...");
 		try {
 			customer = customerService.getCustomerDetails(customer);
-			log.info("Infor is: " + customerService.getCustomerDetails(customer).toString());
 			requestDTO.setCustomer(customer);
 		} catch (Exception ex) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
-			log.error("Exception occured in getCustomerDetails: " + ex);
 		}
 		return requestDTO;
 	}
@@ -98,13 +92,11 @@ public class CustomerController implements RequestMappings, Constants {
 	@PostMapping(value = UPDATE_PROFILE_CUST)
 	public RequestDTO updateCustomerDetails(@RequestBody RequestDTO requestDTO) {
 		Customer customer = requestDTO.getCustomer();
-		log.info("getCustomerDetails starts...");
 		try {
 			customer = customerService.updateCustomerDetails(customer);
 			requestDTO.setCustomer(customer);
 		} catch (Exception ex) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
-			log.error("Exception occured in getCustomerDetails: " + ex);
 		}
 		return requestDTO;
 	}
@@ -115,13 +107,10 @@ public class CustomerController implements RequestMappings, Constants {
 
 	@PostMapping(value = CUSTOMER_VIEW_RWD_POINTS)
 	public RequestDTO viewRewardPoints(@RequestBody RequestDTO requestDTO) {
-		long userId = requestDTO.getUserId();
 		String userName = requestDTO.getUserName();
-		log.info("viewRewardPoints starts..." + userId);
 		try {
 			List<RewardPoints> rewardPointsList = rewardPointsService.getRewardPointsByUserName(userName);
 			if (CollectionUtils.isEmpty(rewardPointsList)) {
-				log.info("viewRewardPoints returns with" + NO_REWARDS_FOUND);
 				requestDTO.setActionStatus(NO_REWARDS_FOUND);
 				return requestDTO;
 			} else {
@@ -141,12 +130,10 @@ public class CustomerController implements RequestMappings, Constants {
 				rewardPointsList.add(rewardPoints);
 				requestDTO.setRewardPointsList(
 						StreamSupport.stream(rewardPointsList.spliterator(), false).collect(Collectors.toList()));
-				log.info("viewRewardPoints ends with" + totalCount);
 			}
 
 		} catch (Exception ex) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
-			log.info("Exception is: " + ex);
 			ex.printStackTrace();
 		}
 

@@ -17,13 +17,10 @@ import com.postang.domain.Vehicle;
 import com.postang.model.RequestDTO;
 import com.postang.service.VehicleService;
 
-import lombok.extern.log4j.Log4j2;
-
 /**
  * @author Subrahmanya Vijay
  *
  */
-@Log4j2
 @RestController
 @CrossOrigin
 @RequestMapping(RequestMappings.BRW)
@@ -35,7 +32,6 @@ public class VehicleController implements RequestMappings, Constants {
 	@PostMapping(value = VEHICLE_CREATE)
 	public RequestDTO createVehicle(@RequestBody RequestDTO requestDTO) {
 		Vehicle vehicle = requestDTO.getVehicle();
-		log.info("createVehicle starts..." + vehicle);
 		try {
 			vehicle.setDeleted(NO);
 			vehicle.setCreatedDate(new Date());
@@ -43,7 +39,6 @@ public class VehicleController implements RequestMappings, Constants {
 			requestDTO.setVehicle(savedVehicle);
 			requestDTO.setActionStatus(savedVehicle.getVehicleId() > 0 ? SUCCESS : FAILURE);
 		} catch (Exception e) {
-			log.error("Exception in createVehicle" + e);
 			e.printStackTrace();
 		}
 		return requestDTO;
@@ -52,7 +47,6 @@ public class VehicleController implements RequestMappings, Constants {
 	@PostMapping(value = VEHICLE_UPDATE)
 	public RequestDTO updateVehicle(@RequestBody RequestDTO requestDTO) {
 		Vehicle vehicle = requestDTO.getVehicle();
-		log.info("updateVehicle starts..." + vehicle);
 		try {
 			vehicle.setUpdatedDate(new Date());
 			Vehicle savedVehicle = vehicleService.saveVehicle(vehicle);
@@ -60,21 +54,17 @@ public class VehicleController implements RequestMappings, Constants {
 			requestDTO.setActionStatus(UPDATE_SXS);
 		} catch (Exception e) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
-			log.error("Exception in updateVehicle" + e);
 		}
 		return requestDTO;
 	}
 
 	@PostMapping(value = VEHICLE_DELETE_TOGGLE)
 	public RequestDTO toggleDelete(@RequestBody RequestDTO requestDTO) {
-		long vehicleId = requestDTO.getVehicle().getVehicleId();
-		log.info("toggleDelete starts..." + vehicleId);
 		try {
 			String toggleStatus = vehicleService.toggleDeleteVehicle(requestDTO.getVehicle());
 			return viewVehicleList(toggleStatus);
 		} catch (Exception e) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
-			log.error("Exception in toggleDelete" + e);
 			e.printStackTrace();
 		}
 		return requestDTO;
@@ -83,7 +73,6 @@ public class VehicleController implements RequestMappings, Constants {
 	@GetMapping(value = VEHICLE_VIEW_ALL)
 	public RequestDTO viewVehicleList(String status) {
 		RequestDTO requestDTO = new RequestDTO();
-		log.info("viewVehicleList starts...");
 		try {
 			requestDTO.setVehiclesList(vehicleService.getVehicleList());
 			if (!StringUtils.isEmpty(status)) {
@@ -91,7 +80,6 @@ public class VehicleController implements RequestMappings, Constants {
 			}
 		} catch (Exception e) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
-			log.error("Exception in viewVehicleList" + e);
 			e.printStackTrace();
 		}
 		return requestDTO;

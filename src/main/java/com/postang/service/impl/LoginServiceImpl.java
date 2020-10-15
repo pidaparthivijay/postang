@@ -35,12 +35,10 @@ public class LoginServiceImpl implements Constants, LoginService {
 	@Override
 	public User getUserDetailsByUserName(String userName) {
 		User loginUser = null;
-		log.info("getUserDetailsByUserName starts: ");
 		try {
 			loginUser = commonDAOService.findUserByUserName(userName);
 		} catch (Exception e) {
-			log.info("Exception in getUserDetails: " + e);
-			log.error(e);
+			e.printStackTrace();
 		}
 		return loginUser;
 	}
@@ -67,11 +65,9 @@ public class LoginServiceImpl implements Constants, LoginService {
 				User newDetails = commonDAOService.saveUser(existingDetails);
 				return newPwd.equalsIgnoreCase(newDetails.getPassword()) ? PWD_RESET_SUCCESS : PWD_RESET_FAILURE;
 			} else {
-				log.info("There is no user with given userName: " + user.getUserName());
 				return NO_USER_WITH_GIVEN_NAME;
 			}
 		} catch (Exception e) {
-			log.info("Exception occured in resetPwd: " + e);
 			e.printStackTrace();
 		}
 		return null;
@@ -79,16 +75,15 @@ public class LoginServiceImpl implements Constants, LoginService {
 
 	@Override
 	public String validateOtp(OneTimePassword oneTimePassword) {
-		log.info("validateOtp starts with: " + oneTimePassword);
 		List<OneTimePassword> savedOTPList = commonDAOService.findOTPByUserName(oneTimePassword.getUserName());
 		if (!CollectionUtils.isEmpty(savedOTPList)) {
 			for (OneTimePassword otp : savedOTPList) {
 				if (otp.isValid()) {
 					if (Integer.parseInt(oneTimePassword.getOtpValue()) != Integer.parseInt(otp.getOtpValue())) {
-						log.info("inequal");
+						log.info(INVALID_OTP);
 						return INVALID_OTP;
 					} else if (Integer.parseInt(oneTimePassword.getOtpValue()) == Integer.parseInt(otp.getOtpValue())) {
-						log.info("Equal");
+						 log.info(VALID_OTP);
 						return VALID_OTP;
 					}
 				} else {
@@ -103,7 +98,6 @@ public class LoginServiceImpl implements Constants, LoginService {
 
 	@Override
 	public User validateUserDetails(User user) {
-		log.info("validateUserDetails starts: ");
 		try {
 			User loginUser = commonDAOService.findUserByUserName(user.getUserName());
 			if (loginUser == null) {
@@ -117,7 +111,6 @@ public class LoginServiceImpl implements Constants, LoginService {
 				}
 			}
 		} catch (Exception e) {
-			log.info("Exception in validateUserDetails: " + e);
 			e.printStackTrace();
 		}
 		return null;

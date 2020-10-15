@@ -13,13 +13,10 @@ import com.postang.dao.service.LookupDAOService;
 import com.postang.domain.Lookup;
 import com.postang.repo.LookupRepository;
 
-import lombok.extern.log4j.Log4j2;
-
 /**
  * @author Subrahmanya Vijay
  *
  */
-@Log4j2
 @Repository
 public class LookupDAOServiceImpl implements LookupDAOService, Constants {
 
@@ -30,6 +27,7 @@ public class LookupDAOServiceImpl implements LookupDAOService, Constants {
 	public List<Lookup> getLookupList() {
 		return lookupRepository.findAll();
 	}
+
 	@Override
 	public List<Lookup> getLookupListByDefinition(String lookupDefinitionName) {
 		return lookupRepository.findByLookupDefName(lookupDefinitionName);

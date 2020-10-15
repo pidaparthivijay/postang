@@ -41,7 +41,6 @@ public class PDFUtil implements Constants {
 			document.close();
 		} catch (Exception ex) {
 
-			log.error("Exception occurred in generatePdf:", ex);
 			ex.printStackTrace();
 		}
 
@@ -146,7 +145,6 @@ public class PDFUtil implements Constants {
 			document.add(table);
 		} catch (Exception ex) {
 
-			log.error("Exception Occurred in writePdf:", ex);
 			ex.printStackTrace();
 		}
 		document.close();

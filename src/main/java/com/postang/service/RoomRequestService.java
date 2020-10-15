@@ -33,4 +33,6 @@ public interface RoomRequestService {
 
 	String assignRoom(RoomRequest roomRequest);
 
+	String cleanUpRooms();
+
 }

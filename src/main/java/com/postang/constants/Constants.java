@@ -10,14 +10,12 @@ public interface Constants {
 	public static final double ACROOMFARE = 0.25;
 	public static final String ACT_STS = "actionStatus";
 	public static final String ADM_LOG_SUCCESS = "Admin Login Success";
-	public static final String ADM_SXS = "Admin Login Success";// Duplicate
 	public static final String ADMIN = "Admin";
 	public static final String AGE_INSUFF = "Age is not sufficient";
 	public static final String ALLOCATED = "A";
 	public static final String ALLOCATION_MAIL = "allocationMail";
 	public static final String ALLOCATION_MAIL_SUCCESS = "Allocation mail has been sent";
 	public static final String ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvxyz";
-	public static final String AMENITY_REQ_SXS = "Amenity Request Success";
 	public static final String AMENITY_REQUEST="Amenity Request";
 	public static final String AMNT_CRT_FAIL="Amenity Creation Failure";
 	public static final String AMNT_CRT_SXS="Amenity Creation Success";
@@ -40,6 +38,7 @@ public interface Constants {
 	public static final String CANCEL_SUCCESS_MAIL = "cancellationSuccessMail";
 	public static final String CANCEL_SUCCESS_MAIL_FALIURE = "Cancellation Success mail is not sent";
 	public static final String CANCEL_SUCCESS_MAIL_SUCCESS = "Cancellation Success mail has been sent";
+	public static final String CLEANUP_COMPLETE = "Room Cleanup Complete";
 	public static final String COMMA = ",";
 	public static final String CONTENT_DISPOSITION = "Content-Disposition";
 	public static final String CUST_LOG_SUCCESS = "Customer Login Success";

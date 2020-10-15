@@ -27,4 +27,6 @@ public interface RoomRequestDAOService {
 
 	List<RoomRequest> getRequestListByUserName(String userName);
 
+	List<RoomRequest> getExpiredRoomRequests();
+
 }

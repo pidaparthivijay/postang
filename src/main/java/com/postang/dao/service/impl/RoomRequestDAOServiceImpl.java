@@ -63,4 +63,9 @@ public class RoomRequestDAOServiceImpl implements RoomRequestDAOService, Constan
 		return roomReqRepo.findByUserName(userName);
 	}
 
+	@Override
+	public List<RoomRequest> getExpiredRoomRequests() {
+		return roomReqRepo.findExipredRequests();
+	}
+
 }

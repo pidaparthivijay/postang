@@ -14,13 +14,10 @@ import com.postang.repo.CustomerRepository;
 import com.postang.repo.RewardPointsRepository;
 import com.postang.util.Util;
 
-import lombok.extern.log4j.Log4j2;
-
 /**
  * @author Subrahmanya Vijay
  *
  */
-@Log4j2
 @Repository
 public class RewardPointsDAOServiceImpl implements RewardPointsDAOService {
 

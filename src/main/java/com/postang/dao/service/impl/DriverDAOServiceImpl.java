@@ -13,18 +13,16 @@ import com.postang.dao.service.DriverDAOService;
 import com.postang.domain.Driver;
 import com.postang.repo.DriverRepository;
 
-import lombok.extern.log4j.Log4j2;
-
 /**
  * @author Subrahmanya Vijay
  *
  */
 @Repository
-@Log4j2
 public class DriverDAOServiceImpl implements DriverDAOService {
 
 	@Autowired
 	DriverRepository driverRepository;
+
 	@Override
 	public Driver saveDriver(Driver driver) {
 		return driverRepository.save(driver);

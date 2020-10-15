@@ -15,13 +15,10 @@ import com.postang.domain.TourPackageRequest;
 import com.postang.repo.TourPackageRepository;
 import com.postang.repo.TourPackageRequestRepository;
 
-import lombok.extern.log4j.Log4j2;
-
 /**
  * @author Subrahmanya Vijay
  *
  */
-@Log4j2
 @Repository
 public class TourPackageDAOServiceImpl implements TourPackageDAOService, Constants {
 

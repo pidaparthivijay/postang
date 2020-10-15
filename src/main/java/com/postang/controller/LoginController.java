@@ -20,13 +20,10 @@ import com.postang.service.EmployeeService;
 import com.postang.service.LoginService;
 import com.postang.util.Util;
 
-import lombok.extern.log4j.Log4j2;
-
 /**
  * @author Subrahmanya Vijay
  *
  */
-@Log4j2
 @RestController
 @CrossOrigin
 @RequestMapping(value = RequestMappings.BRW)
@@ -46,7 +43,6 @@ public class LoginController implements RequestMappings, Constants {
 	@PostMapping(value = LOGIN)
 	public String loginMethod(@RequestBody User user) {
 		User loginUser = null;
-		log.info("loginMethod starts: ");
 		try {
 			loginUser = loginService.validateUserDetails(user);
 			if (loginUser != null) {
@@ -59,10 +55,10 @@ public class LoginController implements RequestMappings, Constants {
 					Employee employee = employeeService.getEmployeeDetails(user.getUserName());
 					employee.setUserId(loginUser.getUserId());
 					if (EMPLOYEE.equalsIgnoreCase(loginUser.getUserType())) {
-						employee.setStatusMessage(EMP_LOG_SUCCESS); 
-					} else if (ADMIN.equalsIgnoreCase(loginUser.getUserType())) {					
-						employee.setStatusMessage(ADM_LOG_SUCCESS); 
-				}
+						employee.setStatusMessage(EMP_LOG_SUCCESS);
+					} else if (ADMIN.equalsIgnoreCase(loginUser.getUserType())) {
+						employee.setStatusMessage(ADM_LOG_SUCCESS);
+					}
 					return new ObjectMapper().writeValueAsString(employee);
 				}
 			} else {
@@ -70,34 +66,28 @@ public class LoginController implements RequestMappings, Constants {
 				return new ObjectMapper().writeValueAsString(user);
 			}
 		} catch (Exception ex) {
-			log.error("Exception occured in loginMethod: " + ex);
 			ex.printStackTrace();
 		}
-		log.info("loginMethod ends: ");
 		return null;
 	}
 
 	@PostMapping(value = OTP_REQUEST)
 	public String requestOTP(@RequestBody User user) {
-		log.info("requestOTP starts: ");
 		try {
 			String statusMsg = loginService.requestOTPMail(user);
 			if (statusMsg.equals(MAIL_SUCCESS)) {
 				return TRUE;
 			}
 		} catch (Exception ex) {
-			log.error("Exception occured in restorePwd: " + ex);
+			ex.printStackTrace();
 		}
-		log.info("requestOTP ends: ");
 		return null;
 	}
 
 	@PostMapping(value = OTP_SUBMIT)
 	public String submitOtp(@RequestBody OneTimePassword oneTimePassword) {
 		try {
-			log.info("submitOtp starts: ");
 			String otpStatus = loginService.validateOtp(oneTimePassword);
-			log.info("otpStatus: " + otpStatus);
 			if (VALID_OTP.equalsIgnoreCase(otpStatus)) {
 				User user = new User();
 				user.setUserName(oneTimePassword.getUserName());
@@ -116,7 +106,6 @@ public class LoginController implements RequestMappings, Constants {
 			} else
 				return new ObjectMapper().writeValueAsString(otpStatus);
 		} catch (Exception e) {
-			log.error("Exception occured in submitOtp: " + e);
 			e.printStackTrace();
 		}
 		return null;
@@ -130,7 +119,6 @@ public class LoginController implements RequestMappings, Constants {
 			statusMsg = loginService.resetPwd(user);
 			requestDTO.setActionStatus(statusMsg);
 		} catch (Exception e) {
-			log.error("Exception occured in resetPwd: " + e);
 			e.printStackTrace();
 		}
 		return requestDTO;

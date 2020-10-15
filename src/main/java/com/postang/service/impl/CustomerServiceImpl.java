@@ -17,13 +17,10 @@ import com.postang.domain.User;
 import com.postang.service.CustomerService;
 import com.postang.util.Util;
 
-import lombok.extern.log4j.Log4j2;
-
 /**
  * @author Subrahmanya Vijay
  *
  */
-@Log4j2
 @Service
 public class CustomerServiceImpl implements CustomerService, Constants {
 
@@ -75,7 +72,6 @@ public class CustomerServiceImpl implements CustomerService, Constants {
 			}
 			return commonDAOService.saveCustomer(customer);
 		} catch (Exception ex) {
-			log.info("Exception in saveCustomer: " + ex);
 			ex.printStackTrace();
 		}
 		return null;

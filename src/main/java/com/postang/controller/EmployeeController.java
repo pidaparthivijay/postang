@@ -17,7 +17,6 @@ import com.postang.domain.Employee;
 import com.postang.model.RequestDTO;
 import com.postang.service.EmployeeService;
 
-import lombok.extern.log4j.Log4j2;
 
 /**
  * @author Subrahmanya Vijay
@@ -40,14 +39,12 @@ public class EmployeeController implements RequestMappings, Constants {
 	@PostMapping(value = EMP_CREATE)
 	public RequestDTO createEmployee(@RequestBody RequestDTO requestDTO) {
 		Employee employee = requestDTO.getEmployee();
-		log.info("createEmployee starts...");
 		try {
 			Employee emp = employeeService.createEmployee(employee);
 			requestDTO.setEmployee(emp);
 			requestDTO.setActionStatus((emp != null && emp.getEmpId() > 0) ? EMP_CRT_SXS : EMP_CRT_FAIL);
 		} catch (Exception ex) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
-			log.error("Exception in createEmployee : " + ex.getMessage());
 			ex.printStackTrace();
 		}
 		return requestDTO;
@@ -56,14 +53,12 @@ public class EmployeeController implements RequestMappings, Constants {
 	@GetMapping(value = EMP_VIEW_ALL)
 	public RequestDTO getAllEmployees() {
 		RequestDTO requestDTO = new RequestDTO();
-		log.info("getAllEmployees starts...");
 		try {
 			List<Employee> empList = employeeService.getAllEmployees();
 			empList.sort(Comparator.comparing(Employee::getEmpId));
 			requestDTO.setEmployeesList(empList);
 		} catch (Exception ex) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
-			log.error("Exception in getAllEmployees : " + ex.getMessage());
 			ex.printStackTrace();
 		}
 		return requestDTO;
@@ -72,13 +67,11 @@ public class EmployeeController implements RequestMappings, Constants {
 	@PostMapping(value = EMPLOYEE_VIEW_DETAILS)
 	public RequestDTO viewEmployeeDetails(@RequestBody RequestDTO requestDTO) {
 		Employee employee = requestDTO.getEmployee();
-		log.info("viewEmployeeDetails starts...");
 		try {
 			Employee emp = employeeService.getEmployeeDetails(employee.getUserName());
 			requestDTO.setEmployee(emp);
 		} catch (Exception ex) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
-			log.error("Exception in viewEmployeeDetails : " + ex.getMessage());
 			ex.printStackTrace();
 		}
 		return requestDTO;
@@ -87,14 +80,12 @@ public class EmployeeController implements RequestMappings, Constants {
 	@PostMapping(value = EMPLOYEE_UPDATE)
 	public RequestDTO udpateEmployee(@RequestBody RequestDTO requestDTO) {
 		Employee employee = requestDTO.getEmployee();
-		log.info("udpateEmployee starts...");
 		try {
 			Employee emp = employeeService.updateEmployee(employee);
 			requestDTO.setEmployee(emp);
 			requestDTO.setActionStatus((emp != null && emp.getEmpId() > 0) ? EMP_UPDATE_SXS : EMP_UPDATE_FAIL);
 		} catch (Exception ex) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
-			log.error("Exception in udpateEmployee : " + ex.getMessage());
 			ex.printStackTrace();
 		}
 		return requestDTO;

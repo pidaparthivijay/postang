@@ -32,17 +32,13 @@ import com.postang.domain.RoomRequest;
 import com.postang.domain.TourPackage;
 import com.postang.domain.User;
 
-import lombok.extern.log4j.Log4j2;
-
 /**
  * @author Subrahmanya Vijay
  *
  */
-@Log4j2
 public class Util implements Constants {
 
 	public int calculateAge(Date custDob) {
-		log.info("calculateAge starts.. with custDob: " + custDob);
 
 		LocalDate today = LocalDate.now();
 		LocalDate custDOB = custDob.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
@@ -111,7 +107,6 @@ public class Util implements Constants {
 			}
 
 		} catch (Exception e) {
-			log.error("Exception in generateLookupListFromExcelFile.." + e);
 			e.printStackTrace();
 		}
 		return lookupList;
@@ -150,7 +145,6 @@ public class Util implements Constants {
 			genUser.setUserMob(customer.getCustMob());
 			genUser.setUserType(CUSTOMER);
 		} catch (Exception e) {
-			log.info("Exception in generateUserFromCustomer: " + e);
 			e.printStackTrace();
 		}
 		return genUser;
@@ -165,7 +159,6 @@ public class Util implements Constants {
 			genUser.setUserMail(employee.getEmail());
 			genUser.setUserType(ADMIN);
 		} catch (Exception e) {
-			log.info("Exception in generateUserFromEmployee: " + e);
 			e.printStackTrace();
 		}
 		return genUser;
@@ -216,7 +209,6 @@ public class Util implements Constants {
 		}
 		// For specifying wrong message digest algorithms
 		catch (NoSuchAlgorithmException e) {
-			log.info("Exception thrown for incorrect algorithm: " + e);
 			return null;
 		}
 	}
@@ -247,7 +239,6 @@ public class Util implements Constants {
 		rewardPoints.setPointsEarned(this.getPointsForTrxn(reasonCode));
 		rewardPoints.setPointsEarnedDate(new Date());
 		rewardPoints.setPointsExpiryDate(this.calculateEndDate(new Date(), YEAR));
-		// rewardPoints.setUserId(user.getUserId());
 		rewardPoints.setUserName(user.getUserName());
 		return rewardPoints;
 	}

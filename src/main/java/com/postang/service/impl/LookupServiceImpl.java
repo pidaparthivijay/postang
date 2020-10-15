@@ -23,14 +23,12 @@ import lombok.extern.log4j.Log4j2;
  * @author Subrahmanya Vijay
  *
  */
-@Log4j2
 @Service
 public class LookupServiceImpl implements LookupService, Constants {
 
 	@Autowired
 	LookupDAOService lookupDaoService;
 	Util util = new Util();
-
 
 	@Override
 	public List<Lookup> getLookupList() {
@@ -51,12 +49,9 @@ public class LookupServiceImpl implements LookupService, Constants {
 	public String uploadLookupExcel(MultipartFile multipartFile) {
 
 		int existingSize = lookupDaoService.getLookupList().size();
-		log.info("existingSize starts with:" + existingSize);
 		List<Lookup> lookupFromExcel = util.generateLookupListFromExcelFile(multipartFile);
-		log.info("lookupFromExcel size:" + lookupFromExcel.size());
 		List<Lookup> lookupIterables = lookupDaoService.saveLookups(lookupFromExcel);
 		int newSize = lookupDaoService.getLookupList().size();
-		log.info("newSize :" + newSize);
 		return (newSize == lookupIterables.size() + existingSize) ? LOOKUP_EXCEL_SXS : LOOKUP_EXCEL_FAIL;
 	}
 

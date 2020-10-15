@@ -28,14 +28,11 @@ import com.postang.util.MailUtil;
 import com.postang.util.PDFUtil;
 import com.postang.util.Util;
 
-import lombok.extern.log4j.Log4j2;
-
 /**
  * @author Subrahmanya Vijay
  *
  */
 @RestController
-@Log4j2
 @CrossOrigin
 @RequestMapping(RequestMappings.BRW)
 public class RoomRequestController implements RequestMappings, Constants {
@@ -45,7 +42,7 @@ public class RoomRequestController implements RequestMappings, Constants {
 
 	@Autowired
 	RoomService roomService;
-	
+
 	MailUtil mailUtil = new MailUtil();
 	Util util = new Util();
 
@@ -61,13 +58,11 @@ public class RoomRequestController implements RequestMappings, Constants {
 	@RequestMapping(value = ROOM_REQUEST_CREATE, method = { RequestMethod.GET, RequestMethod.POST })
 	public RequestDTO requestRoom(@RequestBody RequestDTO requestDTO) {
 		RoomRequest roomRequest = requestDTO.getRoomRequest();
-		log.info("requestRoom starts..." + roomRequest.getUserId());
 		try {
 			roomRequest = roomRequestService.requestRoom(roomRequest);
 			requestDTO.setActionStatus(roomRequest.getRequestId() > 0 ? ROOM_BOOK_SXS : ROOM_BOOK_FAIL);
 		} catch (Exception ex) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
-			log.error("Exception occured in requestRoom: " + ex);
 		}
 		return requestDTO;
 	}
@@ -75,12 +70,10 @@ public class RoomRequestController implements RequestMappings, Constants {
 	@RequestMapping(value = CUSTOMER_CANCEL_ROOM, method = { RequestMethod.GET, RequestMethod.POST })
 	public RequestDTO cancelRequest(@RequestBody RequestDTO requestDTO) {
 		int roomRequestId = requestDTO.getRoomRequestId();
-		log.info("cancelRequest starts...");
 		try {
 			requestDTO.setActionStatus(roomRequestService.cancelRoomRequest(roomRequestId));
 		} catch (Exception ex) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
-			log.error("Exception occured in cancelRequest : " + ex);
 			ex.printStackTrace();
 		}
 		return requestDTO;
@@ -90,13 +83,11 @@ public class RoomRequestController implements RequestMappings, Constants {
 	public RequestDTO getMyRequestsList(@RequestBody RequestDTO requestDTO) {
 		Customer customer = requestDTO.getCustomer();
 		List<RoomRequest> roomReqDetails = null;
-		log.info("getMyRequestsList starts...");
 		try {
 			roomReqDetails = roomRequestService.getMyRequestsList(customer);
 			requestDTO.setRoomRequestList(roomReqDetails);
 		} catch (Exception ex) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
-			log.error("Exception occured in getMyRequestsList : " + ex);
 			ex.printStackTrace();
 		}
 		return requestDTO;
@@ -105,12 +96,10 @@ public class RoomRequestController implements RequestMappings, Constants {
 	@GetMapping(value = ROOM_REQUEST_VIEW_ALL)
 	public RequestDTO getAllRoomRequests() {
 		RequestDTO requestDTO = new RequestDTO();
-		log.info("getAllRoomRequests starts...");
 		try {
 			requestDTO.setRoomRequestList(roomRequestService.getUnallocatedRoomRequests());
 		} catch (Exception ex) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
-			log.error("Exception in getAllRoomRequests : " + ex.getMessage());
 		}
 		return requestDTO;
 	}
@@ -118,7 +107,6 @@ public class RoomRequestController implements RequestMappings, Constants {
 	@RequestMapping(value = ROOM_REQUEST_FEASIBLE, method = { RequestMethod.GET, RequestMethod.POST })
 	public RequestDTO viewFeasibleRooms(@RequestBody RequestDTO requestDTO) {
 		int roomRequestId = requestDTO.getRoomRequest().getRequestId();
-		log.info("viewFeasibleRooms starts...");
 		try {
 			RoomRequest roomRequest = roomRequestService.getRoomRequestByRequestId(roomRequestId);
 			Room room = util.constructRoomFromRequest(roomRequest);
@@ -127,7 +115,6 @@ public class RoomRequestController implements RequestMappings, Constants {
 			requestDTO.setRoomsList(roomList);
 		} catch (Exception ex) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
-			log.error("Exception in viewFeasibleRooms : " + ex.getMessage());
 			ex.printStackTrace();
 		}
 		return requestDTO;
@@ -136,19 +123,26 @@ public class RoomRequestController implements RequestMappings, Constants {
 	@PostMapping(value = ROOM_REQUEST_ASSIGN_ROOM)
 	public RequestDTO assignRoomToRequest(@RequestBody RequestDTO requestDTO) {
 		RoomRequest roomRequest = requestDTO.getRoomRequest();
-		log.info("assignRoomToRequest starts..." + roomRequest);
 		try {
 
 			String assignStatus = roomRequestService.assignRoom(roomRequest);
 
 			requestDTO.setActionStatus(assignStatus);
-			log.info("assignRoomToRequest ends...");
 		} catch (Exception ex) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
-			log.info("Exception is: " + ex);
 			ex.printStackTrace();
 		}
 		return requestDTO;
 	}
 
+	@GetMapping(value = ROOM_CLEANUP)
+	public RequestDTO cleanUpRooms() {
+		RequestDTO requestDTO = new RequestDTO();
+		try {
+			requestDTO.setActionStatus(roomRequestService.cleanUpRooms());
+		} catch (Exception ex) {
+			requestDTO.setActionStatus(EXCEPTION_OCCURED);
+		}
+		return requestDTO;
+	}
 }

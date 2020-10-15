@@ -4,6 +4,7 @@
 package com.postang.service.impl;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,15 +23,12 @@ import com.postang.service.RoomRequestService;
 import com.postang.util.MailUtil;
 import com.postang.util.Util;
 
-import lombok.extern.log4j.Log4j2;
-
 /**
  * @author Subrahmanya Vijay
  *
  */
 
 @Service
-@Log4j2
 public class RoomRequestServiceImpl implements RoomRequestService, Constants {
 
 	MailUtil mailUtil = new MailUtil();
@@ -66,12 +64,10 @@ public class RoomRequestServiceImpl implements RoomRequestService, Constants {
 		return cancellationStatus;
 	}
 
-
 	@Override
 	public List<RoomRequest> getAllRoomRequests() {
 		return roomReqDAOService.getAllRoomRequests();
 	}
-
 
 	@Override
 	public List<RoomRequest> getMyRequestsList(Customer customer) {
@@ -104,10 +100,8 @@ public class RoomRequestServiceImpl implements RoomRequestService, Constants {
 		return roomReqDAOService.saveRoomRequest(roomReq);
 	}
 
-
 	@Override
 	public String assignRoom(RoomRequest roomRequest) {
-		log.info("assignRoom starts with: " + roomRequest);
 		RoomRequest roomReq = this.getRoomRequestByRequestId(roomRequest.getRequestId());
 		roomReq.setRoomNumber(roomRequest.getRoomNumber());
 		roomReq.setRoomRequestStatus(ALLOCATED);
@@ -128,6 +122,28 @@ public class RoomRequestServiceImpl implements RoomRequestService, Constants {
 
 	private User getUserByUserName(String userName) {
 		return commonDAOService.findUserByUserName(userName);
+	}
+
+	@Override
+	public String cleanUpRooms() {
+		try {
+			List<RoomRequest> roomRequstList = roomReqDAOService.getExpiredRoomRequests();
+			List<Integer> roomNumbers = roomRequstList.stream().distinct().map(RoomRequest::getRoomNumber)
+					.collect(Collectors.toList());
+			for (Integer roomNumber : roomNumbers) {
+				if (roomNumber != 0) {
+					Room room = roomDAOService.getRoomByRoomNumber(roomNumber);
+					room.setRoomStatus(VACANT);
+					roomDAOService.saveRoom(room);
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return EXCEPTION_OCCURED;
+		}
+		return CLEANUP_COMPLETE;
+
 	}
 
 }

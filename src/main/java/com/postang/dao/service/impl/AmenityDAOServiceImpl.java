@@ -15,13 +15,10 @@ import com.postang.domain.AmenityRequest;
 import com.postang.repo.AmenityRepository;
 import com.postang.repo.AmenityRequestRepository;
 
-import lombok.extern.log4j.Log4j2;
-
 /**
  * @author Subrahmanya Vijay
  *
  */
-@Log4j2
 @Repository
 public class AmenityDAOServiceImpl implements AmenityDAOService, Constants {
 

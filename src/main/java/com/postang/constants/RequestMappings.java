@@ -44,6 +44,7 @@ public interface RequestMappings {
 	public static final String PENDING_BILL_PDF = "/generatePDF";
 	public static final String PENDING_BILL_VIEW = "/getPendingBillRequests";
 	public static final String RESET_PWD = "/resetPwd";
+	public static final String ROOM_CLEANUP = "/cleanupRooms";
 	public static final String ROOM_CREATE = "/createRoom";
 	public static final String ROOM_CREATE_MULTIPLE = "/createRoomMultiple";
 	public static final String ROOM_REQUEST_ASSIGN_ROOM = "/assignRoomToRequest";

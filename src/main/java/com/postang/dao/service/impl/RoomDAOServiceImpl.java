@@ -13,15 +13,12 @@ import com.postang.dao.service.RoomDAOService;
 import com.postang.domain.Room;
 import com.postang.repo.RoomRepository;
 
-import lombok.extern.log4j.Log4j2;
-
 /**
  * @author Subrahmanya Vijay
  *
  */
 
 @Repository
-@Log4j2
 public class RoomDAOServiceImpl implements RoomDAOService, Constants {
 
 	@Autowired
@@ -29,7 +26,6 @@ public class RoomDAOServiceImpl implements RoomDAOService, Constants {
 
 	@Override
 	public List<Room> findSimilarRooms(Room room) {
-		log.info(room);
 		return roomRepo.findByRoomModelAndRoomTypeAndRoomCategoryAndRoomStatus(room.getRoomModel(), room.getRoomType(),
 				room.getRoomCategory(), VACANT);
 	}

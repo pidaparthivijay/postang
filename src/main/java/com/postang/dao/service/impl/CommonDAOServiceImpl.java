@@ -19,13 +19,10 @@ import com.postang.repo.EmployeeRepository;
 import com.postang.repo.OneTimePassRepo;
 import com.postang.repo.UserRepository;
 
-import lombok.extern.log4j.Log4j2;
-
 /**
  * @author Subrahmanya Vijay
  *
  */
-@Log4j2
 @Repository
 public class CommonDAOServiceImpl implements CommonDAOService, Constants {
 
@@ -95,7 +92,7 @@ public class CommonDAOServiceImpl implements CommonDAOService, Constants {
 	@Override
 	public void saveOTP(OneTimePassword oneTimePassword) {
 		oneTimePassRepo.save(oneTimePassword);
-		
+
 	}
 
 	@Override

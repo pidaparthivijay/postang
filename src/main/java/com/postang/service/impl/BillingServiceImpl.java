@@ -33,16 +33,12 @@ import com.postang.util.MailUtil;
 import com.postang.util.PDFUtil;
 import com.postang.util.Util;
 
-import lombok.extern.log4j.Log4j2;
-
 /**
  * @author Subrahmanya Vijay
  *
  */
-@Log4j2
 @Service
 public class BillingServiceImpl implements BillingService, Constants {
-
 
 	MailUtil mailUtil = new MailUtil();
 
@@ -65,10 +61,8 @@ public class BillingServiceImpl implements BillingService, Constants {
 
 	Util util = new Util();
 
-
 	@Override
 	public double generateBill(String custEmail) {
-		log.info("generateBill starts with" + custEmail);
 		User user = commonDAOService.findUserByUserMail(custEmail);
 		List<RoomRequest> roomRequestList = roomReqDAOService.getRequestListByUserId((int) user.getUserId());
 		List<RoomRequest> billPendingList = roomRequestList.stream().filter(p -> BILL_PENDING.equals(p.getBillStatus()))
@@ -110,7 +104,7 @@ public class BillingServiceImpl implements BillingService, Constants {
 					.filter(p -> BILL_PENDING.equals(p.getBillStatus())).collect(Collectors.toList());
 			List<TourPackageRequest> billPendingTours = tourPackageRequestList.stream()
 					.filter(p -> BILL_PENDING.equals(p.getBillStatus())).collect(Collectors.toList());
-			
+
 			if (!CollectionUtils.isEmpty(billPendingRooms)) {
 				pendingBillRequests.addAll(this.convertToBillPendingRequest(billPendingRooms));
 			}
@@ -121,7 +115,7 @@ public class BillingServiceImpl implements BillingService, Constants {
 				pendingBillRequests.addAll(this.convertTourReqToBillPendingRequest(billPendingTours));
 			}
 			PendingBillRequest taxes = new PendingBillRequest();
-			if(!CollectionUtils.isEmpty(pendingBillRequests)) {
+			if (!CollectionUtils.isEmpty(pendingBillRequests)) {
 				DoubleSummaryStatistics beforeTaxes = pendingBillRequests.stream()
 						.collect(Collectors.summarizingDouble(PendingBillRequest::getBillAmount));
 				double tax = beforeTaxes.getSum() + (beforeTaxes.getSum() * 0.15);
@@ -131,10 +125,10 @@ public class BillingServiceImpl implements BillingService, Constants {
 			}
 			PendingBillRequest totalBillPendingRequest = new PendingBillRequest();
 			if (!CollectionUtils.isEmpty(pendingBillRequests)) {
-				
+
 				DoubleSummaryStatistics stats = pendingBillRequests.stream()
 						.collect(Collectors.summarizingDouble(PendingBillRequest::getBillAmount));
-			
+
 				totalBillPendingRequest.setBillAmount(stats.getSum());
 				totalBillPendingRequest.setTypeOfRequest(TOTAL_BILL_AMOUNT);
 			} else {
@@ -175,15 +169,16 @@ public class BillingServiceImpl implements BillingService, Constants {
 		if (!CollectionUtils.isEmpty(tourPackageRequestList)) {
 			for (TourPackageRequest tourPackageRequest : tourPackageRequestList) {
 				PendingBillRequest pendingBillRequest = new PendingBillRequest();
-				pendingBillRequest.setBillCode(tourPackageRequest.getUserName() + UNDERSCORE + tourPackageRequest.getTourPackageName()
-						+ UNDERSCORE + tourPackageRequest.getGuestCount());
-				TourPackage tourPackage=tourPackageDAOService.findTourPackageByTourPackageName(tourPackageRequest.getTourPackageName());
+				pendingBillRequest.setBillCode(tourPackageRequest.getUserName() + UNDERSCORE
+						+ tourPackageRequest.getTourPackageName() + UNDERSCORE + tourPackageRequest.getGuestCount());
+				TourPackage tourPackage = tourPackageDAOService
+						.findTourPackageByTourPackageName(tourPackageRequest.getTourPackageName());
 				pendingBillRequest.setRequestId(tourPackageRequest.getTourPackageRequestId());
-				pendingBillRequest.setBillAmount(
-						util.generateBillForTours(tourPackage, tourPackageRequest.getGuestCount()));
+				pendingBillRequest
+						.setBillAmount(util.generateBillForTours(tourPackage, tourPackageRequest.getGuestCount()));
 				pendingBillRequest.setTypeOfRequest(TOUR_REQUEST);
 				pendingBillRequest.setRequestDate(tourPackageRequest.getRequestDate());
-					billPendingRequestList.add(pendingBillRequest);
+				billPendingRequestList.add(pendingBillRequest);
 			}
 		} else {
 			return new ArrayList<>();
@@ -191,15 +186,13 @@ public class BillingServiceImpl implements BillingService, Constants {
 		return billPendingRequestList;
 	}
 
-	private List<PendingBillRequest> convertAmenityReqToBillPendingRequest(
-			List<AmenityRequest> amenityRequestList) {
+	private List<PendingBillRequest> convertAmenityReqToBillPendingRequest(List<AmenityRequest> amenityRequestList) {
 		List<PendingBillRequest> billPendingRequestList = new ArrayList<>();
 		if (!CollectionUtils.isEmpty(amenityRequestList)) {
 			for (AmenityRequest amenityRequest : amenityRequestList) {
 				PendingBillRequest pendingBillRequest = new PendingBillRequest();
-				pendingBillRequest.setBillCode(
-						amenityRequest.getUserName() + UNDERSCORE + amenityRequest.getAmenityId() + UNDERSCORE
-								+ amenityRequest.getNoOfDays());
+				pendingBillRequest.setBillCode(amenityRequest.getUserName() + UNDERSCORE + amenityRequest.getAmenityId()
+						+ UNDERSCORE + amenityRequest.getNoOfDays());
 				pendingBillRequest.setRequestId(amenityRequest.getAmenityRequestId());
 				Amenity amenity = amenityDAOService.findByAmenityId(amenityRequest.getAmenityId());
 				pendingBillRequest.setBillAmount(util.generateBillForAmenities(amenity, amenityRequest.getNoOfDays()));

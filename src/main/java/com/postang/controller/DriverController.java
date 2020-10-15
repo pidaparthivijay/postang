@@ -17,7 +17,6 @@ import com.postang.domain.Driver;
 import com.postang.model.RequestDTO;
 import com.postang.service.DriverService;
 
-import lombok.extern.log4j.Log4j2;
 
 /**
  * @author Subrahmanya Vijay
@@ -35,7 +34,6 @@ public class DriverController implements RequestMappings, Constants {
 	@PostMapping(value = DRIVER_CREATE)
 	public RequestDTO createDriver(@RequestBody RequestDTO requestDTO) {
 		Driver driver = requestDTO.getDriver();
-		log.info("createDriver starts..." + driver);
 		try {
 			driver.setDeleted(NO);
 			driver.setCreatedDate(new Date());
@@ -43,7 +41,6 @@ public class DriverController implements RequestMappings, Constants {
 			requestDTO.setDriver(savedDriver);
 			requestDTO.setActionStatus(savedDriver.getDriverId() > 0 ? SUCCESS : FAILURE);
 		} catch (Exception e) {
-			log.error("Exception in createDriver" + e);
 			e.printStackTrace();
 		}
 		return requestDTO;
@@ -52,7 +49,6 @@ public class DriverController implements RequestMappings, Constants {
 	@PostMapping(value = DRIVER_UPDATE)
 	public RequestDTO updateDriver(@RequestBody RequestDTO requestDTO) {
 		Driver driver = requestDTO.getDriver();
-		log.info("updateDriver starts..." + driver);
 		try {
 			driver.setUpdatedDate(new Date());
 			Driver savedDriver = driverService.saveDriver(driver);
@@ -60,20 +56,16 @@ public class DriverController implements RequestMappings, Constants {
 			requestDTO.setActionStatus(UPDATE_SXS);
 		} catch (Exception e) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
-			log.error("Exception in updateDriver" + e);
 		}
 		return requestDTO;
 	}
-
 	@PostMapping(value = DRIVER_DELETE_TOGGLE)
 	public RequestDTO toggleDelete(@RequestBody RequestDTO requestDTO) {
-		log.info("toggleDelete starts..." + requestDTO.getDriver());
 		try {
 			String toggleStatus = driverService.toggleDeleteDriver(requestDTO.getDriver());
 			return viewDriverList(toggleStatus);
 		} catch (Exception e) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
-			log.error("Exception in toggleDelete" + e);
 			e.printStackTrace();
 		}
 		return requestDTO;
@@ -82,7 +74,6 @@ public class DriverController implements RequestMappings, Constants {
 	@GetMapping(value = DRIVER_VIEW_ALL)
 	public RequestDTO viewDriverList(String status) {
 		RequestDTO requestDTO = new RequestDTO();
-		log.info("viewDriverList starts...");
 		try {
 			requestDTO.setDriversList(driverService.getDriverList());
 			if (!StringUtils.isEmpty(status)) {
@@ -90,7 +81,6 @@ public class DriverController implements RequestMappings, Constants {
 			}
 		} catch (Exception e) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
-			log.error("Exception in viewDriverList" + e);
 			e.printStackTrace();
 		}
 		return requestDTO;
