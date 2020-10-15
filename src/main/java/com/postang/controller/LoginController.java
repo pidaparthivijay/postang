@@ -1,6 +1,7 @@
 package com.postang.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -75,7 +76,7 @@ public class LoginController implements RequestMappings, Constants {
 	public String requestOTP(@RequestBody User user) {
 		try {
 			String statusMsg = loginService.requestOTPMail(user);
-			if (statusMsg.equals(MAIL_SUCCESS)) {
+			if (!StringUtils.isEmpty(statusMsg)) {
 				return TRUE;
 			}
 		} catch (Exception ex) {

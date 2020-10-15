@@ -17,12 +17,10 @@ import com.postang.domain.Driver;
 import com.postang.model.RequestDTO;
 import com.postang.service.DriverService;
 
-
 /**
  * @author Subrahmanya Vijay
  *
  */
-@Log4j2
 @RestController
 @CrossOrigin
 @RequestMapping(RequestMappings.BRW)
@@ -59,6 +57,7 @@ public class DriverController implements RequestMappings, Constants {
 		}
 		return requestDTO;
 	}
+
 	@PostMapping(value = DRIVER_DELETE_TOGGLE)
 	public RequestDTO toggleDelete(@RequestBody RequestDTO requestDTO) {
 		try {

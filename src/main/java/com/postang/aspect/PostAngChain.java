@@ -23,7 +23,7 @@ import lombok.extern.log4j.Log4j2;
 @Aspect
 @Component
 @Log4j2
-public class LoggingAspect implements Serializable {
+public class PostAngChain implements Serializable {
 
 	/**
 	 * 
@@ -32,7 +32,7 @@ public class LoggingAspect implements Serializable {
 
 	@Before("execution(* com.postang.controller.*.*(..)) || execution(* com.postang.dao.service.impl.*.*(..)) || execution(* com.postang.util.*.*(..)) || execution(* com.postang.service.impl.*.*(..))")
 	public void methodStartAdvice(JoinPoint joinPoint) throws JsonProcessingException {
-		if (joinPoint.getArgs() == null) {
+		if (joinPoint.getArgs() == null || joinPoint.getArgs().length == 0) {
 			log.info(joinPoint.getSignature() + " starts:");
 		} else {
 			log.info(joinPoint.getSignature() + " starts with :"
@@ -43,7 +43,7 @@ public class LoggingAspect implements Serializable {
 	@AfterThrowing(pointcut = "execution(* com.postang.controller.*.*(..)) || execution(* com.postang.dao.service.impl.*.*(..)) || execution(* com.postang.util.*.*(..)) || execution(* com.postang.service.impl.*.*(..))", throwing = "ex")
 	public void methodExceptionAdvice(JoinPoint joinPoint, RuntimeException ex) {
 		log.error(joinPoint.getSignature() + " throws: " + ex.getMessage());
-		log.error(ex.getStackTrace());
+		ex.printStackTrace();
 	}
 
 }

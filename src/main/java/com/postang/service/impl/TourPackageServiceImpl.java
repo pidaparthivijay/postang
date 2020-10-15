@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.postang.constants.Constants;
 import com.postang.dao.service.CommonDAOService;
 import com.postang.dao.service.DriverDAOService;
+import com.postang.dao.service.RewardPointsDAOService;
 import com.postang.dao.service.TourPackageDAOService;
 import com.postang.dao.service.VehDriMapDAOService;
 import com.postang.dao.service.VehicleDAOService;
@@ -49,6 +50,9 @@ public class TourPackageServiceImpl implements TourPackageService, Constants {
 
 	@Autowired
 	CommonDAOService commonDAOService;
+
+	@Autowired
+	RewardPointsDAOService rewardPointsDAOService;
 
 	Util util = new Util();
 
@@ -112,6 +116,8 @@ public class TourPackageServiceImpl implements TourPackageService, Constants {
 	@Override
 	public String assignVehDriTour(VehicleDriverMapping vehicleDriverMapping) {
 		String status = EMPTY_STRING;
+		Driver driver = driverDAOService.getDriverByLicense(vehicleDriverMapping.getDriverLicense());
+		vehicleDriverMapping.setDriverContact(driver.getDriverContact());
 		vehicleDriverMapping = vehDriMapDAOService.saveMapping(vehicleDriverMapping);
 		if (vehicleDriverMapping.getVdmId() > 0) {
 			TourPackageRequest tPR = tourPackageDAOService
@@ -124,8 +130,9 @@ public class TourPackageServiceImpl implements TourPackageService, Constants {
 			mailDTO.setTemplateName(TEMPLATE_TOUR_DETAILS);
 			mailDTO.setVehicleDriverMapping(vehicleDriverMapping);
 			mailDTO.setVehicle(vehicleDAOService.getVehicleByRegNum(vehicleDriverMapping.getVehicleRegNum()));
-			mailDTO.setDriver(driverDAOService.getDriverByLicense(vehicleDriverMapping.getDriverLicense()));
+			mailDTO.setDriver(driver);
 			status = mailUtil.triggerMail(mailDTO);
+			rewardPointsDAOService.saveRewardPoints(util.allocateRewardPoints(user, TOUR_BOOKING));
 		} else {
 			status = EXCEPTION_OCCURED;
 		}
@@ -142,7 +149,7 @@ public class TourPackageServiceImpl implements TourPackageService, Constants {
 
 		TourPackageRequest existingTPR = tourPackageDAOService
 				.getTourPackageRequestById(tourPackageRequest.getTourPackageRequestId());
-		if (existingTPR.getVehicleDriverMappingId() != 0) {
+		if (existingTPR.getVehicleDriverMappingId() == 0) {
 			existingTPR.setCancelled(YES);
 			tourPackageDAOService.saveTourPackageRequest(existingTPR);
 			return TOUR_CANCEL_SUCCESS;

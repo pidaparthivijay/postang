@@ -67,4 +67,5 @@ public interface RequestMappings {
 	public static final String VEHICLE_UPDATE = "/updateVehicle";
 	public static final String VEHICLE_VIEW_ALL = "/viewAllVehicles";
 	public static final String VIEW_VD_MAPPING = "/viewVDMapping";
+	public static final String UPDATE_ROOM_REQUEST = "/updateRoomRequest";
 }

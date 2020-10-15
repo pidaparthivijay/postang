@@ -17,12 +17,10 @@ import com.postang.domain.Employee;
 import com.postang.model.RequestDTO;
 import com.postang.service.EmployeeService;
 
-
 /**
  * @author Subrahmanya Vijay
  *
  */
-@Log4j2
 @RestController
 @CrossOrigin
 @RequestMapping(RequestMappings.BRW)
@@ -30,7 +28,6 @@ public class EmployeeController implements RequestMappings, Constants {
 
 	@Autowired
 	EmployeeService employeeService;
-
 
 	/***********************
 	 * Employee Operations**

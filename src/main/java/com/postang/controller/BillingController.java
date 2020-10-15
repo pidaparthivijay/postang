@@ -32,7 +32,6 @@ import com.postang.util.PDFUtil;
  *
  */
 @RestController
-@Log4j2
 @CrossOrigin
 @RequestMapping(RequestMappings.BRW)
 public class BillingController implements RequestMappings, Constants {

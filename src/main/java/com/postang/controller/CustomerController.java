@@ -107,7 +107,7 @@ public class CustomerController implements RequestMappings, Constants {
 
 	@PostMapping(value = CUSTOMER_VIEW_RWD_POINTS)
 	public RequestDTO viewRewardPoints(@RequestBody RequestDTO requestDTO) {
-		String userName = requestDTO.getUserName();
+		String userName = requestDTO.getUser().getUserName();
 		try {
 			List<RewardPoints> rewardPointsList = rewardPointsService.getRewardPointsByUserName(userName);
 			if (CollectionUtils.isEmpty(rewardPointsList)) {

@@ -69,9 +69,23 @@ public class RoomRequestController implements RequestMappings, Constants {
 
 	@RequestMapping(value = CUSTOMER_CANCEL_ROOM, method = { RequestMethod.GET, RequestMethod.POST })
 	public RequestDTO cancelRequest(@RequestBody RequestDTO requestDTO) {
-		int roomRequestId = requestDTO.getRoomRequestId();
+		int roomRequestId = requestDTO.getRoomRequest().getRequestId();
 		try {
 			requestDTO.setActionStatus(roomRequestService.cancelRoomRequest(roomRequestId));
+		} catch (Exception ex) {
+			requestDTO.setActionStatus(EXCEPTION_OCCURED);
+			ex.printStackTrace();
+		}
+		return requestDTO;
+	}
+
+	@RequestMapping(value = UPDATE_ROOM_REQUEST, method = { RequestMethod.GET, RequestMethod.POST })
+	public RequestDTO udpateRoomRequest(@RequestBody RequestDTO requestDTO) {
+		RoomRequest roomRequest = requestDTO.getRoomRequest();
+		try {
+			RoomRequest udpated = roomRequestService.saveRoomRequest(roomRequest);
+			requestDTO.setActionStatus(udpated.getRequestId() == roomRequest.getRequestId() ? ROOM_RQST_UPDATE_SXS
+					: ROOM_RQST_UPDATE_FAIL);
 		} catch (Exception ex) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
 			ex.printStackTrace();

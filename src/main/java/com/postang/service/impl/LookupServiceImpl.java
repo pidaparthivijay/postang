@@ -17,8 +17,6 @@ import com.postang.domain.Lookup;
 import com.postang.service.LookupService;
 import com.postang.util.Util;
 
-import lombok.extern.log4j.Log4j2;
-
 /**
  * @author Subrahmanya Vijay
  *

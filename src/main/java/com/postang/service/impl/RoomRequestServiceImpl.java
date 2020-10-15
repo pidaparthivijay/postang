@@ -3,6 +3,7 @@
  */
 package com.postang.service.impl;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -53,8 +54,7 @@ public class RoomRequestServiceImpl implements RoomRequestService, Constants {
 		RoomRequest roomRequest = roomReqDAOService.getRoomRequestByRequestId(roomRequestId);
 		roomRequest.setRoomRequestStatus(CANCEL);
 		RoomRequest roomReq = roomReqDAOService.saveRoomRequest(roomRequest);
-		int userId = roomReq.getUserId();
-		User user = commonDAOService.findUserByUserId(userId);
+		User user = commonDAOService.findUserByUserName(roomReq.getUserName());
 		MailDTO mailDTO = new MailDTO();
 		mailDTO.setUser(user);
 		mailDTO.setRoomRequestId(roomRequestId);
@@ -71,7 +71,7 @@ public class RoomRequestServiceImpl implements RoomRequestService, Constants {
 
 	@Override
 	public List<RoomRequest> getMyRequestsList(Customer customer) {
-		return roomReqDAOService.getRequestListByUserId((int) customer.getUserId());
+		return roomReqDAOService.getRequestListByUserName(customer.getUserName());
 	}
 
 	@Override
@@ -92,6 +92,7 @@ public class RoomRequestServiceImpl implements RoomRequestService, Constants {
 	@Override
 	public RoomRequest requestRoom(RoomRequest roomRequest) {
 		roomRequest.setRoomRequestStatus(PENDING);
+		roomRequest.setRequestDate(new Date());
 		return roomReqDAOService.saveRoomRequest(roomRequest);
 	}
 

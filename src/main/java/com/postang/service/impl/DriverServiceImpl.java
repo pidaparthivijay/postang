@@ -14,13 +14,10 @@ import com.postang.dao.service.DriverDAOService;
 import com.postang.domain.Driver;
 import com.postang.service.DriverService;
 
-import lombok.extern.log4j.Log4j2;
-
 /**
  * @author Subrahmanya Vijay
  *
  */
-@Log4j2
 @Service
 public class DriverServiceImpl implements DriverService, Constants {
 

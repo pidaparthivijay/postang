@@ -14,13 +14,10 @@ import com.postang.domain.Amenity;
 import com.postang.domain.AmenityRequest;
 import com.postang.service.AmenityService;
 
-import lombok.extern.log4j.Log4j2;
-
 /**
  * @author Subrahmanya Vijay
  *
  */
-@Log4j2
 @Service
 public class AmenityServiceImpl implements AmenityService, Constants {
 

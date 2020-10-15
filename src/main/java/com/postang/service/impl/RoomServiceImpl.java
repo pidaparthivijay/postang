@@ -19,15 +19,12 @@ import com.postang.dao.service.RoomDAOService;
 import com.postang.domain.Room;
 import com.postang.service.RoomService;
 
-import lombok.extern.log4j.Log4j2;
-
 /**
  * @author Subrahmanya Vijay
  *
  */
 
 @Service
-@Log4j2
 public class RoomServiceImpl implements RoomService, Constants {
 
 	@Autowired
@@ -72,7 +69,6 @@ public class RoomServiceImpl implements RoomService, Constants {
 	public List<Room> getRoomsByType(String roomType) {
 		return roomDAOService.getRoomsByType(roomType);
 	}
-
 
 	@Override
 	public void saveMultipleRooms(Room room, int count) {

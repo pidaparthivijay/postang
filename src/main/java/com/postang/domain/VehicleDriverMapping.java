@@ -31,5 +31,5 @@ public class VehicleDriverMapping implements Serializable {
 	private Date assignedDate;
 	private long tourPackageRequestId;
 	private String driverLicense;
-
+	private String driverContact;
 }

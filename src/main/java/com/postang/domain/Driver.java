@@ -30,6 +30,7 @@ public class Driver implements Serializable {
 	@Column(unique = true)
 	private String driverLicense;
 	private String driverName;
+	private String driverContact;
 	private Date createdDate;
 	private Date updatedDate;
 	private String location;

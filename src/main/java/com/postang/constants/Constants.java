@@ -93,6 +93,7 @@ public interface Constants {
 	public static final String MAIL_CUSTNAME = "#custName#";
 	public static final String MAIL_DRINAME = "#driverName#";
 	public static final String MAIL_EMPNAME = "#empName#";
+	public static final String MAIL_DRIVER_CONTACT = "#driverContact#";
 	public static final String MAIL_FALIURE = "mail is not sent";
 	public static final String MAIL_OTP = "#OTP#";
 	public static final String MAIL_PASSWORD = "#password#";
@@ -135,6 +136,8 @@ public interface Constants {
 	public static final String RM_UPDATE_SXS = "Room Update Success";
 	public static final String ROM_REG_DLR = "Room Registration Failed";// Duplicate
 	public static final String ROM_REG_SXS = "Room Registration Success";// Duplicate
+	public static final String ROOM_RQST_UPDATE_SXS = "Room Request Updated Successfully!";
+	public static final String ROOM_RQST_UPDATE_FAIL = "Room Request Update Failed!";
 	public static final String ROOM_ALLOCATED = "Room has been Allocated";
 	public static final String ROOM_BOOK_FAIL="Room Booking Failed";
 	public static final String ROOM_BOOK_SXS="Room Booking Success";

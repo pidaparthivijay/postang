@@ -83,22 +83,29 @@ public class MailUtil implements Constants {
 				if (TEMPLATE_CUST_SIGN_UP_MAIL.equalsIgnoreCase(templateName)) {
 					mimeMessage.setSubject("Welcome to postang " + mailDTO.getCustomer().getUserName());
 					mailText = mailProperties.getProperty(SIGNUPMAIL);
+					InternetAddress[] address = InternetAddress.parse(mailDTO.getCustomer().getCustEmail(), true);
+					// Setting the recepients from the address variable
+					mimeMessage.setRecipients(Message.RecipientType.TO, address);
 					mailText = mailText.replace(MAIL_CUSTNAME, mailDTO.getCustomer().getCustName());
 				} else if (TEMPLATE_EMP_SIGN_UP_MAIL.equalsIgnoreCase(templateName)) {
-					mimeMessage.setSubject("Welcome to postang " + mailDTO.getCustomer().getUserName());
+					mimeMessage.setSubject("Welcome to postang " + mailDTO.getEmployee().getUserName());
 					mailText = mailProperties.getProperty(EMP_SIGNUP_MAIL);
+					InternetAddress[] address = InternetAddress.parse(mailDTO.getEmployee().getEmail(), true);
+					// Setting the recepients from the address variable
+					mimeMessage.setRecipients(Message.RecipientType.TO, address);
 					mailText = mailText.replace(MAIL_EMPNAME, mailDTO.getEmployee().getEmpName());
 					mailText = mailText.replace(MAIL_PASSWORD, mailDTO.getEmployee().getEmpPass());
 				}
 			} else if (TEMPLATE_ALLOCATION_MAIL.equalsIgnoreCase(templateName)) {
 				mimeMessage.setSubject(ROOM_ALLOCATED);
 				mailText = mailProperties.getProperty(ALLOCATION_MAIL);
-				mailText = mailText.replace(MAIL_VEHNAME, mailDTO.getVehicle().getVehicleName());
-				mailText = mailText.replace(MAIL_DRINAME, mailDTO.getDriver().getDriverName());
-				mailText = mailText.replace(MAIL_VEHNUM, mailDTO.getVehicle().getRegNum());
 			} else if (TEMPLATE_TOUR_DETAILS.equalsIgnoreCase(templateName)) {
 				mimeMessage.setSubject(VEHICLE_DRIVER_DETAILS);
 				mailText = mailProperties.getProperty(VEHICLE_DRIVER_DETAILS);
+				mailText = mailText.replace(MAIL_VEHNAME, mailDTO.getVehicle().getVehicleName());
+				mailText = mailText.replace(MAIL_DRINAME, mailDTO.getDriver().getDriverName());
+				mailText = mailText.replace(MAIL_VEHNUM, mailDTO.getVehicle().getRegNum());
+				mailText = mailText.replace(MAIL_DRIVER_CONTACT, mailDTO.getDriver().getDriverContact());
 			} else if (TEMPLATE_CANCEL_FAIL_MAIL.equalsIgnoreCase(templateName)
 					|| (TEMPLATE_CANCEL_MAIL.equalsIgnoreCase(templateName))) {
 				if (TEMPLATE_CANCEL_FAIL_MAIL.equalsIgnoreCase(templateName)) {
