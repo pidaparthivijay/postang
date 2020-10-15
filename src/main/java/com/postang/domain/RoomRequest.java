@@ -40,7 +40,6 @@ public class RoomRequest implements Serializable{
 	@Column(name="requestDate", columnDefinition="DATE DEFAULT CURRENT_DATE")
 	private Date requestDate;
 	private Date checkOutDate;
-	private int roomCount;
 	private int guestCount;
 	private String guestGen;
 	@Transient

@@ -5,6 +5,7 @@ package com.postang.service.impl;
 
 import java.util.List;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -93,6 +94,19 @@ public class EmployeeServiceImpl implements EmployeeService, Constants {
 			return newEmp;
 		}
 		return employee;
+	}
+
+	@Override
+	public Employee updateEmployee(Employee employee) {
+		Employee existingEmployee = commonDAOService.getEmployeeDetails(employee.getUserName());
+		BeanUtils.copyProperties(employee, existingEmployee);
+		User user = commonDAOService.findUserByUserName(employee.getUserName());
+		user.setName(employee.getEmpName());
+		if (!StringUtils.isEmpty(employee.getEmpPass())) {
+			user.setPassword(employee.getEmpPass());
+		}
+		commonDAOService.saveUser(user);
+		return commonDAOService.saveEmployee(existingEmployee);
 	}
 
 }

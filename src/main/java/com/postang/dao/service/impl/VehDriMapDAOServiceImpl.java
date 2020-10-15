@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.postang.dao.service.VehDriMapDAOService;
+import com.postang.domain.TourPackageRequest;
 import com.postang.domain.VehicleDriverMapping;
 import com.postang.repo.VehicleDriverMappingRepository;
 
@@ -26,6 +27,12 @@ public class VehDriMapDAOServiceImpl implements VehDriMapDAOService {
 	@Override
 	public VehicleDriverMapping saveMapping(VehicleDriverMapping vehicleDriverMapping) {
 		return vehicleDriverMappingRepository.save(vehicleDriverMapping);
+	}
+
+	@Override
+	public VehicleDriverMapping getMappingByTourPackageRequestId(TourPackageRequest tourPackageRequest) {
+		return vehicleDriverMappingRepository
+				.findByTourPackageRequestId(Long.valueOf(tourPackageRequest.getTourPackageRequestId()));
 	}
 
 }

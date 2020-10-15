@@ -5,6 +5,7 @@ package com.postang.service.impl;
 
 import java.util.List;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -103,6 +104,19 @@ public class CustomerServiceImpl implements CustomerService, Constants {
 			}
 		}
 		return customer;
+	}
+
+	@Override
+	public Customer updateCustomerDetails(Customer customer) {
+		Customer existingCustomer = commonDAOService.getCustomerByUserName(customer.getUserName());
+		BeanUtils.copyProperties(customer, existingCustomer);
+		User user = commonDAOService.findUserByUserName(customer.getUserName());
+		user.setName(customer.getCustName());
+		if (!StringUtils.isEmpty(customer.getCustPass())) {
+			user.setPassword(customer.getCustPass());
+		}
+		commonDAOService.saveUser(user);
+		return commonDAOService.saveCustomer(existingCustomer);
 	}
 
 }

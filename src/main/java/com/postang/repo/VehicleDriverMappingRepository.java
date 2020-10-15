@@ -10,4 +10,6 @@ import com.postang.domain.VehicleDriverMapping;
  */
 public interface VehicleDriverMappingRepository extends JpaRepository<VehicleDriverMapping, Long> {
 
+	VehicleDriverMapping findByTourPackageRequestId(long tourPackageRequestId);
+
 }

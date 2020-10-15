@@ -95,6 +95,20 @@ public class CustomerController implements RequestMappings, Constants {
 		return requestDTO;
 	}
 
+	@PostMapping(value = UPDATE_PROFILE_CUST)
+	public RequestDTO updateCustomerDetails(@RequestBody RequestDTO requestDTO) {
+		Customer customer = requestDTO.getCustomer();
+		log.info("getCustomerDetails starts...");
+		try {
+			customer = customerService.updateCustomerDetails(customer);
+			requestDTO.setCustomer(customer);
+		} catch (Exception ex) {
+			requestDTO.setActionStatus(EXCEPTION_OCCURED);
+			log.error("Exception occured in getCustomerDetails: " + ex);
+		}
+		return requestDTO;
+	}
+	
 	/******************************
 	 *** Reward Points Operations***
 	 ******************************/

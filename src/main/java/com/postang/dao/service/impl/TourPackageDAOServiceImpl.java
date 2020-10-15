@@ -57,7 +57,7 @@ public class TourPackageDAOServiceImpl implements TourPackageDAOService, Constan
 	}
 
 	@Override
-	public TourPackageRequest getTourPackageRequestById(long tourPackageRequestId) {
+	public TourPackageRequest getTourPackageRequestById(int tourPackageRequestId) {
 		return tourPackageRequestRepository.findByTourPackageRequestId(tourPackageRequestId);
 	}
 

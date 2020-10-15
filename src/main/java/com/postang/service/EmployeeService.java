@@ -19,4 +19,6 @@ public interface EmployeeService {
 	List<Employee> getAllEmployees();
 
 	Employee getEmployeeDetails(String userName);
+
+	Employee updateEmployee(Employee employee);
 }

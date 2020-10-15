@@ -113,7 +113,7 @@ public class TourPackageController implements RequestMappings, Constants {
 	@PostMapping(value = TOUR_PKG_BOOK)
 	public RequestDTO bookTourPackage(@RequestBody RequestDTO requestDTO) {
 		TourPackageRequest tourPackageRequest = requestDTO.getTourPackageRequest();
-		log.info("bookTourPackage starts..." + tourPackageRequest.getUserId());
+		log.info("bookTourPackage starts..." + tourPackageRequest);
 		try {
 			tourPackageRequest.setRequestDate(new Date());
 			tourPackageRequest.setBillStatus(BILL_PENDING);
@@ -162,6 +162,46 @@ public class TourPackageController implements RequestMappings, Constants {
 		} catch (Exception ex) {
 			requestDTO.setActionStatus(EXCEPTION_OCCURED);
 			log.error("Exception occured in assignVehDriTour: " + ex);
+		}
+		return requestDTO;
+	}
+
+	@PostMapping(value = CUSTOMER_GET_TOUR_BKNGS)
+	public RequestDTO getMyTourBkngs(@RequestBody RequestDTO requestDTO) {
+		log.info("getMyTourBkngs starts..." + requestDTO.getCustomer());
+		try {
+			requestDTO.setTourPackageRequestList(tourPackageService.getCustomerTours(requestDTO.getCustomer()));
+
+		} catch (Exception ex) {
+			requestDTO.setActionStatus(EXCEPTION_OCCURED);
+			log.error("Exception occured in getMyTourBkngs: " + ex);
+		}
+		return requestDTO;
+	}
+
+	@PostMapping(value = CANCEL_TOUR_BKNG)
+	public RequestDTO cancelTourBkng(@RequestBody RequestDTO requestDTO) {
+		log.info("cancelTourBkng starts..." + requestDTO.getTourPackageRequest());
+		try {
+			requestDTO.setActionStatus(tourPackageService.cancelTourRequest(requestDTO.getTourPackageRequest()));
+
+		} catch (Exception ex) {
+			requestDTO.setActionStatus(EXCEPTION_OCCURED);
+			log.error("Exception occured in cancelTourBkng: " + ex);
+		}
+		return requestDTO;
+	}
+
+	@PostMapping(value = VIEW_VD_MAPPING)
+	public RequestDTO viewVDMDetails(@RequestBody RequestDTO requestDTO) {
+		log.info("viewVDMDetails starts..." + requestDTO.getTourPackageRequest());
+		try {
+			requestDTO.setVehicleDriverMapping(tourPackageService.viewVDMDetails(requestDTO.getTourPackageRequest()));
+
+		} catch (Exception ex) {
+			requestDTO.setActionStatus(EXCEPTION_OCCURED);
+			log.error("Exception occured in viewVDMDetails: " + ex);
+			ex.printStackTrace();
 		}
 		return requestDTO;
 	}

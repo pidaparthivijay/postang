@@ -5,6 +5,7 @@ package com.postang.service;
 
 import java.util.List;
 
+import com.postang.domain.Customer;
 import com.postang.domain.TourPackage;
 import com.postang.domain.TourPackageRequest;
 import com.postang.domain.VehicleDriverMapping;
@@ -29,5 +30,11 @@ public interface TourPackageService {
 	RequestDTO viewFeasibleVehiclesDrivers(TourPackageRequest tourPackageRequest);
 
 	String assignVehDriTour(VehicleDriverMapping vehicleDriverMapping);
+
+	List<TourPackageRequest> getCustomerTours(Customer customer);
+
+	String cancelTourRequest(TourPackageRequest tourPackageRequest);
+
+	VehicleDriverMapping viewVDMDetails(TourPackageRequest tourPackageRequest);
 
 }

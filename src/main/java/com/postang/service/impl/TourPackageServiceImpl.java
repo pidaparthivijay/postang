@@ -15,6 +15,7 @@ import com.postang.dao.service.DriverDAOService;
 import com.postang.dao.service.TourPackageDAOService;
 import com.postang.dao.service.VehDriMapDAOService;
 import com.postang.dao.service.VehicleDAOService;
+import com.postang.domain.Customer;
 import com.postang.domain.Driver;
 import com.postang.domain.TourPackage;
 import com.postang.domain.TourPackageRequest;
@@ -36,6 +37,7 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 @Service
 public class TourPackageServiceImpl implements TourPackageService, Constants {
+
 
 	@Autowired
 	TourPackageDAOService tourPackageDAOService;
@@ -120,7 +122,7 @@ public class TourPackageServiceImpl implements TourPackageService, Constants {
 		vehicleDriverMapping = vehDriMapDAOService.saveMapping(vehicleDriverMapping);
 		if (vehicleDriverMapping.getVdmId() > 0) {
 			TourPackageRequest tPR = tourPackageDAOService
-					.getTourPackageRequestById(vehicleDriverMapping.getTourPackageRequestId());
+					.getTourPackageRequestById((int) vehicleDriverMapping.getTourPackageRequestId());
 			tPR.setVehicleDriverMappingId((int) vehicleDriverMapping.getVdmId());
 			tourPackageDAOService.saveTourPackageRequest(tPR);
 			User user = commonDAOService.findUserByUserId(tPR.getUserId());
@@ -135,6 +137,31 @@ public class TourPackageServiceImpl implements TourPackageService, Constants {
 			status = EXCEPTION_OCCURED;
 		}
 		return status;
+	}
+
+	@Override
+	public List<TourPackageRequest> getCustomerTours(Customer customer) {
+		return tourPackageDAOService.getRequestListByUserName(customer.getUserName());
+	}
+
+	@Override
+	public String cancelTourRequest(TourPackageRequest tourPackageRequest) {
+
+		TourPackageRequest existingTPR = tourPackageDAOService
+				.getTourPackageRequestById(tourPackageRequest.getTourPackageRequestId());
+		if (existingTPR.getVehicleDriverMappingId() != 0) {
+			existingTPR.setCancelled(YES);
+			tourPackageDAOService.saveTourPackageRequest(existingTPR);
+			return TOUR_CANCEL_SUCCESS;
+		} else {
+			return TOUR_CANCEL_FAILED;
+		}
+
+	}
+
+	@Override
+	public VehicleDriverMapping viewVDMDetails(TourPackageRequest tourPackageRequest) {
+		return vehDriMapDAOService.getMappingByTourPackageRequestId(tourPackageRequest);
 	}
 
 }

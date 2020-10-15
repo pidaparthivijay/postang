@@ -3,6 +3,7 @@
  */
 package com.postang.dao.service;
 
+import com.postang.domain.TourPackageRequest;
 import com.postang.domain.VehicleDriverMapping;
 
 /**
@@ -12,5 +13,7 @@ import com.postang.domain.VehicleDriverMapping;
 public interface VehDriMapDAOService {
 
 	VehicleDriverMapping saveMapping(VehicleDriverMapping vehicleDriverMapping);
+
+	VehicleDriverMapping getMappingByTourPackageRequestId(TourPackageRequest tourPackageRequest);
 
 }

@@ -24,7 +24,7 @@ public interface TourPackageDAOService {
 
 	List<TourPackage> getAllTourPackages();
 
-	TourPackageRequest getTourPackageRequestById(long tourPackageRequestId);
+	TourPackageRequest getTourPackageRequestById(int tourPackageRequestId);
 
 	List<TourPackageRequest> getRequestListByUserName(String userName);
 
